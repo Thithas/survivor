@@ -320,3 +320,4 @@
 - 2026-09-08T14:02:08+00:00 LIVE requested but Polymarket auth/balance failed: Redirecting... — staying on paper
 - 2026-09-08T14:02:11+00:00 relay survivor-mhthithas.vercel.app region unreachable: Expecting value: line 1 column 1 (char 0) | balance via relay FAILED: Redirecting...
 - 2026-09-08T14:08:56+00:00 heartbeat [paper/explore]: 115 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on xrp-updown-5m-1788876300, opens 5
+- 2026-09-08T14:11:45+00:00 heartbeat [paper/explore]: 162 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1788876600, opens 10
