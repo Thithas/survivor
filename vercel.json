@@ -1,4 +1,0 @@
-{
-  "regions": ["dub1"],
-  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_AUTHOR_NAME\" = \"survivor-bot\" ]"
-}
