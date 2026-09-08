@@ -38,3 +38,4 @@
 - 2026-09-08T12:00:48+00:00 code updated on main, restarting on next run
 - 2026-09-08T12:02:25+00:00 heartbeat: 30 scans, 0 open, mode NORMAL, bankroll 20.20, markets 30/1 in window, best up+down 1.01 on btc-updown-5m-1788868800, opens 6
 - 2026-09-08T12:07:13+00:00 code updated on main, restarting on next run
+- 2026-09-08T12:12:02+00:00 heartbeat: 65 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788869400, opens 12
