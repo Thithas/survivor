@@ -326,23 +326,24 @@ def decide(state, P, sigs):
     arb_room = 3 - sum(1 for p in state["open_positions"] if p["type"] == "ARB")
     taken = {p["slug"] for p in state["open_positions"]} | set(state.get("traded", []))
     orders = []
+    n_mom = max(1, sum(1 for s in sigs if s["type"] == "MOMENTUM" and s["confidence"] >= P["momentum_min_confidence"]))
     for s in sorted(sigs, key=lambda s: (s["type"] != "ARB", -s["gross_edge"])):
         if s["type"] == "ARB" and arb_room <= 0: continue
         if s["type"] != "ARB" and room <= 0: continue
         if s["slug"] in taken: continue
         net = s["gross_edge"] - P["fees"] - (0 if s["type"] == "ARB" else P["slippage"])   # arb is FOK at the quoted ask: no slippage term
-        if net < min_edge: continue
+        if net < (P["min_edge"] if s["type"] == "ARB" else min_edge): continue        # CAUTIOUS doesn't apply to riskless arb
         if s["type"] == "MOMENTUM" and (s["liquidity_usd"] < P["min_liquidity_usd"] or s["confidence"] < P["momentum_min_confidence"]): continue
-        stake = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) * s["confidence"] * (0.5 if caut else 1.0)
         unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
         if s["type"] == "ARB":
-            shares = min(stake / unit, s["liq_shares"] * 0.8)        # both legs must fill: size to the thinner side
+            shares = int(min(state["bankroll_usd"] * 0.5 / unit, s["liq_shares"] * 0.8))   # riskless: up to half the cash; both legs must fill
             if shares < MIN_SHARES: continue
-            stake = int(shares) * unit
+            stake = shares * unit
         else:
-            stake = min(stake, s["liquidity_usd"] * 0.8)
-        stake = max(stake, MIN_SHARES * unit)                       # engine rejects < 5 shares per leg
-        if stake > state["bankroll_usd"] * HARD["max_trade_pct"] + 0.01: continue
+            stake = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) * s["confidence"] * (0.5 if caut else 1.0)
+            stake = min(stake / n_mom, s["liquidity_usd"] * 0.8)    # coins firing together are one bet split across them
+            stake = max(stake, MIN_SHARES * unit)                   # engine rejects < 5 shares
+            if stake > state["bankroll_usd"] * HARD["max_trade_pct"] + 0.01: continue
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
         orders.append((s, round(stake, 2), round(net, 4))); taken.add(s["slug"])
         if s["type"] == "ARB": arb_room -= 1
