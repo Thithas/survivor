@@ -100,14 +100,26 @@ def commit(state, msg="survivor: state"):
     if r.returncode: log("push failed", r.stderr[-300:])
 
 # ---------- polymarket (unified SDK: Deposit Wallet / pUSD, V2 CLOB) ----------
-_pm = None
+_pm, _pm_relay = None, None
+def relay_url():
+    """Public URL of the phone relay (file RELAY, written by phone/relay.py). GitHub runners are US IPs and
+    Polymarket geoblocks order placement from there, so every CLOB call is routed through the phone."""
+    try: return open("RELAY").read().strip() or None
+    except Exception: return None
+
 def pm():
-    """Authenticated client. Wallet type (Deposit Wallet / Proxy / Safe) is detected from signer + wallet."""
-    global _pm
-    if _pm is None:
+    """Authenticated client, CLOB traffic via the phone relay. Rebuilt whenever the relay URL changes."""
+    global _pm, _pm_relay
+    relay = relay_url()
+    if _pm is None or relay != _pm_relay:
+        import dataclasses
         from polymarket import SecureClient
-        _pm = SecureClient.create(private_key=os.environ["POLY_PRIVATE_KEY"], wallet=os.environ["POLY_FUNDER"])
-        log("polymarket", _pm.wallet_type, str(_pm.wallet)[:10])
+        from polymarket.environments import PRODUCTION, _create_environment
+        env = PRODUCTION
+        if relay: env = _create_environment(name="relay", config=dataclasses.replace(PRODUCTION._config, clob_url=relay))
+        _pm = SecureClient.create(private_key=os.environ["POLY_PRIVATE_KEY"], wallet=os.environ["POLY_FUNDER"], environment=env)
+        _pm_relay = relay
+        log("polymarket", _pm.wallet_type, str(_pm.wallet)[:10], "via relay" if relay else "DIRECT (orders will be geoblocked)")
     return _pm
 
 def live_balance():
@@ -428,7 +440,11 @@ def main():
     state = load_json(STATE_FILE, None)
     def fresh_state():
         global LIVE_BLOCKED
-        if os.path.exists("LIVE"):
+        if os.path.exists("LIVE") and not relay_url():
+            LIVE_BLOCKED = True
+            journal("LIVE requested but no phone relay (file RELAY) — orders from GitHub are geoblocked; paper until the phone is up")
+            notify("LIVE waiting: phone relay is offline. Start it in Termux (bash ~/survivor/start.sh). Paper until then.")
+        elif os.path.exists("LIVE"):
             try:
                 b = live_balance()
                 if b < HARD["floor_usd"] + 1:
@@ -456,8 +472,9 @@ def main():
         day_roll(state)
         if os.path.exists("LIVE") and time.time() - last_bal > 60:
             try:
+                if not relay_url(): raise RuntimeError("phone relay offline")
                 b = live_balance()
-                if LIVE_BLOCKED and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
+                if LIVE_BLOCKED and relay_url() and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
                     LIVE_BLOCKED = False; commit(state, "survivor: funds landed"); state = fresh_state(); P = params(); dirty = True
                 elif is_live(): state["bankroll_usd"] = b
             except Exception as e: log("balance err", e)
