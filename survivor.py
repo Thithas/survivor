@@ -110,7 +110,10 @@ def clob():
 
 def live_balance():
     from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
-    r = clob().get_balance_allowance(BalanceAllowanceParams(asset_type=AssetType.COLLATERAL))
+    prm = BalanceAllowanceParams(asset_type=AssetType.COLLATERAL)
+    try: clob().update_balance_allowance(prm)          # refresh the CLOB's cached view before reading
+    except Exception as e: log("balance refresh", e)
+    r = clob().get_balance_allowance(prm)
     return float(r["balance"]) / 1e6
 
 def buy(token_id, usd):
@@ -377,14 +380,20 @@ def main():
         global LIVE_BLOCKED
         if os.path.exists("LIVE"):
             try:
-                b = live_balance(); st = new_state(b); st["live_mode"] = True
-                journal(f"LIVE mode on. Polymarket balance {b:.2f}"); notify(f"LIVE. Real money. Balance {b:.2f}. Floor {HARD['floor_usd']}, daily cap {HARD['daily_loss_cap_usd']}, max {int(HARD['max_trade_pct']*100)}%/trade.")
-                return st
+                b = live_balance()
+                if b < HARD["floor_usd"] + 1:
+                    LIVE_BLOCKED = True
+                    journal(f"LIVE requested but Polymarket balance is {b:.2f} (need > {HARD['floor_usd'] + 1:.0f}) — paper until funds land")
+                    notify(f"LIVE waiting: Polymarket balance reads {b:.2f}. Paper until it's above {HARD['floor_usd'] + 1:.0f}. Rechecking every minute.")
+                else:
+                    st = new_state(b); st["live_mode"] = True
+                    journal(f"LIVE mode on. Polymarket balance {b:.2f}"); notify(f"LIVE. Real money. Balance {b:.2f}. Floor {HARD['floor_usd']}, daily cap {HARD['daily_loss_cap_usd']}, max {int(HARD['max_trade_pct']*100)}%/trade.")
+                    return st
             except Exception as e:
                 LIVE_BLOCKED = True
                 journal(f"LIVE requested but Polymarket auth/balance failed: {str(e)[:120]} — staying on paper"); notify(f"LIVE blocked: {str(e)[:120]}. Running paper until fixed.")
         st = new_state(50.0); st["live_mode"] = False; return st
-    if state is None or bool(state.get("live_mode")) != os.path.exists("LIVE"):
+    if state is None or bool(state.get("live_mode")) != os.path.exists("LIVE") or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0):
         state = fresh_state()
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
     scan_errs, last_err = 0, ""
@@ -393,8 +402,12 @@ def main():
         if os.path.exists("HALT"):
             journal("HALT found, exiting"); notify("HALT — stopped"); break
         day_roll(state)
-        if is_live() and time.time() - last_bal > 60:
-            try: state["bankroll_usd"] = live_balance()
+        if os.path.exists("LIVE") and time.time() - last_bal > 60:
+            try:
+                b = live_balance()
+                if LIVE_BLOCKED and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
+                    LIVE_BLOCKED = False; commit(state, "survivor: funds landed"); state = fresh_state(); P = params(); dirty = True
+                elif is_live(): state["bankroll_usd"] = b
             except Exception as e: log("balance err", e)
             last_bal = time.time()
         state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], state["bankroll_usd"])
