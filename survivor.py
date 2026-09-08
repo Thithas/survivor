@@ -25,7 +25,7 @@ HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "ma
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
-          "momentum_window_sec": (10, 45), "max_open_positions": (1, 3), "min_liquidity_usd": (20, 200),
+          "momentum_window_sec": (10, 150), "max_open_positions": (1, 3), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60)}
@@ -184,8 +184,8 @@ def top(token):
     b = requests.get(f"{CLOB}/book", params={"token_id": token}, timeout=5).json()
     asks = [(float(a["price"]), float(a["size"])) for a in b.get("asks", [])]
     bids = [float(a["price"]) for a in b.get("bids", [])]
-    ask, liq = (min(asks)[0], round(min(asks)[0] * min(asks)[1], 2)) if asks else (None, 0.0)
-    return ask, liq, (max(bids) if bids else None)
+    ask, liq, sz = (min(asks)[0], round(min(asks)[0] * min(asks)[1], 2), min(asks)[1]) if asks else (None, 0.0, 0.0)
+    return ask, liq, (max(bids) if bids else None), sz
 
 # ---------- brain (rules) ----------
 def new_state(bankroll):
@@ -222,12 +222,13 @@ def scan(state, P):
         if left <= P["momentum_window_sec"] + 15 or left >= 290: diag["hot"] = True
         if m["slug"] not in state["opens"] and abs((t - m["start"]).total_seconds()) <= 6:
             state["opens"][m["slug"]] = px
-        ua, ul, ub = top(m["up"]); da, dl, db = top(m["down"])
+        ua, ul, ub, usz = top(m["up"]); da, dl, db, dsz = top(m["down"])
         state.setdefault("books", {})[m["slug"]] = {"up": [ua, ub], "down": [da, db], "left": round(left)}
         # Near the close one side's asks often vanish (the winner gets hoarded). Keep recording; only skip what needs both sides.
-        if left <= 75:   # window dataset: one snapshot every ~5s in the final stretch
+        if left <= 300:  # window dataset: every ~10s, tightening to ~5s in the final 75s
             snaps = state.setdefault("snaps", {}).setdefault(m["slug"], {"end": m["end"].isoformat(), "open": state["opens"].get(m["slug"]), "s": []})
-            if not snaps["s"] or snaps["s"][-1]["t"] - left >= 5:
+            if snaps["open"] is None and state["opens"].get(m["slug"]): snaps["open"] = state["opens"][m["slug"]]
+            if not snaps["s"] or snaps["s"][-1]["t"] - left >= (5 if left <= 75 else 10):
                 op = snaps["open"]
                 snaps["s"].append({"t": round(left), "up": ua, "down": da, "mv": round((px - op) / op * 1e4, 1) if op else None})
         base = {"slug": m["slug"], "end": m["end"].isoformat(), "time_left_sec": round(left)}
@@ -236,7 +237,7 @@ def scan(state, P):
             gross = round(1 - (ua + da) - fee(ua, P) - fee(da, P), 4)
             if gross > 0:
                 sigs.append({**base, "type": "ARB", "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
-                             "gross_edge": gross, "liquidity_usd": min(ul, dl), "confidence": 1.0})
+                             "gross_edge": gross, "liquidity_usd": min(ul, dl), "liq_shares": min(usz, dsz), "confidence": 1.0})
         op = state["opens"].get(m["slug"])
         if op and left <= P["momentum_window_sec"]:
             mv = (px - op) / op * 1e4
@@ -263,12 +264,17 @@ def decide(state, P, sigs):
     for s in sorted(sigs, key=lambda s: (s["type"] != "ARB", -s["gross_edge"])):
         if room <= 0: break
         if s["slug"] in taken: continue
-        net = s["gross_edge"] - P["fees"] - P["slippage"]
-        if net < min_edge or s["liquidity_usd"] < P["min_liquidity_usd"]: continue
-        if s["type"] == "MOMENTUM" and s["confidence"] < P["momentum_min_confidence"]: continue
+        net = s["gross_edge"] - P["fees"] - (0 if s["type"] == "ARB" else P["slippage"])   # arb is FOK at the quoted ask: no slippage term
+        if net < min_edge: continue
+        if s["type"] == "MOMENTUM" and (s["liquidity_usd"] < P["min_liquidity_usd"] or s["confidence"] < P["momentum_min_confidence"]): continue
         stake = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) * s["confidence"] * (0.5 if caut else 1.0)
-        stake = min(stake, s["liquidity_usd"] * 0.8)
         unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
+        if s["type"] == "ARB":
+            shares = min(stake / unit, s["liq_shares"] * 0.8)        # both legs must fill: size to the thinner side
+            if shares < MIN_SHARES: continue
+            stake = int(shares) * unit
+        else:
+            stake = min(stake, s["liquidity_usd"] * 0.8)
         stake = max(stake, MIN_SHARES * unit)                       # engine rejects < 5 shares per leg
         if stake > state["bankroll_usd"] * HARD["max_trade_pct"] + 0.01: continue
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
@@ -278,10 +284,12 @@ def decide(state, P, sigs):
 def execute(state, s, stake, net):
     legs = []
     if s["type"] == "ARB":
-        shares = stake / (s["up_ask"] + s["down_ask"])
-        for tok, ask, idx in ((s["up"], s["up_ask"], 0), (s["down"], s["down_ask"], 1)):
+        shares = int(stake / (s["up_ask"] + s["down_ask"]))
+        order = sorted(((s["up"], s["up_ask"], 0), (s["down"], s["down_ask"], 1)), key=lambda x: x[1])   # cheap leg first
+        for tok, ask, idx in order:
             usd = round(shares * ask, 2); ok, resp = buy(tok, usd)
-            legs.append({"token": tok, "outcome": idx, "shares": round(shares, 4), "cost": usd, "ok": ok, "resp": resp})
+            legs.append({"token": tok, "outcome": idx, "shares": float(shares), "cost": usd, "ok": ok, "resp": resp})
+            if not ok: break
     else:
         ok, resp = buy(s["token"], stake)
         legs.append({"token": s["token"], "outcome": s["outcome"], "shares": round(stake / s["ask"], 4), "cost": stake, "ok": ok, "resp": resp})
