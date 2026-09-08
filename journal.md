@@ -293,3 +293,4 @@
 - 2026-09-08T13:35:08+00:00 LIVE requested but no phone relay (file RELAY) — orders from GitHub are geoblocked; paper until the phone is up
 - 2026-09-08T13:35:10+00:00 relay: none
 - 2026-09-08T13:43:08+00:00 heartbeat [paper/explore]: 113 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788874800, opens 5
+- 2026-09-08T13:44:37+00:00 heartbeat [paper/explore]: 135 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788875100, opens 5
