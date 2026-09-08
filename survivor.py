@@ -59,11 +59,15 @@ def pull():
     if IN_ACTIONS: git("pull", "--rebase", "--autostash", "-q")
 def commit(state, msg="survivor: state"):
     save_json(STATE_FILE, state)
+    for f in (TRADES_FILE, JOURNAL_FILE):
+        if not os.path.exists(f): open(f, "a").close()   # git add fails outright on a missing path
     if not IN_ACTIONS: return
-    git("add", STATE_FILE, TRADES_FILE, JOURNAL_FILE)
-    if git("commit", "-q", "-m", msg).returncode == 0:
-        pull(); r = git("push", "-q")
-        if r.returncode: log("push failed", r.stderr[-200:])
+    a = git("add", "--", STATE_FILE, TRADES_FILE, JOURNAL_FILE)
+    if a.returncode: log("git add failed", a.stderr[-200:]); return
+    c = git("commit", "-q", "-m", msg)
+    if c.returncode: log("nothing to commit"); return
+    pull(); r = git("push", "-q")
+    if r.returncode: log("push failed", r.stderr[-300:])
 
 # ---------- polymarket ----------
 _clob = None
