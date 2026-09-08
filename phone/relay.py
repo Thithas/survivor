@@ -18,6 +18,14 @@ DROP_REQ = {"host", "content-length", "transfer-encoding", "connection", "accept
 DROP_RES = {"content-length", "transfer-encoding", "content-encoding", "connection"}
 stats = {"ok": 0, "err": 0, "last": ""}
 
+def tg(msg):
+    """Status to Telegram so nobody has to open a terminal."""
+    tok, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
+    print(msg, flush=True)
+    if not tok or not chat: return
+    try: requests.post(f"https://api.telegram.org/bot{tok}/sendMessage", json={"chat_id": chat, "text": "relay: " + msg}, timeout=10)
+    except Exception: pass
+
 class Relay(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     def handle_any(self):
@@ -43,11 +51,11 @@ class Relay(BaseHTTPRequestHandler):
 
 def publish(url):
     """Write the tunnel URL (with secret) to the repo file RELAY so the brain can find us."""
-    if not GH_TOKEN: print("no GH_TOKEN: paste this into the repo file RELAY yourself:", url); return
+    if not GH_TOKEN: tg("no GH_TOKEN, cannot publish " + url); return
     api = f"https://api.github.com/repos/{REPO}/contents/RELAY"; h = {"Authorization": f"Bearer {GH_TOKEN}", "Accept": "application/vnd.github+json"}
     cur = requests.get(api, headers=h, timeout=15); body = {"message": "phone relay online", "content": base64.b64encode(url.encode()).decode()}
     if cur.status_code == 200: body["sha"] = cur.json()["sha"]
-    r = requests.put(api, headers=h, json=body, timeout=15); print("published RELAY:", r.status_code, url)
+    r = requests.put(api, headers=h, json=body, timeout=15); tg(f"published RELAY {r.status_code} → {url.split('/')[2]}")
 
 def tunnel_forever():
     while True:
@@ -57,13 +65,15 @@ def tunnel_forever():
         for line in p.stdout:
             m = re.search(r"https://[a-z0-9-]+\.trycloudflare\.com", line)
             if m and not url:
-                url = m.group(0) + "/" + SECRET; print("tunnel up:", url)
+                url = m.group(0) + "/" + SECRET; tg("tunnel up " + url.split('/')[2])
                 try: publish(url)
-                except Exception as e: print("publish failed", e)
-        print("tunnel exited, restarting in 5s"); time.sleep(5)
+                except Exception as e: tg(f"publish failed: {str(e)[:120]}")
+        tg("tunnel exited, restarting in 5s"); time.sleep(5)
 
 if __name__ == "__main__":
     threading.Thread(target=tunnel_forever, daemon=True).start()
-    print(f"relay listening on :{PORT} → {UPSTREAM}  (secret {SECRET[:4]}…)")
+    try: geo = requests.get("https://polymarket.com/api/geoblock", timeout=10).json(); geo = f"{geo.get('country')} blocked={geo.get('blocked')}"
+    except Exception as e: geo = f"geo check failed {str(e)[:60]}"
+    tg(f"starting on {os.environ.get('CODESPACE_NAME', 'this machine')} · Polymarket sees {geo}")
     try: ThreadingHTTPServer(("127.0.0.1", PORT), Relay).serve_forever()
     except KeyboardInterrupt: pass
