@@ -314,3 +314,5 @@
 - 2026-09-08T13:59:43+00:00 heartbeat [paper/explore]: 336 scans, 0 open, mode NORMAL, bankroll 50.00, markets None/None in window across None, best up+down None on None, opens 0
 - 2026-09-08T14:00:12+00:00 relay back — live resumed
 - 2026-09-08T14:01:43+00:00 relay survivor-mhthithas.vercel.app region unreachable: Expecting value: line 1 column 1 (char 0) | balance via relay FAILED: Redirecting...
+- 2026-09-08T14:01:45+00:00 LIVE requested but Polymarket auth/balance failed: Redirecting... — staying on paper
+- 2026-09-08T14:01:46+00:00 heartbeat [paper/explore]: 362 scans, 0 open, mode NORMAL, bankroll 50.00, markets None/None in window across None, best up+down None on None, opens 0
