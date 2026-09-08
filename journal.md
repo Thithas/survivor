@@ -1280,3 +1280,5 @@
 - 2026-09-08T22:10:35+00:00 LIVE ARB eth-updown-5m-1788905400 $10.34 edge 0.0258
 - 2026-09-08T22:10:36+00:00 heartbeat: 341 scans, 1 open, mode CAUTIOUS, bankroll 49.52, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.94 on eth-updown-5m-1788905400, opens 60
 - 2026-09-08T22:11:27+00:00 heartbeat: 354 scans, 1 open, mode CAUTIOUS, bankroll 38.83, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.98 on xrp-updown-5m-1788905400, opens 60
+- 2026-09-08T22:14:25+00:00 LIVE ARB PARTIAL btc-updown-5m-1788905400 $6.37 edge 0.0203
+- 2026-09-08T22:14:25+00:00 heartbeat: 409 scans, 2 open, mode CAUTIOUS, bankroll 38.83, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.97 on btc-updown-5m-1788905400, opens 60
