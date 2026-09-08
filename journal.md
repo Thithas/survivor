@@ -307,3 +307,6 @@
 - 2026-09-08T13:55:43+00:00 heartbeat [paper/explore]: 284 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788875700, opens 20
 - 2026-09-08T13:55:49+00:00 heartbeat [paper/explore]: 285 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788875700, opens 20
 - 2026-09-08T13:55:55+00:00 heartbeat [paper/explore]: 286 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788875700, opens 20
+- 2026-09-08T13:57:42+00:00 relay survivor-mhthithas.vercel.app region unreachable: Expecting value: line 1 column 1 (char 0) | balance via relay FAILED: Redirecting...
+- 2026-09-08T13:58:04+00:00 relay back — live resumed
+- 2026-09-08T13:58:59+00:00 heartbeat: 326 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 20
