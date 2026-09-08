@@ -250,3 +250,4 @@
 - 2026-09-08T13:17:37+00:00 order failed ARB xrp-updown-5m-1788873300: Redirecting...
 - 2026-09-08T13:17:37+00:00 heartbeat: 215 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.9 on xrp-updown-5m-1788873300, opens 50
 - 2026-09-08T13:18:06+00:00 heartbeat: 222 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788873300, opens 50
+- 2026-09-08T13:18:31+00:00 heartbeat: 229 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788873300, opens 50
