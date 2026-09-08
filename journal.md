@@ -32,3 +32,4 @@
 - 2026-09-08T11:33:47+00:00 LIVE mode on. Polymarket balance 20.20
 - 2026-09-08T11:39:56+00:00 heartbeat: 197 scans, 0 open, mode NORMAL, bankroll 20.20, markets 30/2 in window, best up+down 1.03 on btc-updown-5m-1788867600, opens 2
 - 2026-09-08T11:46:46+00:00 heartbeat: 396 scans, 0 open, mode NORMAL, bankroll 20.20, markets 30/1 in window, best up+down 1.01 on btc-updown-5m-1788867900, opens 3
+- 2026-09-08T11:51:49+00:00 heartbeat: 545 scans, 0 open, mode NORMAL, bankroll 20.20, markets 30/1 in window, best up+down 1.01 on btc-updown-5m-1788868200, opens 4
