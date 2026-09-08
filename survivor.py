@@ -431,7 +431,7 @@ def relay_alive():
     url = relay_url()
     ok = False
     if url:
-        try: ok = requests.get(url + "/health", timeout=10).ok
+        try: ok = bool((requests.get(url + "/health", timeout=10).json() or {}).get("ok"))   # a login page is not "ok"
         except Exception: ok = False
     _relay_fail = 0 if ok else _relay_fail + 1
     if not ok and _relay_fail == 3 and not LIVE_BLOCKED and os.path.exists("LIVE"):
