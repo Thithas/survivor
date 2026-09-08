@@ -1398,3 +1398,5 @@
 - 2026-09-08T23:32:48+00:00 heartbeat: 1758 scans, 0 open, mode CAUTIOUS, bankroll 52.41, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788910200, opens 60
 - 2026-09-08T23:32:52+00:00 heartbeat: 1759 scans, 0 open, mode CAUTIOUS, bankroll 52.41, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788910200, opens 60
 - 2026-09-08T23:32:58+00:00 heartbeat: 1761 scans, 0 open, mode CAUTIOUS, bankroll 52.41, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788910200, opens 60
+- 2026-09-08T23:33:45+00:00 order failed ARB btc-updown-5m-1788910200: order couldn't be fully filled. FOK orders are fully filled or killed.
+- 2026-09-08T23:33:45+00:00 heartbeat: 1778 scans, 0 open, mode CAUTIOUS, bankroll 52.41, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.93 on btc-updown-5m-1788910200, opens 60
