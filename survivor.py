@@ -246,12 +246,17 @@ def day_roll(state):
         state["consecutive_losses"] = min(state["consecutive_losses"], 2)
         journal("day rolled")
 
+def equity(state):
+    """Cash plus what's tied up in open positions — a buy moves cash into a position, it isn't a loss."""
+    return state["bankroll_usd"] + sum(p["stake"] for p in state["open_positions"])
+
 def set_mode(state):
     if state["mode"] == "DEAD": return
-    old = state["mode"]
-    if state["bankroll_usd"] <= HARD["floor_usd"]: state["mode"] = "DEAD"
+    old = state["mode"]; eq = equity(state)
+    state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], eq)
+    if eq <= HARD["floor_usd"]: state["mode"] = "DEAD"
     elif state["today_pnl_usd"] <= -HARD["daily_loss_cap_usd"] or state["consecutive_losses"] >= 4: state["mode"] = "HIBERNATE"
-    elif state["consecutive_losses"] >= 2 or 1 - state["bankroll_usd"] / state["peak_bankroll_usd"] > 0.10: state["mode"] = "CAUTIOUS"
+    elif state["consecutive_losses"] >= 2 or 1 - eq / state["peak_bankroll_usd"] > 0.10: state["mode"] = "CAUTIOUS"
     elif state["consecutive_wins"] >= 3 or old == "NORMAL": state["mode"] = "NORMAL"
     else: state["mode"] = "CAUTIOUS"
     if state["mode"] != old:
@@ -527,7 +532,7 @@ def main():
                 elif is_live(): state["bankroll_usd"] = b
             except Exception as e: log("balance err", e)
             last_bal = time.time()
-        state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], state["bankroll_usd"])
+        state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], equity(state))
         before = state["closed_trades"]; settle(state); dirty |= state["closed_trades"] != before
         try: dirty |= settle_windows(state)
         except Exception as e: log("settle_windows err", e)
