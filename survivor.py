@@ -33,12 +33,13 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
-          "momentum_min_ask": (0.10, 0.60)}
+          "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
-                  "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40}
+                  "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
+                  "forced_at_sec": 60, "forced_max_ask": 0.92}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -281,7 +282,7 @@ def scan(state, P):
         if left <= P["momentum_window_sec"] + 15 or left >= 290: diag["hot"] = True
         try: ua, ul, ub, usz = top(m["up"]); da, dl, db, dsz = top(m["down"])
         except Exception as e: log("book err", m["slug"], e); continue
-        state.setdefault("books", {})[m["slug"]] = {"up": [ua, ub], "down": [da, db], "left": round(left)}
+        state.setdefault("books", {})[m["slug"]] = {"up": [ua, ub], "down": [da, db], "left": round(left), "up_tok": m["up"], "down_tok": m["down"], "end": m["end"].isoformat()}
         # Near the close one side's asks often vanish (the winner gets hoarded). Keep recording; only skip what needs both sides.
         if left <= 300:  # window dataset: every ~10s, tightening to ~5s in the final 75s
             snaps = state.setdefault("snaps", {}).setdefault(m["slug"], {"asset": m["asset"], "end": m["end"].isoformat(), "open": state["opens"].get(m["slug"]), "s": []})
@@ -350,6 +351,29 @@ def decide(state, P, sigs):
         else: room -= 1
     return orders
 
+def forced_trade(state, P):
+    """Owner's rule: one minimum-size trade per 5-minute cycle even without a signal. Least-bad version:
+    at T-forced_at_sec buy 5 shares of the market's own favourite (highest ask <= forced_max_ask) — the side the market
+    already expects to win, so the expected cost is just the fee. Skipped if a signal already traded this cycle."""
+    if state["mode"] in ("DEAD", "HIBERNATE"): return None
+    books = state.get("books", {})
+    cyc = {slug: b for slug, b in books.items() if b["left"] <= P["forced_at_sec"] and b["left"] >= P["forced_at_sec"] - 12}
+    if not cyc: return None
+    epoch = list(cyc)[0].rsplit("-", 1)[-1]
+    if state.get("forced_epoch") == epoch: return None
+    if any(t.rsplit("-", 1)[-1] == epoch for t in state.get("traded", [])): state["forced_epoch"] = epoch; return None
+    best = None
+    for slug, b in cyc.items():
+        for side, idx in (("up", 0), ("down", 1)):
+            ask = b[side][0]
+            if ask is None or ask > P["forced_max_ask"] or ask < 0.55: continue
+            if best is None or ask > best[2]: best = (slug, side, ask, b[side + "_tok"], idx, b["end"])
+    state["forced_epoch"] = epoch
+    if not best: return None
+    slug, side, ask, tok, idx, end = best
+    return {"type": "MOMENTUM", "forced": True, "slug": slug, "end": end, "time_left_sec": cyc[slug]["left"], "token": tok,
+            "outcome": idx, "ask": ask, "gross_edge": round(-fee(ask, P), 4), "liquidity_usd": 0, "confidence": ask, "move_bps": 0, "peers": "forced"}
+
 def execute(state, s, stake, net):
     legs = []
     if s["type"] == "ARB":
@@ -374,7 +398,7 @@ def execute(state, s, stake, net):
     partial = " PARTIAL" if len(filled) < len(legs) else ""
     if partial:
         pos["type"] = "ARB_LEG"; pos["legs"] = filled          # only the filled leg is real; manage() now watches it
-    msg = f"{'LIVE' if is_live() else 'PAPER'} {s['type']}{partial} {s['slug']} ${cost} edge {net}" + (f" move {s['move_bps']} bps peers {s['peers']}" if s["type"] == "MOMENTUM" else "")
+    msg = f"{'LIVE' if is_live() else 'PAPER'} {'FORCED' if s.get('forced') else s['type']}{partial} {s['slug']} ${cost} edge {net}" + (f" move {s['move_bps']} bps peers {s['peers']}" if s["type"] == "MOMENTUM" and not s.get("forced") else "")
     journal(msg); notify(msg)
 
 def resolve(slug):
@@ -558,6 +582,12 @@ def main():
             time.sleep(5)
         for s, stake, net in decide(state, P, sigs):
             execute(state, s, stake, net); dirty = True
+        try:
+            f = forced_trade(state, P)
+            if f and f["slug"] not in {p["slug"] for p in state["open_positions"]}:
+                stake = round(MIN_SHARES * f["ask"], 2)
+                if stake <= state["bankroll_usd"]: execute(state, f, stake, f["gross_edge"]); dirty = True
+        except Exception as e: log("forced err", e)
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = params(); last_pull = time.time()
             if relay_url() != state.get("relay_seen"):
