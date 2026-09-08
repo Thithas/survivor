@@ -333,3 +333,4 @@
 - 2026-09-08T14:34:07+00:00 LIVE ARB PARTIAL doge-updown-5m-1788877800 $1.5 edge 0.0292
 - 2026-09-08T14:34:08+00:00 heartbeat: 17 scans, 1 open, mode NORMAL, bankroll 20.11, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.94 on doge-updown-5m-1788877800, opens 0
 - 2026-09-08T14:37:57+00:00 heartbeat: 83 scans, 1 open, mode NORMAL, bankroll 18.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788878100, opens 5
+- 2026-09-08T14:37:59+00:00 code updated on main, restarting on next run
