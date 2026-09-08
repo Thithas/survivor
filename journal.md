@@ -30,3 +30,4 @@
 - 2026-09-08T11:27:19+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land
 - 2026-09-08T11:33:25+00:00 code updated on main, restarting on next run
 - 2026-09-08T11:33:47+00:00 LIVE mode on. Polymarket balance 20.20
+- 2026-09-08T11:39:56+00:00 heartbeat: 197 scans, 0 open, mode NORMAL, bankroll 20.20, markets 30/2 in window, best up+down 1.03 on btc-updown-5m-1788867600, opens 2
