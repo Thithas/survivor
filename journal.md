@@ -799,3 +799,88 @@
 - 2026-09-08T18:16:27+00:00 sell failed (take profit) sol-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 7026, order amount: 5000000
 - 2026-09-08T18:16:27+00:00 sell failed (take profit) btc-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 2559, order amount: 5000000
 - 2026-09-08T18:16:27+00:00 heartbeat: 532 scans, 3 open, mode NORMAL, bankroll 30.33, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788891300, opens 60
+- 2026-09-08T18:16:35+00:00 sell failed (take profit) eth-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 0, order amount: 5000000
+- 2026-09-08T18:16:35+00:00 sell failed (take profit) sol-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 7026, order amount: 5000000
+- 2026-09-08T18:16:36+00:00 sell failed (take profit) btc-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 2559, order amount: 5000000
+- 2026-09-08T18:16:41+00:00 sell failed (take profit) eth-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 0, order amount: 5000000
+- 2026-09-08T18:16:41+00:00 sell failed (take profit) sol-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 7026, order amount: 5000000
+- 2026-09-08T18:16:42+00:00 sell failed (take profit) btc-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 2559, order amount: 5000000
+- 2026-09-08T18:16:46+00:00 sell failed (take profit) eth-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 0, order amount: 5000000
+- 2026-09-08T18:16:47+00:00 sell failed (take profit) sol-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 7026, order amount: 5000000
+- 2026-09-08T18:16:47+00:00 sell failed (take profit) btc-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 2559, order amount: 5000000
+- 2026-09-08T18:16:52+00:00 sell failed (take profit) eth-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 0, order amount: 5000000
+- 2026-09-08T18:16:53+00:00 sell failed (take profit) sol-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 7026, order amount: 5000000
+- 2026-09-08T18:16:53+00:00 sell failed (take profit) btc-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 2559, order amount: 5000000
+- 2026-09-08T18:16:58+00:00 sell failed (take profit) eth-updown-5m-1788891000: not enough balance / allowance: the balance is not enough -> balance: 0, order amount: 5000000
+- 2026-09-08T18:17:13+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:13+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:18+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:18+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:19+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:23+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:23+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:23+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:28+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:28+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:28+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:33+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:33+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:33+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:38+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:38+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:38+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:43+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:43+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:43+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:48+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:48+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:48+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:52+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:52+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:52+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:55+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:56+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:56+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:59+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:17:59+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:00+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:03+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:03+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:03+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:07+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:07+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:07+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:11+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:11+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:11+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:15+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:15+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:15+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:19+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:19+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:19+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:23+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:23+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:23+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:26+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:27+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:27+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:30+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:30+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:31+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:34+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:34+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:35+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:38+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:39+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:39+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:42+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:42+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:43+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:46+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:46+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:46+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:50+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:50+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:50+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:51+00:00 heartbeat: 560 scans, 3 open, mode NORMAL, bankroll 30.33, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on sol-updown-5m-1788891300, opens 60
