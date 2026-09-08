@@ -440,3 +440,5 @@
 - 2026-09-08T15:55:39+00:00 sell failed (take profit) eth-updown-5m-1788882600: not enough balance / allowance: the balance is not enough -> balance: 4230768, order amount: 5000000
 - 2026-09-08T15:55:44+00:00 sell failed (take profit) eth-updown-5m-1788882600: not enough balance / allowance: the balance is not enough -> balance: 4230768, order amount: 5000000
 - 2026-09-08T15:55:44+00:00 heartbeat: 966 scans, 1 open, mode CAUTIOUS, bankroll 12.30, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788882900, opens 60
+- 2026-09-08T15:55:51+00:00 sell failed (take profit) eth-updown-5m-1788882600: not enough balance / allowance: the balance is not enough -> balance: 4230768, order amount: 5000000
+- 2026-09-08T15:55:51+00:00 heartbeat: 967 scans, 1 open, mode CAUTIOUS, bankroll 12.30, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on sol-updown-5m-1788882900, opens 60
