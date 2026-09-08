@@ -24,7 +24,7 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 2}
+HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 1}
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
@@ -277,12 +277,13 @@ def scan(state, P):
             mv = (px - op) / op * 1e4
             up_side = mv > 0
             ask, liq = (ua, ul) if up_side else (da, dl)
-            conf = min(0.95, abs(mv) / (2 * P["momentum_min_move_bps"]))
-            # peers: other assets moving the same way this window add conviction (they share the same macro tick)
+            # calibrated on recorded windows (spot move vs actual winner): the proxy feed is right ~55% under 10 bps,
+            # ~70% at 10-20, ~80% above 20. Anything more optimistic than this lost paper money.
+            a = abs(mv); conf = 0.50 if a < 3 else 0.55 if a < 10 else 0.70 if a < 20 else 0.80
             peers = [v for a2, v in moves.items() if a2 != m["asset"]]
             agree = sum(1 for v in peers if (v > 0) == up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
             against = sum(1 for v in peers if (v > 0) != up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
-            conf = min(0.95, conf + 0.08 * agree - 0.10 * against)
+            conf = max(0.0, min(0.90, conf + min(0.05, 0.02 * agree) - 0.05 * against))
             if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
@@ -299,7 +300,7 @@ def decide(state, P, sigs):
     min_edge = P["min_edge"] * (1.5 if caut else 1.0)
     room = min(HARD["max_open_positions"], P["max_open_positions"]) - sum(1 for p in state["open_positions"] if p["type"] != "ARB")
     arb_room = 3 - sum(1 for p in state["open_positions"] if p["type"] == "ARB")
-    taken = {p["slug"] for p in state["open_positions"]}
+    taken = {p["slug"] for p in state["open_positions"]} | set(state.get("traded", []))
     orders = []
     for s in sorted(sigs, key=lambda s: (s["type"] != "ARB", -s["gross_edge"])):
         if s["type"] == "ARB" and arb_room <= 0: continue
@@ -343,6 +344,7 @@ def execute(state, s, stake, net):
     pos = {"slug": s["slug"], "type": s["type"], "legs": legs, "stake": cost, "predicted_edge": net,
            "ts": now().isoformat(timespec="seconds"), "end": s["end"], "live": is_live()}
     state["open_positions"].append(pos)
+    state["traded"] = (state.get("traded", []) + [s["slug"]])[-40:]
     if not is_live(): state["bankroll_usd"] -= cost
     partial = " PARTIAL" if len(filled) < len(legs) else ""
     msg = f"{'LIVE' if is_live() else 'PAPER'} {s['type']}{partial} {s['slug']} ${cost} edge {net}" + (f" move {s['move_bps']} bps peers {s['peers']}" if s["type"] == "MOMENTUM" else "")
