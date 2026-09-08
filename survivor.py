@@ -21,8 +21,10 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.10, "max_open_positions": 2}
-BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min_confidence": (0.55, 0.85),
+HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 1}
+# Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
+# Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
+BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
           "momentum_window_sec": (10, 45), "max_open_positions": (1, 3), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
@@ -49,7 +51,8 @@ def now(): return dt.datetime.now(dt.timezone.utc)
 def today(): return now().date().isoformat()
 def parse(s): return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
 def log(*a): print(now().strftime("%H:%M:%S"), *a, flush=True)
-def is_live(): return os.path.exists("LIVE")
+LIVE_BLOCKED = False   # set when LIVE is requested but Polymarket auth/balance fails; falls back to paper and pings you
+def is_live(): return os.path.exists("LIVE") and not LIVE_BLOCKED
 
 # ---------- telegram ----------
 def notify(msg):
@@ -367,8 +370,22 @@ def redispatch():
 
 # ---------- loop ----------
 def main():
+    global LIVE_BLOCKED
     P = params()
-    state = load_json(STATE_FILE, None) or new_state(live_balance() if is_live() else 50.0)
+    state = load_json(STATE_FILE, None)
+    def fresh_state():
+        global LIVE_BLOCKED
+        if os.path.exists("LIVE"):
+            try:
+                b = live_balance(); st = new_state(b); st["live_mode"] = True
+                journal(f"LIVE mode on. Polymarket balance {b:.2f}"); notify(f"LIVE. Real money. Balance {b:.2f}. Floor {HARD['floor_usd']}, daily cap {HARD['daily_loss_cap_usd']}, max {int(HARD['max_trade_pct']*100)}%/trade.")
+                return st
+            except Exception as e:
+                LIVE_BLOCKED = True
+                journal(f"LIVE requested but Polymarket auth/balance failed: {str(e)[:120]} — staying on paper"); notify(f"LIVE blocked: {str(e)[:120]}. Running paper until fixed.")
+        st = new_state(50.0); st["live_mode"] = False; return st
+    if state is None or bool(state.get("live_mode")) != os.path.exists("LIVE"):
+        state = fresh_state()
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
     scan_errs, last_err = 0, ""
     notify(f"run start {'LIVE' if is_live() else 'PAPER'} bankroll {state['bankroll_usd']:.2f} mode {state['mode']}")
@@ -402,6 +419,8 @@ def main():
             execute(state, s, stake, net); dirty = True
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = params(); last_pull = time.time()
+            if bool(state.get("live_mode")) != os.path.exists("LIVE") and not state["open_positions"]:
+                commit(state, "survivor: mode switch"); state = fresh_state(); P = params(); dirty = True
         if dirty or time.time() - last_commit > COMMIT_EVERY:
             d = state.get("diag", {})
             journal(f"heartbeat{'' if is_live() else ' [paper/explore]'}: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
