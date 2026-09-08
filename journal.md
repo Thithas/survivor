@@ -270,3 +270,6 @@
 - 2026-09-08T13:27:59+00:00 heartbeat [paper/explore]: 54 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788873900, opens 60
 - 2026-09-08T13:28:03+00:00 PAPER MOMENTUM doge-updown-5m-1788873900 $4.8 edge 0.1288 move 20.2 bps peers 4/0
 - 2026-09-08T13:28:04+00:00 heartbeat [paper/explore]: 55 scans, 1 open, mode NORMAL, bankroll 15.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on eth-updown-5m-1788873900, opens 60
+- 2026-09-08T13:28:06+00:00 mode NORMAL -> CAUTIOUS
+- 2026-09-08T13:28:13+00:00 PAPER MOMENTUM eth-updown-5m-1788873900 $3.2 edge 0.2839 move 8.9 bps peers 4/0
+- 2026-09-08T13:28:14+00:00 heartbeat [paper/explore]: 58 scans, 2 open, mode CAUTIOUS, bankroll 12.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on sol-updown-5m-1788873900, opens 60
