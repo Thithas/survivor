@@ -16,7 +16,8 @@
   "btc-updown-5m-1788862200": 78684.605,
   "btc-updown-5m-1788862800": 78769.995,
   "btc-updown-5m-1788863100": 78845.005,
-  "btc-updown-5m-1788863400": 78802.445
+  "btc-updown-5m-1788863400": 78802.445,
+  "btc-updown-5m-1788863700": 78714.045
  },
  "stats": {
   "wins": 0,
@@ -29,9 +30,9 @@
   "markets": 30,
   "in_window": 1,
   "best_sum": 1.01,
-  "slug": "btc-updown-5m-1788863400",
+  "slug": "btc-updown-5m-1788863700",
   "hot": false,
-  "spot": 78812.495
+  "spot": 78673.315
  },
  "snaps": {}
 }
