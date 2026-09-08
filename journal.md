@@ -289,3 +289,4 @@
 - 2026-09-08T13:32:33+00:00 heartbeat [paper/explore]: 130 scans, 0 open, mode HIBERNATE, bankroll 12.99, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788874200, opens 60
 - 2026-09-08T13:32:44+00:00 LIVE requested but no phone relay (file RELAY) — orders from GitHub are geoblocked; paper until the phone is up
 - 2026-09-08T13:32:44+00:00 heartbeat [paper/explore]: 132 scans, 0 open, mode NORMAL, bankroll 50.00, markets None/None in window across None, best up+down None on None, opens 0
+- 2026-09-08T13:34:46+00:00 code updated on main, restarting on next run

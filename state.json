@@ -17,5 +17,619 @@
   "arb": 0,
   "momentum": 0
  },
- "live_mode": false
+ "live_mode": false,
+ "books": {
+  "btc-updown-5m-1788874200": {
+   "up": [
+    0.01,
+    null
+   ],
+   "down": [
+    null,
+    0.99
+   ],
+   "left": 17
+  },
+  "eth-updown-5m-1788874200": {
+   "up": [
+    0.01,
+    null
+   ],
+   "down": [
+    null,
+    0.99
+   ],
+   "left": 17
+  },
+  "sol-updown-5m-1788874200": {
+   "up": [
+    0.01,
+    null
+   ],
+   "down": [
+    null,
+    0.99
+   ],
+   "left": 17
+  },
+  "xrp-updown-5m-1788874200": {
+   "up": [
+    0.01,
+    null
+   ],
+   "down": [
+    null,
+    0.99
+   ],
+   "left": 17
+  },
+  "doge-updown-5m-1788874200": {
+   "up": [
+    0.01,
+    null
+   ],
+   "down": [
+    null,
+    0.99
+   ],
+   "left": 17
+  },
+  "btc-updown-5m-1788874500": {
+   "up": [
+    0.49,
+    0.48
+   ],
+   "down": [
+    0.52,
+    0.51
+   ],
+   "left": 317
+  },
+  "eth-updown-5m-1788874500": {
+   "up": [
+    0.52,
+    0.51
+   ],
+   "down": [
+    0.49,
+    0.48
+   ],
+   "left": 317
+  },
+  "sol-updown-5m-1788874500": {
+   "up": [
+    0.52,
+    0.45
+   ],
+   "down": [
+    0.55,
+    0.45
+   ],
+   "left": 317
+  },
+  "xrp-updown-5m-1788874500": {
+   "up": [
+    0.48,
+    0.43
+   ],
+   "down": [
+    0.57,
+    0.52
+   ],
+   "left": 317
+  },
+  "doge-updown-5m-1788874500": {
+   "up": [
+    0.48,
+    0.42
+   ],
+   "down": [
+    0.58,
+    0.52
+   ],
+   "left": 317
+  }
+ },
+ "snaps": {
+  "btc-updown-5m-1788874200": {
+   "asset": "btc",
+   "end": "2026-09-08T13:35:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 132,
+     "up": 0.03,
+     "down": 0.98,
+     "mv": null
+    },
+    {
+     "t": 121,
+     "up": 0.02,
+     "down": 0.99,
+     "mv": null
+    },
+    {
+     "t": 110,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 100,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 89,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 78,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 72,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 67,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 62,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 57,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 51,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 44,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 37,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 30,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 22,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    }
+   ]
+  },
+  "eth-updown-5m-1788874200": {
+   "asset": "eth",
+   "end": "2026-09-08T13:35:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 132,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 121,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 110,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 100,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 89,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 78,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 72,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 67,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 62,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 57,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 51,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 44,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 37,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 30,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 22,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    }
+   ]
+  },
+  "sol-updown-5m-1788874200": {
+   "asset": "sol",
+   "end": "2026-09-08T13:35:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 132,
+     "up": 0.03,
+     "down": 0.98,
+     "mv": null
+    },
+    {
+     "t": 121,
+     "up": 0.02,
+     "down": 0.99,
+     "mv": null
+    },
+    {
+     "t": 110,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 100,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 89,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 78,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 72,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 67,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 62,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 57,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 51,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 44,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 37,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 30,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 22,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    }
+   ]
+  },
+  "xrp-updown-5m-1788874200": {
+   "asset": "xrp",
+   "end": "2026-09-08T13:35:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 132,
+     "up": 0.04,
+     "down": 0.98,
+     "mv": null
+    },
+    {
+     "t": 121,
+     "up": 0.03,
+     "down": 0.99,
+     "mv": null
+    },
+    {
+     "t": 110,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 100,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 89,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 78,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 72,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 67,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 62,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 57,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 51,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 44,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 37,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 30,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 22,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    }
+   ]
+  },
+  "doge-updown-5m-1788874200": {
+   "asset": "doge",
+   "end": "2026-09-08T13:35:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 132,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 121,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 110,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 100,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 89,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 78,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 72,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 67,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 62,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 57,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 51,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 44,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 37,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 30,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 22,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    }
+   ]
+  }
+ },
+ "diag": {
+  "markets": 100,
+  "in_window": 10,
+  "assets": [
+   "btc",
+   "doge",
+   "eth",
+   "sol",
+   "xrp"
+  ],
+  "best_sum": 1.01,
+  "slug": "btc-updown-5m-1788874500",
+  "hot": true,
+  "spot": 78173.17000015796
+ }
 }
