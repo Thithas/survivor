@@ -33,13 +33,14 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
-          "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95)}
+          "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95),
+          "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 60, "forced_max_ask": 0.92}
+                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -433,7 +434,9 @@ def manage(state, P):
             keep.append(p); continue
         leg = p["legs"][0]; bid = b["up"][1] if leg["outcome"] == 0 else b["down"][1]; left = b["left"]
         if bid is None: keep.append(p); continue
+        p["peak_bid"] = max(p.get("peak_bid", 0.0), bid)          # trailing lock: once it was a near-certain win, don't ride it back down
         reason = "take profit" if bid >= P["take_profit_bid"] else \
+                 "profit lock" if (p["peak_bid"] >= P["lock_from_bid"] and bid <= p["peak_bid"] - P["lock_giveback"] and left >= 3) else \
                  "stop loss" if (bid <= P["stop_loss_bid"] and left >= P["stop_loss_min_left_sec"]) else None
         if not reason: keep.append(p); continue
         ok, resp = sell(leg["token"], leg["shares"])
