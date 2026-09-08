@@ -184,9 +184,9 @@ function renderSignals(){
   $("signals-empty").style.display=signals.length?"none":"block"; $("signals").style.display=signals.length?"table":"none";
 }
 function sizing(ask,conf){
-  const bank=state.bankroll_usd||50, caut=state.mode==="CAUTIOUS";
-  let stake=bank*Math.min(0.10,P.max_trade_pct||0.10)*conf*(caut?0.5:1); stake=Math.max(stake,5*ask);
-  const shares=Math.floor(stake/ask); return {shares,cost:+(shares*ask).toFixed(2),ok:shares*ask<=bank*0.10+0.01&&bank-shares*ask>=30};
+  const bank=state.bankroll_usd||20, caut=state.mode==="CAUTIOUS", CAP=0.25, FLOOR=10;
+  let stake=bank*Math.min(CAP,P.max_trade_pct||CAP)*conf*(caut?0.5:1); stake=Math.max(stake,5*ask);
+  const shares=Math.floor(stake/ask); return {shares,cost:+(shares*ask).toFixed(2),ok:shares*ask<=bank*CAP+0.01&&bank-shares*ask>=FLOOR};
 }
 
 async function findLive(){
