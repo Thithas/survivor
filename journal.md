@@ -14,3 +14,4 @@
 - 2026-09-08T11:03:04+00:00 LIVE mode on. Polymarket balance 0.00
 - 2026-09-08T11:03:05+00:00 mode NORMAL -> DEAD
 - 2026-09-08T11:03:05+00:00 DEAD at bankroll 0.00. Post-mortem: stats {'wins': 0, 'losses': 0, 'pnl': 0.0, 'arb': 0, 'momentum': 0}
+- 2026-09-08T11:06:42+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land

@@ -1,0 +1,42 @@
+{
+ "bankroll_usd": 50.0,
+ "start_bankroll_usd": 50.0,
+ "peak_bankroll_usd": 50.0,
+ "today": "2026-09-08",
+ "today_pnl_usd": 0.0,
+ "consecutive_losses": 0,
+ "consecutive_wins": 0,
+ "mode": "NORMAL",
+ "open_positions": [],
+ "closed_trades": 0,
+ "opens": {},
+ "stats": {
+  "wins": 0,
+  "losses": 0,
+  "pnl": 0.0,
+  "arb": 0,
+  "momentum": 0
+ },
+ "live_mode": false,
+ "books": {
+  "btc-updown-5m-1788865500": {
+   "up": [
+    0.01,
+    null
+   ],
+   "down": [
+    null,
+    0.99
+   ],
+   "left": 76
+  }
+ },
+ "diag": {
+  "markets": 30,
+  "in_window": 1,
+  "best_sum": null,
+  "slug": "",
+  "hot": false,
+  "spot": 78384.085
+ }
+}
