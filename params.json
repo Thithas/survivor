@@ -11,7 +11,7 @@
   "momentum_max_ask": 0.75,
   "min_order_usd": 1.0,
   "take_profit_bid": 1.0,
-  "stop_loss_bid": 0.25,
+  "stop_loss_bid": 0.35,
   "stop_loss_min_left_sec": 8,
   "fee_rate": 0.07,
   "momentum_min_ask": 0.4,
