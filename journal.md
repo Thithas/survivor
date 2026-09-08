@@ -325,3 +325,6 @@
 - 2026-09-08T14:13:28+00:00 heartbeat [paper/explore]: 187 scans, 0 open, mode NORMAL, bankroll 50.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788876600, opens 10
 - 2026-09-08T14:13:30+00:00 code updated on main, restarting on next run
 - 2026-09-08T14:13:51+00:00 LIVE requested but Polymarket auth/balance failed: Redirecting... — staying on paper
+- 2026-09-08T14:13:55+00:00 relay survivor-mhthithas.vercel.app region unreachable: Expecting value: line 1 column 1 (char 0) | balance via relay FAILED: Redirecting...
+- 2026-09-08T14:17:15+00:00 PAPER ARB btc-updown-5m-1788876900 $12.35 edge 0.0337
+- 2026-09-08T14:17:16+00:00 heartbeat [paper/explore]: 46 scans, 1 open, mode NORMAL, bankroll 37.65, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.95 on btc-updown-5m-1788876900, opens 5
