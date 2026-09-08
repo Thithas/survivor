@@ -260,3 +260,5 @@
 - 2026-09-08T13:22:29+00:00 heartbeat: 283 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788873600, opens 55
 - 2026-09-08T13:23:08+00:00 order failed MOMENTUM btc-updown-5m-1788873600: Redirecting...
 - 2026-09-08T13:23:08+00:00 heartbeat: 293 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788873600, opens 55
+- 2026-09-08T13:24:16+00:00 relay: none
+- 2026-09-08T13:24:17+00:00 code updated on main, restarting on next run
