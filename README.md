@@ -39,3 +39,16 @@ momentum_max_ask 0.6–0.9, min_order_usd 1–5.
 - Set `fees` to whatever Polymarket charges on these markets before going live; the default 0 is optimistic.
 - Momentum uses Coinbase spot as a proxy for the resolution price. Treat it as an experiment until the log says otherwise.
 - GitHub Actions is meant for CI. Low-volume use is unlikely to be flagged, but that risk is yours.
+
+## Phone relay (required for live)
+
+GitHub's runners are US IPs and Polymarket rejects orders from them. The brain stays on GitHub; your Android phone forwards its
+Polymarket calls through a Bangladesh IP. The private key never reaches the phone — requests arrive already signed.
+
+1. Install **Termux** from F-Droid (not the Play Store build). Open it.
+2. `curl -sL https://raw.githubusercontent.com/Thithas/survivor/main/phone/setup.sh | bash`
+3. `nano ~/survivor/.env` → replace the placeholder with your GitHub token (repo scope) → Ctrl+O, Enter, Ctrl+X.
+4. `bash ~/survivor/start.sh` — leave Termux open (swipe it away = relay dies). Android: Settings → Apps → Termux → Battery → Unrestricted.
+
+The relay opens a free Cloudflare quick-tunnel, writes its URL to the repo file `RELAY`, and the brain switches to it within 2 minutes.
+Telegram says "LIVE. Real money." when the chain is complete. If the phone drops, the bot pings "phone relay offline" and runs paper until it's back.
