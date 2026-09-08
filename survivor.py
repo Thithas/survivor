@@ -34,13 +34,14 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
           "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95),
-          "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9)}
+          "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9),
+          "max_edge": (0.10, 1.0)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6}
+                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "max_edge": 0.20}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -335,6 +336,8 @@ def decide(state, P, sigs):
         net = s["gross_edge"] - P["fees"] - (0 if s["type"] == "ARB" else P["slippage"])   # arb is FOK at the quoted ask: no slippage term
         if net < (P["min_edge"] if s["type"] == "ARB" else min_edge): continue        # CAUTIOUS doesn't apply to riskless arb
         if s["type"] == "MOMENTUM" and (s["liquidity_usd"] < P["min_liquidity_usd"] or s["confidence"] < P["momentum_min_confidence"]): continue
+        # an implausibly large edge means the market strongly disagrees with our feed — those lost 100% every time
+        if s["type"] == "MOMENTUM" and not s.get("forced") and net > P["max_edge"]: continue
         unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
         if s["type"] == "ARB":
             shares = int(min(state["bankroll_usd"] * HARD["max_trade_pct"] / unit, s["liq_shares"] * 0.5))   # both legs must fill: never more than half the thinner book
