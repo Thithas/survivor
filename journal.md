@@ -486,3 +486,4 @@
 - 2026-09-08T15:59:14+00:00 sell failed (take profit) eth-updown-5m-1788882600: No orderbook exists for the requested token id
 - 2026-09-08T15:59:15+00:00 closed MOMENTUM eth-updown-5m-1788882600 pnl +2.25 | today -2.45 | bankroll 16.53
 - 2026-09-08T15:59:18+00:00 heartbeat: 1006 scans, 0 open, mode CAUTIOUS, bankroll 16.53, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.008 on eth-updown-5m-1788882900, opens 60
+- 2026-09-08T16:03:07+00:00 heartbeat: 1051 scans, 0 open, mode CAUTIOUS, bankroll 16.53, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788883200, opens 60
