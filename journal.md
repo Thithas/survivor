@@ -145,3 +145,5 @@
 - 2026-09-08T12:53:09+00:00 heartbeat: 470 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on eth-updown-5m-1788871800, opens 25
 - 2026-09-08T12:53:13+00:00 order failed MOMENTUM btc-updown-5m-1788871800: Trading restricted in your region, please refer to available regions - https://docs.polymarket.com/developers/CLOB/geoblock
 - 2026-09-08T12:53:13+00:00 heartbeat: 471 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on eth-updown-5m-1788871800, opens 25
+- 2026-09-08T12:53:17+00:00 order failed MOMENTUM sol-updown-5m-1788871800: Trading restricted in your region, please refer to available regions - https://docs.polymarket.com/developers/CLOB/geoblock
+- 2026-09-08T12:53:17+00:00 heartbeat: 472 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788871800, opens 25
