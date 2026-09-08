@@ -991,3 +991,7 @@
 - 2026-09-08T19:06:19+00:00 closed MOMENTUM xrp-updown-5m-1788893700 pnl +2.10 | today +7.56 | bankroll 45.00
 - 2026-09-08T19:06:21+00:00 mode NORMAL -> CAUTIOUS
 - 2026-09-08T19:06:24+00:00 heartbeat: 351 scans, 2 open, mode CAUTIOUS, bankroll 45.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788894300, opens 60
+- 2026-09-08T19:06:27+00:00 closed MOMENTUM doge-updown-5m-1788893700 pnl +1.70 | today +9.26 | bankroll 45.00
+- 2026-09-08T19:06:28+00:00 closed MOMENTUM eth-updown-5m-1788893700 pnl +2.95 | today +12.21 | bankroll 45.00
+- 2026-09-08T19:06:33+00:00 order failed ARB btc-updown-5m-1788894300: order couldn't be fully filled. FOK orders are fully filled or killed.
+- 2026-09-08T19:06:33+00:00 heartbeat: 352 scans, 0 open, mode CAUTIOUS, bankroll 45.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.92 on btc-updown-5m-1788894300, opens 60
