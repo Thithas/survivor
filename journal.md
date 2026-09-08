@@ -186,3 +186,4 @@
 - 2026-09-08T12:59:46+00:00 heartbeat: 583 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788872400, opens 30
 - 2026-09-08T13:00:40+00:00 order failed ARB doge-updown-5m-1788872400: Redirecting...
 - 2026-09-08T13:00:40+00:00 heartbeat: 598 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.96 on doge-updown-5m-1788872400, opens 35
+- 2026-09-08T13:01:26+00:00 heartbeat: 609 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788872400, opens 35
