@@ -14,7 +14,8 @@ import os, json, time, subprocess, datetime as dt
 import requests
 
 GAMMA, CLOB = "https://gamma-api.polymarket.com", "https://clob.polymarket.com"
-SLUG_PREFIX = "btc-updown-5m-"
+SLUG_PREFIX, SERIES_SLUG = "btc-updown-5m-", "btc-up-or-down-5m"
+MIN_SHARES = 5          # Polymarket engine minimum per order
 STATE_FILE, TRADES_FILE, JOURNAL_FILE = "state.json", "trades.jsonl", "journal.md"
 RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
@@ -24,11 +25,15 @@ HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.10, "ma
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min_confidence": (0.55, 0.85),
           "momentum_window_sec": (10, 45), "max_open_positions": (1, 3), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
-          "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0)}
+          "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
-                  "min_order_usd": 1.0}
+                  "min_order_usd": 1.0, "fee_rate": 0.07}
+
+def fee(p, P):
+    """Polymarket crypto_fees_v2: taker pays rate * p * (1-p) per share; makers pay nothing."""
+    return P["fee_rate"] * p * (1 - p)
 
 def now(): return dt.datetime.now(dt.timezone.utc)
 def today(): return now().date().isoformat()
@@ -114,11 +119,15 @@ def spot():
         return float(list(r.values())[0]["c"][0])
 
 def markets():
-    r = requests.get(f"{GAMMA}/markets", params={"limit": 40, "closed": "false", "order": "startDate", "ascending": "false"}, timeout=10).json()
+    # /markets hides this series ("Hide From New"); the events endpoint with series_slug is the reliable path.
+    r = requests.get(f"{GAMMA}/events", params={"series_slug": SERIES_SLUG, "closed": "false", "limit": 30,
+                                               "order": "endDate", "ascending": "true"}, timeout=10).json()
     out = []
-    for m in r:
-        slug = m.get("slug", "")
+    for ev in r:
+        slug = ev.get("slug", "")
         if not slug.startswith(SLUG_PREFIX): continue
+        m = (ev.get("markets") or [None])[0]
+        if not m: continue
         try:
             toks, outs = json.loads(m["clobTokenIds"]), json.loads(m["outcomes"])
             up, down = toks[outs.index("Up")], toks[outs.index("Down")]
@@ -176,7 +185,7 @@ def scan(state, P):
         if ua is None or da is None: continue
         if diag["best_sum"] is None or ua + da < diag["best_sum"]: diag["best_sum"], diag["slug"] = round(ua + da, 3), m["slug"]
         base = {"slug": m["slug"], "end": m["end"].isoformat(), "time_left_sec": round(left)}
-        gross = round(1 - (ua + da), 4)
+        gross = round(1 - (ua + da) - fee(ua, P) - fee(da, P), 4)
         if gross > 0:
             sigs.append({**base, "type": "ARB", "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
                          "gross_edge": gross, "liquidity_usd": min(ul, dl), "confidence": 1.0})
@@ -188,7 +197,7 @@ def scan(state, P):
             conf = min(0.95, abs(mv) / (2 * P["momentum_min_move_bps"]))
             if abs(mv) >= P["momentum_min_move_bps"] and ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "token": m["up"] if up_side else m["down"],
-                             "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask, 4),
+                             "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1)})
     state["opens"] = dict(list(state["opens"].items())[-30:])
     state["diag"] = diag
@@ -209,8 +218,10 @@ def decide(state, P, sigs):
         if s["type"] == "MOMENTUM" and s["confidence"] < P["momentum_min_confidence"]: continue
         stake = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) * s["confidence"] * (0.5 if caut else 1.0)
         stake = min(stake, s["liquidity_usd"] * 0.8)
+        unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
+        stake = max(stake, MIN_SHARES * unit)                       # engine rejects < 5 shares per leg
+        if stake > state["bankroll_usd"] * HARD["max_trade_pct"] + 0.01: continue
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
-        if stake < P["min_order_usd"] * (2 if s["type"] == "ARB" else 1): continue
         orders.append((s, round(stake, 2), round(net, 4))); room -= 1; taken.add(s["slug"])
     return orders
 
