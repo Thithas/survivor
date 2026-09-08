@@ -1,5 +1,5 @@
 {
-  "min_edge": 0.03,
+  "min_edge": 0.01,
   "max_trade_pct": 0.25,
   "momentum_min_confidence": 0.7,
   "momentum_window_sec": 30,
