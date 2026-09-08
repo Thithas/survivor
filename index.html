@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SURVIVOR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#E8ECEF; --panel:#FFFFFF; --ink:#16212B; --muted:#66737E; --line:#CBD3D9;
+    --alive:#0E7C7B; --warn:#B7791F; --dead:#B3261E; --sleep:#5B6B7A; --up:#0E7C7B; --down:#B3261E;
+  }
+  *{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;color:var(--ink);font-size:15px;line-height:1.45;
+       font-variant-numeric:tabular-nums;max-width:680px;padding:20px 16px 48px;margin-inline:auto}
+  h1{font-size:22px;font-weight:600;letter-spacing:.06em;margin:0}
+  header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .status{color:var(--muted);font-size:14px}
+  .status b{color:var(--ink);font-weight:500}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--sleep);margin-right:6px;vertical-align:middle}
+  .dot.alive{background:var(--alive)} .dot.dead{background:var(--dead)} .dot.warn{background:var(--warn)}
+
+  /* hero: the runway */
+  .runway{margin:28px 0 8px}
+  .runway .big{font-size:56px;font-weight:600;line-height:1;letter-spacing:-.02em}
+  .runway .big small{font-size:18px;font-weight:400;color:var(--muted);margin-left:8px;letter-spacing:0}
+  .track{position:relative;height:14px;margin:18px 0 6px;background:linear-gradient(90deg,var(--dead) 0,var(--dead) 2px,var(--line) 2px);border-radius:2px}
+  .track .fill{position:absolute;left:0;top:0;bottom:0;background:var(--alive);border-radius:2px}
+  .track .peak{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+  .ticks{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+  .ticks span b{color:var(--ink);font-weight:500}
+  .vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px;margin:22px 0 4px}
+  .vitals div span{display:block;font-size:13px;color:var(--muted)} .vitals div b{font-size:20px;font-weight:500}
+  .mode{font-weight:600} .mode.NORMAL{color:var(--alive)} .mode.CAUTIOUS{color:var(--warn)} .mode.HIBERNATE{color:var(--sleep)} .mode.DEAD{color:var(--dead)}
+
+  section{margin-top:34px;border-top:1px solid var(--line);padding-top:14px}
+  h2{font-size:15px;font-weight:600;margin:0 0 4px}
+  .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  th{font-weight:500;color:var(--muted)}
+  .pos{color:var(--up)} .neg{color:var(--down)}
+  .ev-good{background:#E3F2EF} .ev-bad{background:#F7E6E5}
+  .journal{font-size:13.5px;margin:0;padding:0;list-style:none}
+  .journal li{padding:6px 0;border-bottom:1px solid var(--line);color:var(--ink)}
+  .journal li time{color:var(--muted);margin-right:8px}
+  .empty{color:var(--muted);font-size:14px;padding:10px 0}
+  svg.spark{width:100%;height:64px;display:block;margin:6px 0 2px}
+  footer{margin-top:40px;color:var(--muted);font-size:13px}
+  footer a{color:var(--ink)}
+  @media (prefers-reduced-motion:no-preference){ .track .fill{transition:width .6s ease} }
+</style>
+</head>
+<body>
+<header>
+  <h1>SURVIVOR</h1>
+  <div class="status"><span class="dot" id="dot"></span><span id="run">checking…</span></div>
+</header>
+
+<div class="runway">
+  <div class="big"><span id="bank">—</span><small id="paper">paper</small></div>
+  <div class="track"><div class="fill" id="fill" style="width:0"></div><div class="peak" id="peak" style="left:0"></div></div>
+  <div class="ticks"><span>floor <b>$30</b></span><span id="peaklbl">peak <b>—</b></span></div>
+  <div class="vitals">
+    <div><span>today</span><b id="today">—</b></div>
+    <div><span>mode</span><b id="mode" class="mode">—</b></div>
+    <div><span>streak</span><b id="streak">—</b></div>
+    <div><span>open</span><b id="open">—</b></div>
+    <div><span>closed</span><b id="closed">—</b></div>
+    <div><span>win rate</span><b id="wr">—</b></div>
+  </div>
+  <div class="status" id="diag"></div>
+</div>
+
+<section>
+  <h2>Is there an edge?</h2>
+  <p class="hint">From every window the bot watched: if the spot move at T−seconds pointed the right way, and what a share of that side cost. EV is per share after the 7%·p(1−p) taker fee. Green means paying.</p>
+  <table id="edge"><thead><tr><th>T−</th><th>|move| ≥</th><th>n</th><th>right</th><th>ask</th><th>EV/share</th></tr></thead><tbody></tbody></table>
+  <p class="empty" id="edge-empty">No windows recorded yet — the first line lands about 6 minutes after a window closes.</p>
+</section>
+
+<section>
+  <h2>Trades</h2>
+  <svg class="spark" id="spark" viewBox="0 0 600 64" preserveAspectRatio="none"></svg>
+  <table id="trades"><thead><tr><th>when</th><th>type</th><th>stake</th><th>pnl</th><th>edge</th></tr></thead><tbody></tbody></table>
+  <p class="empty" id="trades-empty">No closed trades yet.</p>
+</section>
+
+<section>
+  <h2>Journal</h2>
+  <ul class="journal" id="journal"></ul>
+</section>
+
+<footer>Reads <a id="repo" href="#">the repo</a> directly; refreshes every 60 s. Bot commits every 10 min or on a trade.</footer>
+
+<script>
+const OWNER="Thithas", REPO="survivor", BRANCH="main", FLOOR=30, FEE=0.07;
+const RAW=`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`;
+document.getElementById("repo").href=`https://github.com/${OWNER}/${REPO}`;
+const $=id=>document.getElementById(id);
+const money=v=>(v<0?"−":"")+"$"+Math.abs(v).toFixed(2);
+const signed=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(2);
+const ago=iso=>{const s=(Date.now()-new Date(iso))/1000;return s<90?`${Math.round(s)}s ago`:s<5400?`${Math.round(s/60)}m ago`:`${(s/3600).toFixed(1)}h ago`};
+async function get(path){const r=await fetch(RAW+path+"?t="+Date.now(),{cache:"no-store"});return r.ok?r.text():""}
+const lines=t=>t.split("\n").filter(Boolean);
+
+async function load(){
+  const [stateT,tradesT,journalT,windowsT]=await Promise.all(["state.json","trades.jsonl","journal.md","windows.jsonl"].map(get));
+  let st={}; try{st=JSON.parse(stateT)}catch{}
+  const trades=lines(tradesT).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
+  const windows=lines(windowsT).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
+  const journal=lines(journalT).map(l=>l.replace(/^- /,""));
+  render(st,trades,windows,journal); runStatus(journal);
+}
+
+function render(st,trades,windows,journal){
+  const bank=st.bankroll_usd??0, peak=st.peak_bankroll_usd??bank, start=st.start_bankroll_usd??50;
+  $("bank").textContent=money(bank);
+  $("paper").textContent=(st.open_positions||[]).some(p=>p.live)||(trades.at(-1)||{}).live?"live":"paper";
+  const top=Math.max(peak,start,bank);
+  const pct=v=>Math.max(0,Math.min(100,(v-FLOOR)/(top-FLOOR)*100));
+  $("fill").style.width=pct(bank)+"%"; $("peak").style.left=pct(peak)+"%";
+  $("peaklbl").innerHTML=`peak <b>${money(peak)}</b>`;
+  const t=st.today_pnl_usd??0; $("today").textContent=signed(t); $("today").className=t>0?"pos":t<0?"neg":"";
+  $("mode").textContent=st.mode||"—"; $("mode").className="mode "+(st.mode||"");
+  const w=st.consecutive_wins||0,l=st.consecutive_losses||0; $("streak").textContent=w?`${w} W`:l?`${l} L`:"—";
+  $("open").textContent=(st.open_positions||[]).length; $("closed").textContent=st.closed_trades??0;
+  const s=st.stats||{}, n=(s.wins||0)+(s.losses||0); $("wr").textContent=n?Math.round(100*s.wins/n)+"%":"—";
+  const d=st.diag||{}; $("diag").textContent=d.markets!==undefined?`sees ${d.markets} markets, ${d.in_window} live · best up+down ${d.best_sum??"—"} · BTC ${d.spot?Math.round(d.spot).toLocaleString():"—"}`:"";
+
+  // edge table
+  const rows=[], buckets=[[45,40,50],[30,25,35],[15,10,20]], thresholds=[3,6,10];
+  for(const [label,lo,hi] of buckets) for(const th of thresholds){
+    let n=0,right=0,askSum=0;
+    for(const win of windows){ if(win.winner!==0&&win.winner!==1) continue;
+      const snap=(win.snaps||[]).find(x=>x.t>=lo&&x.t<=hi&&x.mv!==null&&x.mv!==undefined); if(!snap) continue;
+      if(Math.abs(snap.mv)<th) continue;
+      const pred=snap.mv>=0?0:1, ask=pred===0?snap.up:snap.down; if(ask==null) continue;
+      n++; right+=(pred===win.winner)?1:0; askSum+=ask;
+    }
+    if(n){const acc=right/n,ask=askSum/n,ev=acc-ask-FEE*ask*(1-ask); rows.push({label,th,n,acc,ask,ev})}
+  }
+  const tb=$("edge").querySelector("tbody"); tb.innerHTML="";
+  for(const r of rows){const tr=document.createElement("tr"); tr.className=r.n>=15?(r.ev>0?"ev-good":"ev-bad"):"";
+    tr.innerHTML=`<td>${r.label}s</td><td>${r.th} bps</td><td>${r.n}</td><td>${Math.round(r.acc*100)}%</td><td>${r.ask.toFixed(2)}</td><td>${signed(r.ev)}</td>`; tb.appendChild(tr)}
+  $("edge-empty").style.display=rows.length?"none":"block"; $("edge").style.display=rows.length?"table":"none";
+
+  // trades + sparkline
+  const tt=$("trades").querySelector("tbody"); tt.innerHTML="";
+  for(const tr of trades.slice(-20).reverse()){const el=document.createElement("tr");
+    el.innerHTML=`<td>${ago(tr.ts)}</td><td>${tr.type}${tr.live?"":" (paper)"}</td><td>${money(tr.stake)}</td><td class="${tr.pnl>0?"pos":tr.pnl<0?"neg":""}">${signed(tr.pnl)}</td><td>${tr.predicted_edge??""}</td>`; tt.appendChild(el)}
+  $("trades-empty").style.display=trades.length?"none":"block"; $("trades").style.display=trades.length?"table":"none";
+  let cum=0; const pts=trades.map((tr,i)=>{cum+=tr.pnl;return [i,cum]});
+  const svg=$("spark"); svg.innerHTML="";
+  if(pts.length>1){const ys=pts.map(p=>p[1]),mn=Math.min(0,...ys),mx=Math.max(0,...ys)||1;
+    const X=i=>i/(pts.length-1)*600, Y=v=>60-(v-mn)/(mx-mn||1)*56;
+    svg.innerHTML=`<line x1="0" x2="600" y1="${Y(0)}" y2="${Y(0)}" stroke="#CBD3D9"/><polyline fill="none" stroke="${cum>=0?"#0E7C7B":"#B3261E"}" stroke-width="2" points="${pts.map(p=>X(p[0])+","+Y(p[1])).join(" ")}"/>`}
+  else svg.style.display="none";
+
+  // journal
+  const jl=$("journal"); jl.innerHTML="";
+  for(const line of journal.slice(-25).reverse()){const m=line.match(/^(\S+)\s(.*)$/); const li=document.createElement("li");
+    li.innerHTML=m?`<time>${ago(m[1])}</time>${m[2]}`:line; jl.appendChild(li)}
+}
+
+async function runStatus(journal){
+  const last=journal.at(-1), lastT=last&&last.match(/^(\S+)/)?.[1];
+  let txt=lastT?`last heartbeat ${ago(lastT)}`:"no heartbeat yet", cls="";
+  try{const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/runs?per_page=1`,{cache:"no-store"});
+    if(r.ok){const run=(await r.json()).workflow_runs?.[0];
+      if(run){const live=run.status==="in_progress"; cls=live?"alive":"warn"; txt=`<b>run #${run.run_number} ${live?"running":run.status}</b> · ${txt}`}}}
+  catch{}
+  if(lastT&&(Date.now()-new Date(lastT))>25*60e3) cls="warn";
+  $("run").innerHTML=txt; $("dot").className="dot "+cls;
+}
+load(); setInterval(load,60000);
+</script>
+</body>
+</html>
