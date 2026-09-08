@@ -679,3 +679,14 @@
 - 2026-09-08T18:07:06+00:00 sell failed (take profit) eth-updown-5m-1788890400: not enough balance / allowance: the balance is not enough -> balance: 3175, order amount: 5000000
 - 2026-09-08T18:07:13+00:00 sell failed (take profit) eth-updown-5m-1788890400: not enough balance / allowance: the balance is not enough -> balance: 3175, order amount: 5000000
 - 2026-09-08T18:07:13+00:00 heartbeat: 403 scans, 1 open, mode CAUTIOUS, bankroll 26.10, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.99 on sol-updown-5m-1788890700, opens 60
+- 2026-09-08T18:07:19+00:00 sell failed (take profit) eth-updown-5m-1788890400: not enough balance / allowance: the balance is not enough -> balance: 3175, order amount: 5000000
+- 2026-09-08T18:07:24+00:00 sell failed (take profit) eth-updown-5m-1788890400: not enough balance / allowance: the balance is not enough -> balance: 3175, order amount: 5000000
+- 2026-09-08T18:07:28+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:33+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:37+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:42+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:46+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:50+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:54+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:57+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:07:57+00:00 heartbeat: 413 scans, 1 open, mode CAUTIOUS, bankroll 26.10, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60
