@@ -9,7 +9,9 @@
  "mode": "NORMAL",
  "open_positions": [],
  "closed_trades": 0,
- "opens": {},
+ "opens": {
+  "btc-updown-5m-1788865800": 78372.165
+ },
  "stats": {
   "wins": 0,
   "losses": 0,
@@ -17,5 +19,123 @@
   "arb": 0,
   "momentum": 0
  },
- "live_mode": false
+ "live_mode": false,
+ "books": {
+  "btc-updown-5m-1788865500": {
+   "up": [
+    0.001,
+    null
+   ],
+   "down": [
+    null,
+    0.999
+   ],
+   "left": 0
+  },
+  "btc-updown-5m-1788865800": {
+   "up": [
+    0.21,
+    0.2
+   ],
+   "down": [
+    0.8,
+    0.79
+   ],
+   "left": 255
+  }
+ },
+ "snaps": {
+  "btc-updown-5m-1788865500": {
+   "end": "2026-09-08T11:10:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 69,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 63,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 57,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 51,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 46,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 40,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 34,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 28,
+     "up": 0.01,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 23,
+     "up": 0.001,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 17,
+     "up": 0.001,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 12,
+     "up": 0.001,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 6,
+     "up": 0.001,
+     "down": null,
+     "mv": null
+    },
+    {
+     "t": 0,
+     "up": 0.001,
+     "down": null,
+     "mv": null
+    }
+   ]
+  }
+ },
+ "diag": {
+  "markets": 30,
+  "in_window": 1,
+  "best_sum": 1.01,
+  "slug": "btc-updown-5m-1788865800",
+  "hot": false,
+  "spot": 78337.835
+ }
 }
