@@ -6,3 +6,4 @@
 - 2026-09-08T10:32:44+00:00 heartbeat [paper/explore]: 461 scans, 0 open, mode NORMAL, bankroll 50.00, markets 30/1 in window, best up+down 1.01 on btc-updown-5m-1788863400, opens 7
 - 2026-09-08T10:37:35+00:00 code updated on main, restarting on next run
 - 2026-09-08T10:40:02+00:00 code updated on main, restarting on next run
+- 2026-09-08T10:44:36+00:00 heartbeat [paper/explore]: 109 scans, 0 open, mode NORMAL, bankroll 50.00, markets 30/2 in window, best up+down 1.02 on btc-updown-5m-1788864300, opens 9
