@@ -191,3 +191,4 @@
 - 2026-09-08T13:01:49+00:00 relay survivor-iy3jalxbi-mhthithas.vercel.app region unreachable: Expecting value: line 1 column 1 (char 0) | balance via relay FAILED: Redirecting...
 - 2026-09-08T13:02:26+00:00 heartbeat: 8 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788872400, opens 35
 - 2026-09-08T13:02:36+00:00 heartbeat: 10 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788872400, opens 35
+- 2026-09-08T13:03:56+00:00 heartbeat: 32 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788872400, opens 35
