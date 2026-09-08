@@ -1,7 +1,7 @@
 {
- "bankroll_usd": 50.0,
- "start_bankroll_usd": 50.0,
- "peak_bankroll_usd": 50.0,
+ "bankroll_usd": 20.195385,
+ "start_bankroll_usd": 20.195385,
+ "peak_bankroll_usd": 20.195385,
  "today": "2026-09-08",
  "today_pnl_usd": 0.0,
  "consecutive_losses": 0,
@@ -9,9 +9,7 @@
  "mode": "NORMAL",
  "open_positions": [],
  "closed_trades": 0,
- "opens": {
-  "btc-updown-5m-1788867000": 78414.555
- },
+ "opens": {},
  "stats": {
   "wins": 0,
   "losses": 0,
@@ -19,117 +17,5 @@
   "arb": 0,
   "momentum": 0
  },
- "live_mode": false,
- "books": {
-  "btc-updown-5m-1788866700": {
-   "up": [
-    0.01,
-    null
-   ],
-   "down": [
-    null,
-    0.99
-   ],
-   "left": 1
-  },
-  "btc-updown-5m-1788867000": {
-   "up": [
-    0.85,
-    0.84
-   ],
-   "down": [
-    0.16,
-    0.15
-   ],
-   "left": 95
-  }
- },
- "diag": {
-  "markets": 30,
-  "in_window": 1,
-  "best_sum": 1.01,
-  "slug": "btc-updown-5m-1788867000",
-  "hot": false,
-  "spot": 78462.7
- },
- "snaps": {
-  "btc-updown-5m-1788866700": {
-   "end": "2026-09-08T11:30:00+00:00",
-   "open": null,
-   "s": [
-    {
-     "t": 73,
-     "up": 0.46,
-     "down": 0.56,
-     "mv": null
-    },
-    {
-     "t": 66,
-     "up": 0.53,
-     "down": 0.48,
-     "mv": null
-    },
-    {
-     "t": 60,
-     "up": 0.46,
-     "down": 0.55,
-     "mv": null
-    },
-    {
-     "t": 53,
-     "up": 0.32,
-     "down": 0.69,
-     "mv": null
-    },
-    {
-     "t": 47,
-     "up": 0.04,
-     "down": 0.97,
-     "mv": null
-    },
-    {
-     "t": 42,
-     "up": 0.02,
-     "down": 0.99,
-     "mv": null
-    },
-    {
-     "t": 36,
-     "up": 0.02,
-     "down": 0.99,
-     "mv": null
-    },
-    {
-     "t": 30,
-     "up": 0.01,
-     "down": null,
-     "mv": null
-    },
-    {
-     "t": 24,
-     "up": 0.01,
-     "down": null,
-     "mv": null
-    },
-    {
-     "t": 17,
-     "up": 0.01,
-     "down": null,
-     "mv": null
-    },
-    {
-     "t": 11,
-     "up": 0.01,
-     "down": null,
-     "mv": null
-    },
-    {
-     "t": 5,
-     "up": 0.01,
-     "down": null,
-     "mv": null
-    }
-   ]
-  }
- }
+ "live_mode": true
 }
