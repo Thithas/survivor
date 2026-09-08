@@ -11,3 +11,6 @@
 - 2026-09-08T10:53:45+00:00 heartbeat [paper/explore]: 343 scans, 0 open, mode NORMAL, bankroll 50.00, markets 30/1 in window, best up+down 1.01 on btc-updown-5m-1788864600, opens 11
 - 2026-09-08T10:58:47+00:00 heartbeat [paper/explore]: 476 scans, 0 open, mode NORMAL, bankroll 50.00, markets 30/1 in window, best up+down 1.01 on btc-updown-5m-1788864900, opens 12
 - 2026-09-08T11:02:42+00:00 code updated on main, restarting on next run
+- 2026-09-08T11:03:04+00:00 LIVE mode on. Polymarket balance 0.00
+- 2026-09-08T11:03:05+00:00 mode NORMAL -> DEAD
+- 2026-09-08T11:03:05+00:00 DEAD at bankroll 0.00. Post-mortem: stats {'wins': 0, 'losses': 0, 'pnl': 0.0, 'arb': 0, 'momentum': 0}

@@ -1,29 +1,15 @@
 {
- "bankroll_usd": 50.0,
- "start_bankroll_usd": 50.0,
- "peak_bankroll_usd": 50.0,
+ "bankroll_usd": 0.0,
+ "start_bankroll_usd": 0.0,
+ "peak_bankroll_usd": 0.0,
  "today": "2026-09-08",
  "today_pnl_usd": 0.0,
  "consecutive_losses": 0,
  "consecutive_wins": 0,
- "mode": "NORMAL",
+ "mode": "DEAD",
  "open_positions": [],
  "closed_trades": 0,
- "opens": {
-  "btc-updown-5m-1788861300": 78733.785,
-  "btc-updown-5m-1788861600": 78744.165,
-  "btc-updown-5m-1788861900": 78699.235,
-  "btc-updown-5m-1788862200": 78684.605,
-  "btc-updown-5m-1788862800": 78769.995,
-  "btc-updown-5m-1788863100": 78845.005,
-  "btc-updown-5m-1788863400": 78802.445,
-  "btc-updown-5m-1788863700": 78714.045,
-  "btc-updown-5m-1788864000": 78691.025,
-  "btc-updown-5m-1788864300": 78627.99,
-  "btc-updown-5m-1788864600": 78649.995,
-  "btc-updown-5m-1788864900": 78607.985,
-  "btc-updown-5m-1788865200": 78554.415
- },
+ "opens": {},
  "stats": {
   "wins": 0,
   "losses": 0,
@@ -31,133 +17,5 @@
   "arb": 0,
   "momentum": 0
  },
- "diag": {
-  "markets": 30,
-  "in_window": 1,
-  "best_sum": 1.01,
-  "slug": "btc-updown-5m-1788865200",
-  "hot": false,
-  "spot": 78500.225
- },
- "snaps": {
-  "btc-updown-5m-1788864900": {
-   "end": "2026-09-08T11:00:00+00:00",
-   "open": 78607.985,
-   "s": [
-    {
-     "t": 75,
-     "up": 0.03,
-     "down": 0.98,
-     "mv": -5.6
-    },
-    {
-     "t": 70,
-     "up": 0.02,
-     "down": 0.99,
-     "mv": -5.6
-    },
-    {
-     "t": 64,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.2
-    },
-    {
-     "t": 58,
-     "up": 0.01,
-     "down": null,
-     "mv": -5.7
-    },
-    {
-     "t": 51,
-     "up": 0.01,
-     "down": null,
-     "mv": -5.7
-    },
-    {
-     "t": 45,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    },
-    {
-     "t": 39,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    },
-    {
-     "t": 33,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    },
-    {
-     "t": 27,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    },
-    {
-     "t": 21,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    },
-    {
-     "t": 15,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    },
-    {
-     "t": 9,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    },
-    {
-     "t": 3,
-     "up": 0.01,
-     "down": null,
-     "mv": -6.8
-    }
-   ]
-  }
- },
- "books": {
-  "btc-updown-5m-1788864600": {
-   "up": [
-    0.01,
-    null
-   ],
-   "down": [
-    null,
-    0.99
-   ],
-   "left": 1
-  },
-  "btc-updown-5m-1788864900": {
-   "up": [
-    0.01,
-    null
-   ],
-   "down": [
-    null,
-    0.99
-   ],
-   "left": 1
-  },
-  "btc-updown-5m-1788865200": {
-   "up": [
-    0.12,
-    0.11
-   ],
-   "down": [
-    0.89,
-    0.88
-   ],
-   "left": 138
-  }
- }
+ "live_mode": true
 }
