@@ -25,19 +25,20 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 1}
+HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 2}
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
           "momentum_window_sec": (10, 150), "max_open_positions": (1, 3), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
-          "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60)}
+          "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
+          "momentum_min_ask": (0.10, 0.60)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
-                  "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8}
+                  "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -307,7 +308,7 @@ def scan(state, P):
             agree = sum(1 for v in peers if (v > 0) == up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
             against = sum(1 for v in peers if (v > 0) != up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
             conf = max(0.0, min(0.90, conf + min(0.05, 0.02 * agree) - 0.05 * against))
-            if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and ask <= P["momentum_max_ask"]:
+            if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1), "peers": f"{agree}/{against}"})
@@ -352,7 +353,7 @@ def execute(state, s, stake, net):
     legs = []
     if s["type"] == "ARB":
         shares = int(stake / (s["up_ask"] + s["down_ask"]))
-        order = sorted(((s["up"], s["up_ask"], 0), (s["down"], s["down_ask"], 1)), key=lambda x: x[1])   # cheap leg first
+        order = sorted(((s["up"], s["up_ask"], 0), (s["down"], s["down_ask"], 1)), key=lambda x: -x[1])  # likely winner first
         for tok, ask, idx in order:
             usd = round(shares * ask, 2); ok, resp = buy(tok, usd)
             legs.append({"token": tok, "outcome": idx, "shares": float(shares), "cost": usd, "ok": ok, "resp": resp})
