@@ -2,3 +2,4 @@
 {"ts": "2026-09-08T13:28:13+00:00", "slug": "eth-updown-5m-1788873900", "type": "MOMENTUM", "stake": 3.2, "pnl": -2.2081, "predicted_edge": 0.2839, "winner": -2, "live": false, "note": "stop loss @ 0.21 with 32s left"}
 {"ts": "2026-09-08T13:29:43+00:00", "slug": "eth-updown-5m-1788873900", "type": "MOMENTUM", "stake": 3.85, "pnl": -2.906, "predicted_edge": 0.1576, "winner": -2, "live": false, "note": "stop loss @ 0.20 with 13s left"}
 {"ts": "2026-09-08T13:29:50+00:00", "slug": "eth-updown-5m-1788873900", "type": "MOMENTUM", "stake": 3.1, "pnl": -3.1, "predicted_edge": 0.3035, "winner": 1, "live": false, "note": ""}
+{"ts": "2026-09-08T14:34:07+00:00", "slug": "doge-updown-5m-1788877800", "type": "ARB", "stake": 1.5, "pnl": -1.5, "predicted_edge": 0.0292, "winner": 0, "live": true, "note": ""}
