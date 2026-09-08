@@ -10,8 +10,9 @@ Control files in repo root (edit from your phone, picked up within ~2 min):
 Env (GitHub Secrets/Variables): POLY_PRIVATE_KEY, POLY_FUNDER, POLY_SIGNATURE_TYPE,
   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, RUN_SECONDS
 """
-import os, json, time, subprocess, datetime as dt
+import os, json, time, subprocess, datetime as dt, socket
 import requests
+socket.setdefaulttimeout(20)
 
 GAMMA, CLOB = "https://gamma-api.polymarket.com", "https://clob.polymarket.com"
 # Every 5-minute Up/Down series Polymarket runs. Each asset is its own series; slug pattern <asset>-updown-5m-<epoch>.
@@ -105,13 +106,14 @@ def _install_bypass():
     """Vercel's free plan keeps a login wall on the relay URL; VERCEL_BYPASS is its official automation key.
     Attach it to every httpx client that targets the relay (the SDK builds its own clients, so hook the constructor)."""
     key = os.environ.get("VERCEL_BYPASS")
-    if not key or getattr(_install_bypass, "done", False): return
+    if getattr(_install_bypass, "done", False): return
     import httpx
     orig = httpx.Client.__init__
     def patched(self, *a, **kw):
+        kw["timeout"] = httpx.Timeout(20.0)           # never let one relay call hang the whole loop
         orig(self, *a, **kw)
         base = str(kw.get("base_url") or "")
-        if "vercel.app" in base: self.headers["x-vercel-protection-bypass"] = key
+        if key and "vercel.app" in base: self.headers["x-vercel-protection-bypass"] = key
     httpx.Client.__init__ = patched; _install_bypass.done = True
 def _bypass_headers():
     key = os.environ.get("VERCEL_BYPASS"); return {"x-vercel-protection-bypass": key} if key else {}
