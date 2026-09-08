@@ -255,6 +255,7 @@ def main():
     P = load_params()
     state = load_json(STATE_FILE, None) or new_state(live_balance() if is_live() else 50.0)
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
+    scan_errs, last_err = 0, ""
     notify(f"run start {'LIVE' if is_live() else 'PAPER'} bankroll {state['bankroll_usd']:.2f} mode {state['mode']}")
     while time.time() - t0 < RUN_SECONDS:
         if os.path.exists("HALT"):
@@ -270,15 +271,21 @@ def main():
         if state["mode"] == "DEAD":
             journal(f"DEAD at bankroll {state['bankroll_usd']:.2f}. Post-mortem: stats {state['stats']}")
             notify("DEAD. Floor breached. Trading stopped permanently."); commit(state, "survivor: DEAD"); return
-        try: sigs = scan(state, P)
+        try:
+            sigs = scan(state, P); scans += 1; scan_errs = 0
         except Exception as e:
-            log("scan err", e); time.sleep(5); continue
-        scans += 1
+            sigs, scan_errs, last_err = [], scan_errs + 1, f"{type(e).__name__}: {str(e)[:120]}"
+            log("scan err", last_err)
+            if scan_errs in (5, 100, 1000):
+                journal(f"scan failing ({scan_errs} in a row): {last_err}"); notify(f"scan failing: {last_err}")
+            time.sleep(5)
         for s, stake, net in decide(state, P, sigs):
             execute(state, s, stake, net); dirty = True
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = load_params(); last_pull = time.time()
         if dirty or time.time() - last_commit > COMMIT_EVERY:
+            journal(f"heartbeat: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
+                    f"bankroll {state['bankroll_usd']:.2f}" + (f", last error {last_err}" if scan_errs else ""))
             commit(state); last_commit = time.time(); dirty = False
         hot = any(s["time_left_sec"] <= P["momentum_window_sec"] + 15 for s in sigs) or bool(state["opens"])
         time.sleep(1 if hot else 3)
