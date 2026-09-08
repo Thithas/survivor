@@ -273,3 +273,5 @@
 - 2026-09-08T13:28:06+00:00 mode NORMAL -> CAUTIOUS
 - 2026-09-08T13:28:13+00:00 PAPER MOMENTUM eth-updown-5m-1788873900 $3.2 edge 0.2839 move 8.9 bps peers 4/0
 - 2026-09-08T13:28:14+00:00 heartbeat [paper/explore]: 58 scans, 2 open, mode CAUTIOUS, bankroll 12.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on sol-updown-5m-1788873900, opens 60
+- 2026-09-08T13:28:57+00:00 sold MOMENTUM doge-updown-5m-1788873900 pnl +1.01 (take profit @ 0.97 with 64s left) | today +1.01 | bankroll 18.00
+- 2026-09-08T13:28:58+00:00 heartbeat [paper/explore]: 73 scans, 1 open, mode CAUTIOUS, bankroll 18.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.99 on eth-updown-5m-1788873900, opens 60
