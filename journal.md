@@ -1008,3 +1008,5 @@
 - 2026-09-08T19:13:46+00:00 heartbeat: 448 scans, 1 open, mode NORMAL, bankroll 45.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on xrp-updown-5m-1788894600, opens 60
 - 2026-09-08T19:14:12+00:00 sold ARB_LEG eth-updown-5m-1788894600 pnl -15.93 (stop loss @ 0.23 with 50s left) | today -3.71 | bankroll 45.00
 - 2026-09-08T19:14:13+00:00 heartbeat: 454 scans, 0 open, mode NORMAL, bankroll 45.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788894600, opens 60
+- 2026-09-08T19:14:16+00:00 mode NORMAL -> CAUTIOUS
+- 2026-09-08T19:14:19+00:00 heartbeat: 455 scans, 0 open, mode CAUTIOUS, bankroll 45.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788894600, opens 60
