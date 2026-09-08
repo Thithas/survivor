@@ -337,7 +337,7 @@ def decide(state, P, sigs):
         if s["type"] == "MOMENTUM" and (s["liquidity_usd"] < P["min_liquidity_usd"] or s["confidence"] < P["momentum_min_confidence"]): continue
         unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
         if s["type"] == "ARB":
-            shares = int(min(state["bankroll_usd"] * 0.5 / unit, s["liq_shares"] * 0.8))   # riskless: up to half the cash; both legs must fill
+            shares = int(min(state["bankroll_usd"] * HARD["max_trade_pct"] / unit, s["liq_shares"] * 0.5))   # both legs must fill: never more than half the thinner book
             if shares < MIN_SHARES: continue
             stake = shares * unit
         else:
@@ -397,7 +397,16 @@ def execute(state, s, stake, net):
     if not is_live(): state["bankroll_usd"] -= cost
     partial = " PARTIAL" if len(filled) < len(legs) else ""
     if partial:
-        pos["type"] = "ARB_LEG"; pos["legs"] = filled          # only the filled leg is real; manage() now watches it
+        # half an arb is a naked bet. Unwind it this second; only if the sell fails do we keep it as a managed leg.
+        leg = filled[0]; ok2, resp2 = sell(leg["token"], leg["shares"])
+        if ok2:
+            b = state.get("books", {}).get(s["slug"], {}); bid = (b.get("up") or [None, None])[1] if leg["outcome"] == 0 else (b.get("down") or [None, None])[1]
+            proceeds = round(leg["shares"] * ((bid if bid else s["up_ask" if leg["outcome"] == 0 else "down_ask"]) - fee(bid or 0.5, P)), 4)
+            journal(f"arb half-fill unwound {s['slug']}: sold {leg['shares']} back, ~{proceeds - cost:+.2f}"); notify(f"arb half-fill on {s['slug']} unwound (~{proceeds - cost:+.2f})")
+            if not is_live(): state["bankroll_usd"] += proceeds - cost
+            state["traded"] = (state.get("traded", []) + [s["slug"]])[-40:]
+            return
+        pos["type"] = "ARB_LEG"; pos["legs"] = filled          # unwind failed: manage it like a directional trade
     msg = f"{'LIVE' if is_live() else 'PAPER'} {'FORCED' if s.get('forced') else s['type']}{partial} {s['slug']} ${cost} edge {net}" + (f" move {s['move_bps']} bps peers {s['peers']}" if s["type"] == "MOMENTUM" and not s.get("forced") else "")
     journal(msg); notify(msg)
 
