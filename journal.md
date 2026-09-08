@@ -923,3 +923,6 @@
 - 2026-09-08T18:26:13+00:00 heartbeat: 668 scans, 1 open, mode NORMAL, bankroll 36.35, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788891900, opens 60
 - 2026-09-08T18:26:24+00:00 heartbeat: 670 scans, 1 open, mode NORMAL, bankroll 36.35, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.99 on doge-updown-5m-1788891900, opens 60
 - 2026-09-08T18:28:00+00:00 heartbeat: 693 scans, 1 open, mode NORMAL, bankroll 36.35, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788891900, opens 60
+- 2026-09-08T18:29:09+00:00 closed ARB sol-updown-5m-1788891600 pnl +0.96 | today +2.66 | bankroll 36.35
+- 2026-09-08T18:29:10+00:00 mode NORMAL -> CAUTIOUS
+- 2026-09-08T18:29:13+00:00 heartbeat: 714 scans, 0 open, mode CAUTIOUS, bankroll 36.35, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.007 on xrp-updown-5m-1788891900, opens 60
