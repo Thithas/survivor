@@ -25,11 +25,13 @@ HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.10, "ma
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min_confidence": (0.55, 0.85),
           "momentum_window_sec": (10, 45), "max_open_positions": (1, 3), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
-          "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10)}
+          "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
+          "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
-                  "min_order_usd": 1.0, "fee_rate": 0.07}
+                  "min_order_usd": 1.0, "fee_rate": 0.07,
+                  "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -148,11 +150,25 @@ def markets():
         out.append({"slug": slug, "start": start, "end": end, "up": up, "down": down})
     return out
 
-def best_ask(token):
+def top(token):
+    """(best ask, $ at ask, best bid) for a token."""
     b = requests.get(f"{CLOB}/book", params={"token_id": token}, timeout=5).json()
     asks = [(float(a["price"]), float(a["size"])) for a in b.get("asks", [])]
-    if not asks: return None, 0.0
-    p, s = min(asks); return p, round(p * s, 2)
+    bids = [float(a["price"]) for a in b.get("bids", [])]
+    ask, liq = (min(asks)[0], round(min(asks)[0] * min(asks)[1], 2)) if asks else (None, 0.0)
+    return ask, liq, (max(bids) if bids else None)
+
+def sell(token_id, shares):
+    """Market FOK sell of `shares`. Returns (ok, response)."""
+    if not is_live(): return True, "paper"
+    from py_clob_client.clob_types import MarketOrderArgs, OrderType
+    from py_clob_client.order_builder.constants import SELL
+    try:
+        o = clob().create_market_order(MarketOrderArgs(token_id=token_id, amount=round(shares, 2), side=SELL, order_type=OrderType.FOK))
+        r = clob().post_order(o, OrderType.FOK)
+        return bool(r.get("success")), str(r)[:160]
+    except Exception as e:
+        return False, str(e)[:160]
 
 # ---------- brain (rules) ----------
 def new_state(bankroll):
@@ -189,7 +205,8 @@ def scan(state, P):
         if left <= P["momentum_window_sec"] + 15 or left >= 290: diag["hot"] = True
         if m["slug"] not in state["opens"] and abs((t - m["start"]).total_seconds()) <= 6:
             state["opens"][m["slug"]] = px
-        ua, ul = best_ask(m["up"]); da, dl = best_ask(m["down"])
+        ua, ul, ub = top(m["up"]); da, dl, db = top(m["down"])
+        state.setdefault("books", {})[m["slug"]] = {"up": [ua, ub], "down": [da, db], "left": round(left)}
         # Near the close one side's asks often vanish (the winner gets hoarded). Keep recording; only skip what needs both sides.
         if left <= 75:   # window dataset: one snapshot every ~5s in the final stretch
             snaps = state.setdefault("snaps", {}).setdefault(m["slug"], {"end": m["end"].isoformat(), "open": state["opens"].get(m["slug"]), "s": []})
@@ -214,6 +231,7 @@ def scan(state, P):
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1)})
     state["opens"] = dict(list(state["opens"].items())[-30:])
+    state["books"] = dict(list(state.get("books", {}).items())[-3:])
     diag["hot"] = diag["hot"] or any(0 < (m["end"] - t).total_seconds() <= 75 for m in ms)
     state["diag"] = diag
     return sigs
@@ -285,6 +303,27 @@ def settle_windows(state):
     for slug in done: state["snaps"].pop(slug, None)
     return bool(done)
 
+def manage(state, P):
+    """Close momentum positions early: lock in near-certain wins, cut clear losers while a bid still exists."""
+    keep, changed = [], False
+    for p in state["open_positions"]:
+        b = state.get("books", {}).get(p["slug"])
+        if p["type"] != "MOMENTUM" or not b:
+            keep.append(p); continue
+        leg = p["legs"][0]; bid = b["up"][1] if leg["outcome"] == 0 else b["down"][1]; left = b["left"]
+        if bid is None: keep.append(p); continue
+        reason = "take profit" if bid >= P["take_profit_bid"] else \
+                 "stop loss" if (bid <= P["stop_loss_bid"] and left >= P["stop_loss_min_left_sec"]) else None
+        if not reason: keep.append(p); continue
+        ok, resp = sell(leg["token"], leg["shares"])
+        if not ok:
+            journal(f"sell failed ({reason}) {p['slug']}: {resp}"); keep.append(p); continue
+        proceeds = round(leg["shares"] * (bid - fee(bid, P)), 4)
+        record(state, p, round(proceeds - p["stake"], 4), -2, note=f"{reason} @ {bid:.2f} with {left}s left")
+        changed = True
+    state["open_positions"] = keep
+    return changed
+
 def settle(state):
     t, keep = now(), []
     for p in state["open_positions"]:
@@ -302,7 +341,7 @@ def settle(state):
         record(state, p, pnl, winner)
     state["open_positions"] = keep
 
-def record(state, p, pnl, winner):
+def record(state, p, pnl, winner, note=""):
     if not p["live"]: state["bankroll_usd"] += p["stake"] + pnl
     state["today_pnl_usd"] = round(state["today_pnl_usd"] + pnl, 4)
     st = state["stats"]; st["pnl"] = round(st["pnl"] + pnl, 4); st[p["type"].lower()] += 1
@@ -310,9 +349,9 @@ def record(state, p, pnl, winner):
     else: st["losses"] += 1; state["consecutive_losses"] += 1; state["consecutive_wins"] = 0
     state["closed_trades"] += 1
     rec = {"ts": p["ts"], "slug": p["slug"], "type": p["type"], "stake": p["stake"], "pnl": pnl,
-           "predicted_edge": p["predicted_edge"], "winner": winner, "live": p["live"]}
+           "predicted_edge": p["predicted_edge"], "winner": winner, "live": p["live"], "note": note}
     with open(TRADES_FILE, "a") as f: f.write(json.dumps(rec) + "\n")
-    msg = f"closed {p['type']} {p['slug']} pnl {pnl:+.2f} | today {state['today_pnl_usd']:+.2f} | bankroll {state['bankroll_usd']:.2f}"
+    msg = f"{'sold' if winner == -2 else 'closed'} {p['type']} {p['slug']} pnl {pnl:+.2f}{' (' + note + ')' if note else ''} | today {state['today_pnl_usd']:+.2f} | bankroll {state['bankroll_usd']:.2f}"
     journal(msg); notify(msg)
 
 def redispatch():
@@ -351,6 +390,8 @@ def main():
             notify("DEAD. Floor breached. Trading stopped permanently."); commit(state, "survivor: DEAD"); return
         try:
             sigs = scan(state, P); scans += 1; scan_errs = 0
+            try: dirty |= manage(state, P)
+            except Exception as e: log("manage err", e)
         except Exception as e:
             sigs, scan_errs, last_err = [], scan_errs + 1, f"{type(e).__name__}: {str(e)[:120]}"
             log("scan err", last_err)
