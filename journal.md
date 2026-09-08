@@ -329,3 +329,6 @@
 - 2026-09-08T14:17:15+00:00 PAPER ARB btc-updown-5m-1788876900 $12.35 edge 0.0337
 - 2026-09-08T14:17:16+00:00 heartbeat [paper/explore]: 46 scans, 1 open, mode NORMAL, bankroll 37.65, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.95 on btc-updown-5m-1788876900, opens 5
 - 2026-09-08T14:33:20+00:00 LIVE mode on. Polymarket balance 20.11
+- 2026-09-08T14:33:23+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 20.11
+- 2026-09-08T14:34:07+00:00 LIVE ARB PARTIAL doge-updown-5m-1788877800 $1.5 edge 0.0292
+- 2026-09-08T14:34:08+00:00 heartbeat: 17 scans, 1 open, mode NORMAL, bankroll 20.11, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.94 on doge-updown-5m-1788877800, opens 0
