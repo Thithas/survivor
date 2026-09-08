@@ -422,6 +422,19 @@ def record(state, p, pnl, winner, note=""):
     msg = f"{'sold' if winner == -2 else 'closed'} {p['type']} {p['slug']} pnl {pnl:+.2f}{' (' + note + ')' if note else ''} | today {state['today_pnl_usd']:+.2f} | bankroll {state['bankroll_usd']:.2f}"
     journal(msg); notify(msg)
 
+def check_relay(state):
+    """Prove the relay path end to end: /health (which region answers) and a balance read through it."""
+    url = relay_url()
+    if not url: journal("relay: none"); notify("relay: none — orders from GitHub are geoblocked"); return
+    try:
+        h = requests.get(url + "/health", timeout=15); region = (h.json() or {}).get("region", "?") if h.ok else f"HTTP {h.status_code}"
+    except Exception as e: region = f"unreachable: {str(e)[:80]}"
+    global _pm; _pm = None
+    try: bal = f"balance via relay {live_balance():.2f}"
+    except Exception as e: bal = f"balance via relay FAILED: {str(e)[:100]}"
+    msg = f"relay {url.split('/')[2]} region {region} | {bal}"
+    journal(msg); notify(msg)
+
 def redispatch():
     """GitHub's cron is unreliable on quiet repos: start the next run ourselves when this one ends."""
     pat, repo = os.environ.get("GH_PAT"), os.environ.get("GITHUB_REPOSITORY")
@@ -463,6 +476,7 @@ def main():
         st = new_state(50.0); st["live_mode"] = False; return st
     if state is None or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0) or bool(state.get("live_mode")) != os.path.exists("LIVE"):
         state = fresh_state(); commit(state, "survivor: startup")
+    if os.path.exists("LIVE"): state["relay_seen"] = relay_url(); check_relay(state)
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
     scan_errs, last_err = 0, ""
     notify(f"run start {'LIVE' if is_live() else 'PAPER'} bankroll {state['bankroll_usd']:.2f} mode {state['mode']}")
@@ -501,6 +515,8 @@ def main():
             execute(state, s, stake, net); dirty = True
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = params(); last_pull = time.time()
+            if relay_url() != state.get("relay_seen"):
+                state["relay_seen"] = relay_url(); check_relay(state)
             if bool(state.get("live_mode")) != is_live() and not state["open_positions"]:
                 commit(state, "survivor: mode switch"); state = fresh_state(); P = params(); dirty = True
         if dirty or time.time() - last_commit > COMMIT_EVERY:
