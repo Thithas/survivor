@@ -25,7 +25,7 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 2}
+HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.25, "max_open_positions": 2}   # daily cap off by owner's instruction; floor is the only brake
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
@@ -258,7 +258,7 @@ def set_mode(state):
     old = state["mode"]; eq = equity(state)
     state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], eq)
     if eq <= HARD["floor_usd"]: state["mode"] = "DEAD"
-    elif state["today_pnl_usd"] <= -HARD["daily_loss_cap_usd"] or state["consecutive_losses"] >= 4: state["mode"] = "HIBERNATE"
+    elif state["today_pnl_usd"] <= -HARD["daily_loss_cap_usd"]: state["mode"] = "HIBERNATE"
     elif state["consecutive_losses"] >= 2 or 1 - eq / state["peak_bankroll_usd"] > 0.10: state["mode"] = "CAUTIOUS"
     elif state["consecutive_wins"] >= 3 or old == "NORMAL": state["mode"] = "NORMAL"
     else: state["mode"] = "CAUTIOUS"
