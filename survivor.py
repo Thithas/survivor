@@ -34,13 +34,13 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
           "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95),
-          "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50)}
+          "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25}
+                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -391,6 +391,7 @@ def execute(state, s, stake, net):
         journal(f"order failed {s['type']} {s['slug']}: {legs[0]['resp']}"); return
     cost = round(sum(l["cost"] for l in filled), 2)
     pos = {"slug": s["slug"], "type": s["type"], "legs": legs, "stake": cost, "predicted_edge": net,
+           "entry_price": s.get("ask"),
            "ts": now().isoformat(timespec="seconds"), "end": s["end"], "live": is_live()}
     state["open_positions"].append(pos)
     state["traded"] = (state.get("traded", []) + [s["slug"]])[-40:]
@@ -442,16 +443,20 @@ def manage(state, P):
             keep.append(p); continue
         leg = p["legs"][0]; bid = b["up"][1] if leg["outcome"] == 0 else b["down"][1]; left = b["left"]
         if bid is None: keep.append(p); continue
+        cyc = p["slug"].rsplit("-", 1)[-1]
+        if state.get("bad_cycle") == cyc and bid < 0.6 and left >= P["stop_loss_min_left_sec"]:
+            bid = min(bid, P["stop_loss_bid"])        # a sibling on this cycle already stopped: the whole tick was wrong
         p["peak_bid"] = max(p.get("peak_bid", 0.0), bid)          # trailing lock: once it was a near-certain win, don't ride it back down
         reason = "take profit" if bid >= P["take_profit_bid"] else \
                  "profit lock" if (p["peak_bid"] >= P["lock_from_bid"] and bid <= p["peak_bid"] - P["lock_giveback"] and left >= 3) else \
-                 "stop loss" if (bid <= P["stop_loss_bid"] and left >= P["stop_loss_min_left_sec"]) else None
+                 "stop loss" if (bid <= max(P["stop_loss_bid"], P["stop_frac_of_entry"] * (p.get("entry_price") or 1)) and left >= P["stop_loss_min_left_sec"]) else None
         if not reason: keep.append(p); continue
         ok, resp = sell(leg["token"], leg["shares"])
         if not ok:
             journal(f"sell failed ({reason}) {p['slug']}: {resp}"); keep.append(p); continue
         proceeds = round(leg["shares"] * (bid - fee(bid, P)), 4)
-        record(state, p, round(proceeds - p["stake"], 4), -2, note=f"{reason} @ {bid:.2f} with {left}s left")
+        record(state, p, round(proceeds - p["stake"], 4), -2, note=f"{reason} @ {bid:.2f} with {left:.0f}s left")
+        if reason == "stop loss": state["bad_cycle"] = p["slug"].rsplit("-", 1)[-1]
         changed = True
     state["open_positions"] = keep
     return changed
