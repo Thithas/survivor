@@ -1,4 +1,3 @@
 {
-  "regions": ["dub1"],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- api vercel.json package.json"
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_AUTHOR_NAME\" = \"survivor-bot\" ]"
 }
