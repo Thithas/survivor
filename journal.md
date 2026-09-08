@@ -1216,3 +1216,6 @@
 - 2026-09-08T21:28:39+00:00 LIVE MOMENTUM doge-updown-5m-1788902700 $2.0 edge 0.4232 move 29.0 bps peers 4/0
 - 2026-09-08T21:28:41+00:00 LIVE MOMENTUM xrp-updown-5m-1788902700 $3.35 edge 0.1545 move 23.3 bps peers 4/0
 - 2026-09-08T21:28:41+00:00 heartbeat: 965 scans, 4 open, mode CAUTIOUS, bankroll 54.24, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.98 on btc-updown-5m-1788902700, opens 60
+- 2026-09-08T21:28:48+00:00 sell failed (stop loss) sol-updown-5m-1788902700: order couldn't be fully filled. FOK orders are fully filled or killed.
+- 2026-09-08T21:28:49+00:00 sold MOMENTUM doge-updown-5m-1788902700 pnl -0.33 (stop loss @ 0.35 with 75s left) | today +2.63 | bankroll 54.24
+- 2026-09-08T21:28:49+00:00 heartbeat: 966 scans, 3 open, mode CAUTIOUS, bankroll 54.24, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788902700, opens 60
