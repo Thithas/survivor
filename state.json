@@ -9,9 +9,7 @@
  "mode": "NORMAL",
  "open_positions": [],
  "closed_trades": 0,
- "opens": {
-  "btc-updown-5m-1788866700": 78449.295
- },
+ "opens": {},
  "stats": {
   "wins": 0,
   "losses": 0,
@@ -19,51 +17,5 @@
   "arb": 0,
   "momentum": 0
  },
- "live_mode": false,
- "books": {
-  "btc-updown-5m-1788866400": {
-   "up": [
-    null,
-    0.99
-   ],
-   "down": [
-    0.01,
-    null
-   ],
-   "left": 1
-  },
-  "btc-updown-5m-1788866700": {
-   "up": [
-    0.22,
-    0.21
-   ],
-   "down": [
-    0.79,
-    0.78
-   ],
-   "left": 183
-  }
- },
- "snaps": {
-  "btc-updown-5m-1788866400": {
-   "end": "2026-09-08T11:25:00+00:00",
-   "open": null,
-   "s": [
-    {
-     "t": 5,
-     "up": null,
-     "down": 0.01,
-     "mv": null
-    }
-   ]
-  }
- },
- "diag": {
-  "markets": 30,
-  "in_window": 1,
-  "best_sum": 1.01,
-  "slug": "btc-updown-5m-1788866700",
-  "hot": false,
-  "spot": 78431.15
- }
+ "live_mode": false
 }
