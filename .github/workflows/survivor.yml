@@ -1,0 +1,32 @@
+name: survivor
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+concurrency:
+  group: survivor
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: |
+          git config user.name "survivor-bot"
+          git config user.email "survivor-bot@users.noreply.github.com"
+      - run: python survivor.py
+        env:
+          POLY_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+          POLY_FUNDER: ${{ secrets.POLY_FUNDER }}
+          POLY_SIGNATURE_TYPE: ${{ vars.POLY_SIGNATURE_TYPE || '1' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_SECONDS: ${{ vars.RUN_SECONDS || '21000' }}
