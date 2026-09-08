@@ -1090,3 +1090,4 @@
 - 2026-09-08T20:04:11+00:00 sell failed (stop loss) xrp-updown-5m-1788897600: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-08T20:04:15+00:00 sell failed (stop loss) xrp-updown-5m-1788897600: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-08T20:04:50+00:00 heartbeat: 459 scans, 1 open, mode CAUTIOUS, bankroll 48.29, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1788897900, opens 60
+- 2026-09-08T20:06:32+00:00 heartbeat: 482 scans, 1 open, mode CAUTIOUS, bankroll 48.29, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.99 on sol-updown-5m-1788897900, opens 60
