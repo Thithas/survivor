@@ -96,69 +96,60 @@ def commit(state, msg="survivor: state"):
     pull(); r = git("push", "-q")
     if r.returncode: log("push failed", r.stderr[-300:])
 
-# ---------- polymarket ----------
-_clob = None
-def clob():
-    global _clob
-    if _clob is None:
-        from py_clob_client.client import ClobClient
-        _clob = ClobClient(CLOB, key=os.environ["POLY_PRIVATE_KEY"], chain_id=137,
-                           signature_type=int(os.environ.get("POLY_SIGNATURE_TYPE", "1")),
-                           funder=os.environ["POLY_FUNDER"])
-        _clob.set_api_creds(_clob.create_or_derive_api_creds())
-    return _clob
+# ---------- polymarket (unified SDK: Deposit Wallet / pUSD, V2 CLOB) ----------
+_pm = None
+def pm():
+    """Authenticated client. Wallet type (Deposit Wallet / Proxy / Safe) is detected from signer + wallet."""
+    global _pm
+    if _pm is None:
+        from polymarket import SecureClient
+        _pm = SecureClient.create(private_key=os.environ["POLY_PRIVATE_KEY"], wallet=os.environ["POLY_FUNDER"])
+        log("polymarket", _pm.wallet_type, str(_pm.wallet)[:10])
+    return _pm
 
 def live_balance():
-    from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
-    prm = BalanceAllowanceParams(asset_type=AssetType.COLLATERAL)
-    try: clob().update_balance_allowance(prm)          # refresh the CLOB's cached view before reading
-    except Exception as e: log("balance refresh", e)
-    r = clob().get_balance_allowance(prm)
-    return float(r["balance"]) / 1e6
+    """pUSD balance of the account wallet, in dollars."""
+    r = pm().get_balance_allowance(asset_type="COLLATERAL")
+    return r.balance / 1e6
 
 def diagnose_funds():
-    """Where is the money? CLOB view under both proxy types + on-chain USDC.e/USDC of funder and signer (several RPCs)."""
+    """Where is the money? SDK view of the wallet + on-chain pUSD/USDC.e of the account wallet."""
     out = []
-    from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
-    for st in (1, 2):
-        try:
-            r = clob().get_balance_allowance(BalanceAllowanceParams(asset_type=AssetType.COLLATERAL, signature_type=st))
-            out.append(f"clob sig{st} balance={float(r.get('balance', 0)) / 1e6:.2f}")
-        except Exception as e: out.append(f"clob sig{st} err {str(e)[:60]}")
     try:
-        from eth_account import Account
-        signer = Account.from_key(os.environ["POLY_PRIVATE_KEY"]).address
-    except Exception as e: signer = None; out.append(f"signer err {str(e)[:60]}")
+        c = pm(); out.append(f"wallet_type={c.wallet_type} wallet={str(c.wallet)[:6]}…{str(c.wallet)[-4:]} signer={str(c.signer)[:6]}…{str(c.signer)[-4:]}")
+        r = c.get_balance_allowance(asset_type="COLLATERAL"); out.append(f"clob pUSD balance={r.balance / 1e6:.2f} allowances={len(r.allowances)}")
+        try: out.append(f"approvals={c.get_trading_approvals_state()}"[:120])
+        except Exception as e: out.append(f"approvals err {str(e)[:60]}")
+    except Exception as e: out.append(f"sdk err {str(e)[:100]}")
     funder = os.environ.get("POLY_FUNDER", "")
-    mask = lambda a: f"{a[:6]}…{a[-4:]}" if a else "none"
-    out.append(f"funder={mask(funder)} signer={mask(signer or '')}")
-    tokens = {"USDC.e": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", "USDC": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"}
-    rpcs = ["https://polygon-bor-rpc.publicnode.com", "https://rpc.ankr.com/polygon", "https://polygon.llamarpc.com", "https://polygon-rpc.com"]
-    for label, addr in (("funder", funder), ("signer", signer)):
-        if not addr: continue
-        for tname, taddr in tokens.items():
-            data = "0x70a08231" + addr[2:].lower().rjust(64, "0"); got = None; last = ""
-            for rpc in rpcs:
-                try:
-                    r = requests.post(rpc, json={"jsonrpc": "2.0", "id": 1, "method": "eth_call",
-                                      "params": [{"to": taddr, "data": data}, "latest"]}, timeout=10).json()
-                    if "result" in r: got = int(r["result"], 16) / 1e6; break
-                    last = str(r.get("error", r))[:60]
-                except Exception as e: last = str(e)[:60]
-            out.append(f"{label} {tname}={got:.2f}" if got is not None else f"{label} {tname} err {last}")
+    tokens = {"pUSD": "0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB", "USDC.e": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"}
+    rpcs = ["https://polygon-bor-rpc.publicnode.com", "https://rpc.ankr.com/polygon", "https://polygon-rpc.com"]
+    for tname, taddr in tokens.items():
+        data = "0x70a08231" + funder[2:].lower().rjust(64, "0"); got = None; last = ""
+        for rpc in rpcs:
+            try:
+                r = requests.post(rpc, json={"jsonrpc": "2.0", "id": 1, "method": "eth_call", "params": [{"to": taddr, "data": data}, "latest"]}, timeout=10).json()
+                if "result" in r: got = int(r["result"], 16) / 1e6; break
+                last = str(r.get("error", r))[:60]
+            except Exception as e: last = str(e)[:60]
+        out.append(f"onchain {tname}={got:.2f}" if got is not None else f"onchain {tname} err {last}")
     journal("funds check: " + " | ".join(out)); notify("funds check: " + " | ".join(out))
 
+def _resp(r):
+    ok = bool(getattr(r, "ok", False))
+    return ok, (f"{r.order_id} {r.status}" if ok else f"{getattr(r, 'code', '?')}: {getattr(r, 'message', r)}")[:160]
+
 def buy(token_id, usd):
-    """Market FOK buy of `usd` collateral. Returns (ok, response)."""
+    """Market FOK buy spending `usd` pUSD. Returns (ok, response)."""
     if not is_live(): return True, "paper"
-    from py_clob_client.clob_types import MarketOrderArgs, OrderType
-    from py_clob_client.order_builder.constants import BUY
-    try:
-        o = clob().create_market_order(MarketOrderArgs(token_id=token_id, amount=round(usd, 2), side=BUY, order_type=OrderType.FOK))
-        r = clob().post_order(o, OrderType.FOK)
-        return bool(r.get("success")), str(r)[:160]
-    except Exception as e:
-        return False, str(e)[:160]
+    try: return _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FOK"))
+    except Exception as e: return False, str(e)[:160]
+
+def sell(token_id, shares):
+    """Market FOK sell of `shares`. Returns (ok, response)."""
+    if not is_live(): return True, "paper"
+    try: return _resp(pm().place_market_order(token_id=token_id, side="SELL", shares=str(round(shares, 2)), order_type="FOK"))
+    except Exception as e: return False, str(e)[:160]
 
 def spot():
     try: return float(requests.get("https://api.coinbase.com/v2/prices/BTC-USD/spot", timeout=5).json()["data"]["amount"])
@@ -195,18 +186,6 @@ def top(token):
     bids = [float(a["price"]) for a in b.get("bids", [])]
     ask, liq = (min(asks)[0], round(min(asks)[0] * min(asks)[1], 2)) if asks else (None, 0.0)
     return ask, liq, (max(bids) if bids else None)
-
-def sell(token_id, shares):
-    """Market FOK sell of `shares`. Returns (ok, response)."""
-    if not is_live(): return True, "paper"
-    from py_clob_client.clob_types import MarketOrderArgs, OrderType
-    from py_clob_client.order_builder.constants import SELL
-    try:
-        o = clob().create_market_order(MarketOrderArgs(token_id=token_id, amount=round(shares, 2), side=SELL, order_type=OrderType.FOK))
-        r = clob().post_order(o, OrderType.FOK)
-        return bool(r.get("success")), str(r)[:160]
-    except Exception as e:
-        return False, str(e)[:160]
 
 # ---------- brain (rules) ----------
 def new_state(bankroll):
