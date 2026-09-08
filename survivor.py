@@ -14,14 +14,17 @@ import os, json, time, subprocess, datetime as dt
 import requests
 
 GAMMA, CLOB = "https://gamma-api.polymarket.com", "https://clob.polymarket.com"
-SLUG_PREFIX, SERIES_SLUG = "btc-updown-5m-", "btc-up-or-down-5m"
+# Every 5-minute Up/Down series Polymarket runs. Each asset is its own series; slug pattern <asset>-updown-5m-<epoch>.
+ASSETS = {"btc": "BTC", "eth": "ETH", "sol": "SOL", "xrp": "XRP", "doge": "DOGE"}
+SERIES = {a: f"{a}-up-or-down-5m" for a in ASSETS}
+PREFIX = {a: f"{a}-updown-5m-" for a in ASSETS}
 MIN_SHARES = 5          # Polymarket engine minimum per order
 STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE = "state.json", "trades.jsonl", "journal.md", "windows.jsonl"
 RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 1}
+HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 5.0, "max_trade_pct": 0.25, "max_open_positions": 2}
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
@@ -151,32 +154,47 @@ def sell(token_id, shares):
     try: return _resp(pm().place_market_order(token_id=token_id, side="SELL", shares=str(round(shares, 2)), order_type="FOK"))
     except Exception as e: return False, str(e)[:160]
 
-def spot():
-    try: return float(requests.get("https://api.coinbase.com/v2/prices/BTC-USD/spot", timeout=5).json()["data"]["amount"])
-    except Exception:
-        r = requests.get("https://api.kraken.com/0/public/Ticker?pair=XBTUSD", timeout=5).json()["result"]
-        return float(list(r.values())[0]["c"][0])
+def spots():
+    """Spot USD for every asset in one call (Coinbase exchange rates are USD->coin, so invert)."""
+    out = {}
+    try:
+        rates = requests.get("https://api.coinbase.com/v2/exchange-rates", params={"currency": "USD"}, timeout=5).json()["data"]["rates"]
+        for a, sym in ASSETS.items():
+            if sym in rates and float(rates[sym]) > 0: out[a] = 1 / float(rates[sym])
+    except Exception as e: log("spot err", e)
+    if "btc" not in out:   # fallback so BTC never goes dark
+        try: out["btc"] = float(requests.get("https://api.coinbase.com/v2/prices/BTC-USD/spot", timeout=5).json()["data"]["amount"])
+        except Exception: pass
+    return out
+def spot(): return spots().get("btc")
 
+_mcache = {}
 def markets():
-    # /markets hides this series ("Hide From New"); the events endpoint with series_slug is the reliable path.
-    r = requests.get(f"{GAMMA}/events", params={"series_slug": SERIES_SLUG, "closed": "false", "limit": 30,
-                                               "order": "endDate", "ascending": "true"}, timeout=10).json()
-    out = []
-    for ev in r:
-        slug = ev.get("slug", "")
-        if not slug.startswith(SLUG_PREFIX): continue
-        m = (ev.get("markets") or [None])[0]
-        if not m: continue
-        try:
-            toks, outs = json.loads(m["clobTokenIds"]), json.loads(m["outcomes"])
-            up, down = toks[outs.index("Up")], toks[outs.index("Down")]
-        except Exception: continue
-        tail = slug.rsplit("-", 1)[-1]
-        if tail.isdigit():   # window start epoch is in the slug
-            start = dt.datetime.fromtimestamp(int(tail), dt.timezone.utc); end = start + dt.timedelta(minutes=5)
-        else:
-            start, end = parse(m["startDate"]), parse(m["endDate"])
-        out.append({"slug": slug, "start": start, "end": end, "up": up, "down": down})
+    """All 5-min Up/Down markets across assets. Gamma /markets hides these series; events?series_slug is reliable. Cached 30s."""
+    out, t = [], time.time()
+    for a in ASSETS:
+        c = _mcache.get(a)
+        if not c or t - c[0] > 30:
+            try:
+                r = requests.get(f"{GAMMA}/events", params={"series_slug": SERIES[a], "closed": "false", "limit": 20,
+                                                           "order": "endDate", "ascending": "true"}, timeout=10).json()
+            except Exception as e: log("markets err", a, e); r = []
+            ms = []
+            for ev in r or []:
+                slug = ev.get("slug", "")
+                if not slug.startswith(PREFIX[a]): continue
+                m = (ev.get("markets") or [None])[0]
+                if not m: continue
+                try:
+                    toks, outs = json.loads(m["clobTokenIds"]), json.loads(m["outcomes"])
+                    up, down = toks[outs.index("Up")], toks[outs.index("Down")]
+                except Exception: continue
+                tail = slug.rsplit("-", 1)[-1]
+                if tail.isdigit(): start = dt.datetime.fromtimestamp(int(tail), dt.timezone.utc); end = start + dt.timedelta(minutes=5)
+                else: start, end = parse(m["startDate"]), parse(m["endDate"])
+                ms.append({"asset": a, "slug": slug, "start": start, "end": end, "up": up, "down": down})
+            _mcache[a] = (t, ms)
+        out += _mcache[a][1]
     return out
 
 def top(token):
@@ -212,21 +230,25 @@ def set_mode(state):
         journal(f"mode {old} -> {state['mode']}"); notify(f"mode {old} -> {state['mode']}")
 
 def scan(state, P):
-    sigs, px, t = [], spot(), now()
+    sigs, sp, t = [], spots(), now()
     ms = markets()
-    diag = {"markets": len(ms), "in_window": 0, "best_sum": None, "slug": "", "hot": False, "spot": px}
-    for m in ms:
-        left = (m["end"] - t).total_seconds()
-        if left <= 0 or left > 330: continue
-        diag["in_window"] += 1
+    live_ms = [m for m in ms if 0 < (m["end"] - t).total_seconds() <= 330 and m["asset"] in sp]
+    diag = {"markets": len(ms), "in_window": len(live_ms), "assets": sorted({m["asset"] for m in ms}), "best_sum": None, "slug": "", "hot": False, "spot": sp.get("btc")}
+    # first pass: every asset's move this window, so each market can see whether its peers agree
+    moves = {}
+    for m in live_ms:
+        if m["slug"] not in state["opens"] and abs((t - m["start"]).total_seconds()) <= 6: state["opens"][m["slug"]] = sp[m["asset"]]
+        op = state["opens"].get(m["slug"])
+        if op: moves[m["asset"]] = (sp[m["asset"]] - op) / op * 1e4
+    for m in live_ms:
+        left = (m["end"] - t).total_seconds(); px = sp[m["asset"]]
         if left <= P["momentum_window_sec"] + 15 or left >= 290: diag["hot"] = True
-        if m["slug"] not in state["opens"] and abs((t - m["start"]).total_seconds()) <= 6:
-            state["opens"][m["slug"]] = px
-        ua, ul, ub, usz = top(m["up"]); da, dl, db, dsz = top(m["down"])
+        try: ua, ul, ub, usz = top(m["up"]); da, dl, db, dsz = top(m["down"])
+        except Exception as e: log("book err", m["slug"], e); continue
         state.setdefault("books", {})[m["slug"]] = {"up": [ua, ub], "down": [da, db], "left": round(left)}
         # Near the close one side's asks often vanish (the winner gets hoarded). Keep recording; only skip what needs both sides.
         if left <= 300:  # window dataset: every ~10s, tightening to ~5s in the final 75s
-            snaps = state.setdefault("snaps", {}).setdefault(m["slug"], {"end": m["end"].isoformat(), "open": state["opens"].get(m["slug"]), "s": []})
+            snaps = state.setdefault("snaps", {}).setdefault(m["slug"], {"asset": m["asset"], "end": m["end"].isoformat(), "open": state["opens"].get(m["slug"]), "s": []})
             if snaps["open"] is None and state["opens"].get(m["slug"]): snaps["open"] = state["opens"][m["slug"]]
             if not snaps["s"] or snaps["s"][-1]["t"] - left >= (5 if left <= 75 else 10):
                 op = snaps["open"]
@@ -236,7 +258,7 @@ def scan(state, P):
             if diag["best_sum"] is None or ua + da < diag["best_sum"]: diag["best_sum"], diag["slug"] = round(ua + da, 3), m["slug"]
             gross = round(1 - (ua + da) - fee(ua, P) - fee(da, P), 4)
             if gross > 0:
-                sigs.append({**base, "type": "ARB", "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
+                sigs.append({**base, "type": "ARB", "asset": m["asset"], "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
                              "gross_edge": gross, "liquidity_usd": min(ul, dl), "liq_shares": min(usz, dsz), "confidence": 1.0})
         op = state["opens"].get(m["slug"])
         if op and left <= P["momentum_window_sec"]:
@@ -244,13 +266,18 @@ def scan(state, P):
             up_side = mv > 0
             ask, liq = (ua, ul) if up_side else (da, dl)
             conf = min(0.95, abs(mv) / (2 * P["momentum_min_move_bps"]))
+            # peers: other assets moving the same way this window add conviction (they share the same macro tick)
+            peers = [v for a2, v in moves.items() if a2 != m["asset"]]
+            agree = sum(1 for v in peers if (v > 0) == up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
+            against = sum(1 for v in peers if (v > 0) != up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
+            conf = min(0.95, conf + 0.08 * agree - 0.10 * against)
             if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and ask <= P["momentum_max_ask"]:
-                sigs.append({**base, "type": "MOMENTUM", "token": m["up"] if up_side else m["down"],
+                sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
-                             "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1)})
-    state["opens"] = dict(list(state["opens"].items())[-30:])
-    state["books"] = dict(list(state.get("books", {}).items())[-3:])
-    diag["hot"] = diag["hot"] or any(0 < (m["end"] - t).total_seconds() <= 75 for m in ms)
+                             "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1), "peers": f"{agree}/{against}"})
+    state["opens"] = dict(list(state["opens"].items())[-60:])
+    state["books"] = dict(list(state.get("books", {}).items())[-12:])
+    diag["hot"] = diag["hot"] or any(0 < (m["end"] - t).total_seconds() <= 75 for m in live_ms)
     state["diag"] = diag
     return sigs
 
@@ -258,11 +285,13 @@ def decide(state, P, sigs):
     if state["mode"] in ("DEAD", "HIBERNATE"): return []
     caut = state["mode"] == "CAUTIOUS"
     min_edge = P["min_edge"] * (1.5 if caut else 1.0)
-    room = min(HARD["max_open_positions"], P["max_open_positions"]) - len(state["open_positions"])
+    room = min(HARD["max_open_positions"], P["max_open_positions"]) - sum(1 for p in state["open_positions"] if p["type"] != "ARB")
+    arb_room = 3 - sum(1 for p in state["open_positions"] if p["type"] == "ARB")
     taken = {p["slug"] for p in state["open_positions"]}
     orders = []
     for s in sorted(sigs, key=lambda s: (s["type"] != "ARB", -s["gross_edge"])):
-        if room <= 0: break
+        if s["type"] == "ARB" and arb_room <= 0: continue
+        if s["type"] != "ARB" and room <= 0: continue
         if s["slug"] in taken: continue
         net = s["gross_edge"] - P["fees"] - (0 if s["type"] == "ARB" else P["slippage"])   # arb is FOK at the quoted ask: no slippage term
         if net < min_edge: continue
@@ -278,7 +307,9 @@ def decide(state, P, sigs):
         stake = max(stake, MIN_SHARES * unit)                       # engine rejects < 5 shares per leg
         if stake > state["bankroll_usd"] * HARD["max_trade_pct"] + 0.01: continue
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
-        orders.append((s, round(stake, 2), round(net, 4))); room -= 1; taken.add(s["slug"])
+        orders.append((s, round(stake, 2), round(net, 4))); taken.add(s["slug"])
+        if s["type"] == "ARB": arb_room -= 1
+        else: room -= 1
     return orders
 
 def execute(state, s, stake, net):
@@ -302,7 +333,7 @@ def execute(state, s, stake, net):
     state["open_positions"].append(pos)
     if not is_live(): state["bankroll_usd"] -= cost
     partial = " PARTIAL" if len(filled) < len(legs) else ""
-    msg = f"{'LIVE' if is_live() else 'PAPER'} {s['type']}{partial} {s['slug']} ${cost} edge {net}"
+    msg = f"{'LIVE' if is_live() else 'PAPER'} {s['type']}{partial} {s['slug']} ${cost} edge {net}" + (f" move {s['move_bps']} bps peers {s['peers']}" if s["type"] == "MOMENTUM" else "")
     journal(msg); notify(msg)
 
 def resolve(slug):
@@ -323,7 +354,7 @@ def settle_windows(state):
         except Exception as e: log("window resolve err", e); continue
         if winner is None and age < 1800: continue
         with open(WINDOWS_FILE, "a") as f:
-            f.write(json.dumps({"slug": slug, "end": w["end"], "open": w["open"], "winner": winner, "snaps": w["s"]}) + "\n")
+            f.write(json.dumps({"slug": slug, "asset": w.get("asset", "btc"), "end": w["end"], "open": w["open"], "winner": winner, "snaps": w["s"]}) + "\n")
         done.append(slug)
     for slug in done: state["snaps"].pop(slug, None)
     return bool(done)
@@ -458,7 +489,7 @@ def main():
         if dirty or time.time() - last_commit > COMMIT_EVERY:
             d = state.get("diag", {})
             journal(f"heartbeat{'' if is_live() else ' [paper/explore]'}: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
-                    f"bankroll {state['bankroll_usd']:.2f}, markets {d.get('markets')}/{d.get('in_window')} in window, "
+                    f"bankroll {state['bankroll_usd']:.2f}, markets {d.get('markets')}/{d.get('in_window')} in window across {d.get('assets')}, "
                     f"best up+down {d.get('best_sum')} on {d.get('slug')}, opens {len(state['opens'])}"
                     + (f", last error {last_err}" if scan_errs else ""))
             commit(state); last_commit = time.time(); dirty = False
