@@ -370,6 +370,8 @@ def execute(state, s, stake, net):
     state["traded"] = (state.get("traded", []) + [s["slug"]])[-40:]
     if not is_live(): state["bankroll_usd"] -= cost
     partial = " PARTIAL" if len(filled) < len(legs) else ""
+    if partial:
+        pos["type"] = "ARB_LEG"; pos["legs"] = filled          # only the filled leg is real; manage() now watches it
     msg = f"{'LIVE' if is_live() else 'PAPER'} {s['type']}{partial} {s['slug']} ${cost} edge {net}" + (f" move {s['move_bps']} bps peers {s['peers']}" if s["type"] == "MOMENTUM" else "")
     journal(msg); notify(msg)
 
@@ -401,7 +403,7 @@ def manage(state, P):
     keep, changed = [], False
     for p in state["open_positions"]:
         b = state.get("books", {}).get(p["slug"])
-        if p["type"] != "MOMENTUM" or not b:
+        if p["type"] not in ("MOMENTUM", "ARB_LEG") or not b:
             keep.append(p); continue
         leg = p["legs"][0]; bid = b["up"][1] if leg["outcome"] == 0 else b["down"][1]; left = b["left"]
         if bid is None: keep.append(p); continue
@@ -437,7 +439,7 @@ def settle(state):
 def record(state, p, pnl, winner, note=""):
     if not p["live"]: state["bankroll_usd"] += p["stake"] + pnl
     state["today_pnl_usd"] = round(state["today_pnl_usd"] + pnl, 4)
-    st = state["stats"]; st["pnl"] = round(st["pnl"] + pnl, 4); st[p["type"].lower()] += 1
+    st = state["stats"]; st["pnl"] = round(st["pnl"] + pnl, 4); st[p["type"].lower()] = st.get(p["type"].lower(), 0) + 1
     if pnl > 0: st["wins"] += 1; state["consecutive_wins"] += 1; state["consecutive_losses"] = 0
     else: st["losses"] += 1; state["consecutive_losses"] += 1; state["consecutive_wins"] = 0
     state["closed_trades"] += 1
