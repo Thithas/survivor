@@ -116,6 +116,32 @@ def live_balance():
     r = clob().get_balance_allowance(prm)
     return float(r["balance"]) / 1e6
 
+def diagnose_funds():
+    """Where is the money? Raw CLOB reply + on-chain USDC.e / USDC balances of funder and signer. Journaled, addresses masked."""
+    out = []
+    try:
+        from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
+        r = clob().get_balance_allowance(BalanceAllowanceParams(asset_type=AssetType.COLLATERAL)); out.append(f"clob={r}")
+    except Exception as e: out.append(f"clob err {str(e)[:80]}")
+    try:
+        from eth_account import Account
+        signer = Account.from_key(os.environ["POLY_PRIVATE_KEY"]).address
+    except Exception as e: signer = None; out.append(f"signer err {str(e)[:60]}")
+    funder = os.environ.get("POLY_FUNDER", "")
+    mask = lambda a: f"{a[:6]}…{a[-4:]}" if a else "none"
+    out.append(f"funder={mask(funder)} signer={mask(signer or '')} same={bool(signer) and signer.lower() == funder.lower()}")
+    tokens = {"USDC.e": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", "USDC": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"}
+    for label, addr in (("funder", funder), ("signer", signer)):
+        if not addr: continue
+        for tname, taddr in tokens.items():
+            try:
+                data = "0x70a08231" + addr[2:].lower().rjust(64, "0")
+                r = requests.post("https://polygon-rpc.com", json={"jsonrpc": "2.0", "id": 1, "method": "eth_call",
+                                  "params": [{"to": taddr, "data": data}, "latest"]}, timeout=10).json()
+                out.append(f"{label} {tname}={int(r['result'], 16) / 1e6:.2f}")
+            except Exception as e: out.append(f"{label} {tname} err {str(e)[:50]}")
+    journal("funds check: " + " | ".join(out)); notify("funds check: " + " | ".join(out))
+
 def buy(token_id, usd):
     """Market FOK buy of `usd` collateral. Returns (ok, response)."""
     if not is_live(): return True, "paper"
@@ -383,6 +409,8 @@ def main():
                 b = live_balance()
                 if b < HARD["floor_usd"] + 1:
                     LIVE_BLOCKED = True
+                    try: diagnose_funds()
+                    except Exception as e: journal(f"funds check failed: {str(e)[:100]}")
                     journal(f"LIVE requested but Polymarket balance is {b:.2f} (need > {HARD['floor_usd'] + 1:.0f}) — paper until funds land")
                     notify(f"LIVE waiting: Polymarket balance reads {b:.2f}. Paper until it's above {HARD['floor_usd'] + 1:.0f}. Rechecking every minute.")
                 else:
@@ -393,12 +421,8 @@ def main():
                 LIVE_BLOCKED = True
                 journal(f"LIVE requested but Polymarket auth/balance failed: {str(e)[:120]} — staying on paper"); notify(f"LIVE blocked: {str(e)[:120]}. Running paper until fixed.")
         st = new_state(50.0); st["live_mode"] = False; return st
-    if state is None or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0):
-        state = fresh_state()
-    elif bool(state.get("live_mode")) != os.path.exists("LIVE"):
-        state = fresh_state()
-        if LIVE_BLOCKED and not state.get("live_mode"):   # LIVE asked for but not fundable: keep running paper quietly
-            pass
+    if state is None or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0) or bool(state.get("live_mode")) != os.path.exists("LIVE"):
+        state = fresh_state(); commit(state, "survivor: startup")
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
     scan_errs, last_err = 0, ""
     notify(f"run start {'LIVE' if is_live() else 'PAPER'} bankroll {state['bankroll_usd']:.2f} mode {state['mode']}")
