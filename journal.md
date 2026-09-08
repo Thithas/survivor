@@ -690,3 +690,21 @@
 - 2026-09-08T18:07:54+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
 - 2026-09-08T18:07:57+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
 - 2026-09-08T18:07:57+00:00 heartbeat: 413 scans, 1 open, mode CAUTIOUS, bankroll 26.10, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60
+- 2026-09-08T18:08:02+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:05+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:09+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:13+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:16+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:19+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:22+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:26+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:29+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:33+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:36+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:40+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:43+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:47+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:50+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:53+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:57+00:00 sell failed (take profit) eth-updown-5m-1788890400: No orderbook exists for the requested token id
+- 2026-09-08T18:08:57+00:00 heartbeat: 430 scans, 1 open, mode CAUTIOUS, bankroll 26.10, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60
