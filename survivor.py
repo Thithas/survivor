@@ -422,6 +422,22 @@ def record(state, p, pnl, winner, note=""):
     msg = f"{'sold' if winner == -2 else 'closed'} {p['type']} {p['slug']} pnl {pnl:+.2f}{' (' + note + ')' if note else ''} | today {state['today_pnl_usd']:+.2f} | bankroll {state['bankroll_usd']:.2f}"
     journal(msg); notify(msg)
 
+_relay_fail = 0
+def relay_alive():
+    """True if the relay answers /health. Three misses in a row block live trading and ping once; recovery unblocks."""
+    global _relay_fail, LIVE_BLOCKED
+    url = relay_url()
+    ok = False
+    if url:
+        try: ok = requests.get(url + "/health", timeout=10).ok
+        except Exception: ok = False
+    _relay_fail = 0 if ok else _relay_fail + 1
+    if not ok and _relay_fail == 3 and not LIVE_BLOCKED and os.path.exists("LIVE"):
+        LIVE_BLOCKED = True; journal("relay offline — live blocked"); notify("Relay offline: open the Codespace (github.com/Thithas/survivor → Code → Codespaces). Paper until it's back.")
+    if ok and LIVE_BLOCKED and os.path.exists("LIVE"):
+        LIVE_BLOCKED = False; journal("relay back — live resumed"); notify("Relay back. LIVE resumed.")
+    return ok
+
 def check_relay(state):
     """Prove the relay path end to end: /health (which region answers) and a balance read through it."""
     url = relay_url()
@@ -486,7 +502,7 @@ def main():
         day_roll(state)
         if os.path.exists("LIVE") and time.time() - last_bal > 60:
             try:
-                if not relay_url(): raise RuntimeError("phone relay offline")
+                if not relay_alive(): raise RuntimeError("relay offline")
                 b = live_balance()
                 if LIVE_BLOCKED and relay_url() and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
                     LIVE_BLOCKED = False; commit(state, "survivor: funds landed"); state = fresh_state(); P = params(); dirty = True
