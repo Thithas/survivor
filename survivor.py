@@ -314,6 +314,17 @@ def record(state, p, pnl, winner):
     msg = f"closed {p['type']} {p['slug']} pnl {pnl:+.2f} | today {state['today_pnl_usd']:+.2f} | bankroll {state['bankroll_usd']:.2f}"
     journal(msg); notify(msg)
 
+def redispatch():
+    """GitHub's cron is unreliable on quiet repos: start the next run ourselves when this one ends."""
+    pat, repo = os.environ.get("GH_PAT"), os.environ.get("GITHUB_REPOSITORY")
+    if not (pat and repo): return
+    try:
+        r = requests.post(f"https://api.github.com/repos/{repo}/actions/workflows/survivor.yml/dispatches",
+                          headers={"Authorization": f"Bearer {pat}", "Accept": "application/vnd.github+json"},
+                          json={"ref": "main"}, timeout=10)
+        log("redispatch", r.status_code)
+    except Exception as e: log("redispatch failed", e)
+
 # ---------- loop ----------
 def main():
     P = params()
@@ -358,11 +369,12 @@ def main():
             commit(state); last_commit = time.time(); dirty = False
         if RESTART:
             journal("code updated on main, restarting on next run"); notify("code updated, restarting")
-            commit(state, "survivor: restart for new code"); return
+            commit(state, "survivor: restart for new code"); redispatch(); return
         time.sleep(1 if state.get("diag", {}).get("hot") else 2)
     journal(f"run end: {scans} scans, mode {state['mode']}, bankroll {state['bankroll_usd']:.2f}, "
             f"today {state['today_pnl_usd']:+.2f}, open {len(state['open_positions'])}, stats {state['stats']}")
     commit(state, "survivor: run end")
+    if state["mode"] != "DEAD" and not os.path.exists("HALT"): redispatch()
 
 if __name__ == "__main__":
     main()
