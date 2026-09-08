@@ -10,323 +10,264 @@
   :root{--bg:#E8ECEF;--ink:#16212B;--muted:#66737E;--line:#CBD3D9;--up:#0E7C7B;--down:#B3261E;--warn:#B7791F;--sleep:#5B6B7A;--soft:#F4F6F7}
   *{box-sizing:border-box}
   html{background:var(--bg)}
-  body{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;color:var(--ink);font-size:15px;line-height:1.45;
-       font-variant-numeric:tabular-nums;max-width:680px;padding:18px 16px 48px;margin-inline:auto}
+  body{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;color:var(--ink);font-size:15px;line-height:1.45;font-variant-numeric:tabular-nums;max-width:720px;padding:18px 14px 48px;margin-inline:auto}
   h1{font-size:20px;font-weight:600;letter-spacing:.06em;margin:0}
   header{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
   .status{color:var(--muted);font-size:13.5px}
   .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--sleep);margin-right:6px;vertical-align:middle}
   .dot.alive{background:var(--up)} .dot.warn{background:var(--warn)} .dot.dead{background:var(--down)}
+  .clock{display:flex;align-items:baseline;gap:14px;margin-top:18px}
+  .clock .t{font-size:56px;font-weight:600;line-height:1;letter-spacing:-.03em;min-width:3ch}
+  .clock .sub{color:var(--muted);font-size:13.5px}
+  .bar{height:6px;background:var(--line);border-radius:3px;margin:10px 0 14px;overflow:hidden} .bar div{height:100%;background:var(--ink);width:0}
 
-  .live{margin-top:22px}
-  .clock{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-  .clock .t{font-size:64px;font-weight:600;line-height:1;letter-spacing:-.03em;min-width:3ch}
-  .clock .slug{color:var(--muted);font-size:13.5px}
-  .bar{height:6px;background:var(--line);border-radius:3px;margin:12px 0 18px;overflow:hidden}
-  .bar div{height:100%;background:var(--ink);width:0}
-  .sides{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .side{padding:14px 14px 12px;border-radius:6px;background:var(--soft);border-left:5px solid var(--line)}
-  .side.up{border-left-color:var(--up)} .side.down{border-left-color:var(--down)}
-  .side .name{font-weight:600;font-size:14px}
-  .side .ask{font-size:40px;font-weight:600;line-height:1.1;margin:4px 0 2px}
-  .side .bidsz{color:var(--muted);font-size:13px}
-  .side.fav{outline:2px solid currentColor}
-  .side.up.fav{color:var(--up)} .side.down.fav{color:var(--down)}
-  .spot{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-  .spot div span{display:block;font-size:13px;color:var(--muted)} .spot div b{font-size:19px;font-weight:500}
-  .verdict{margin-top:18px;padding:14px;border-radius:6px;background:var(--ink);color:#fff;font-size:15px;line-height:1.4}
-  .verdict b{font-weight:600}
-  .verdict.trade{background:var(--up)} .verdict.err{background:var(--down)}
-  svg.tape{width:100%;height:70px;display:block;margin-top:14px}
-  .legend{color:var(--muted);font-size:12.5px;margin-top:4px}
+  .board{width:100%;border-collapse:collapse}
+  .board td,.board th{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-size:14.5px}
+  .board th{font-weight:500;color:var(--muted);font-size:13px}
+  .board td:first-child,.board th:first-child{text-align:left;font-weight:600}
+  .board tr.sel td{background:var(--soft)}
+  .board tr{cursor:pointer}
+  .board .v{font-size:12.5px;color:var(--muted);text-align:left;white-space:normal;max-width:180px}
+  .board tr.buy td{background:#E3F2EF} .board tr.buy .v{color:var(--up);font-weight:600}
+  .pos{color:var(--up)} .neg{color:var(--down)}
+  .detail{margin-top:14px;padding:12px 14px;border-radius:6px;background:var(--soft)}
+  .detail .verdict{font-size:15px;line-height:1.4}
+  .detail b{font-weight:600}
+  svg.tape{width:100%;height:64px;display:block;margin-top:10px}
+  .act{margin-top:10px;padding:12px 14px;border-radius:6px;background:#E3F2EF;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .act.on{display:flex} .act a{background:var(--up);color:#fff;text-decoration:none;padding:10px 14px;border-radius:5px;font-weight:600;white-space:nowrap}
+  .toolbar{display:flex;gap:8px;margin-top:10px}
+  button{font:inherit;font-size:13.5px;padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:5px;color:var(--ink)} button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 
-  section{margin-top:32px;border-top:1px solid var(--line);padding-top:14px}
+  section{margin-top:30px;border-top:1px solid var(--line);padding-top:14px}
   h2{font-size:15px;font-weight:600;margin:0 0 4px}
   .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
   table{width:100%;border-collapse:collapse;font-size:14px}
   th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
-  th:first-child,td:first-child{text-align:left}
-  th{font-weight:500;color:var(--muted)}
-  .pos{color:var(--up)} .neg{color:var(--down)}
+  th:first-child,td:first-child{text-align:left} th{font-weight:500;color:var(--muted)}
   .ev-good{background:#E3F2EF} .ev-bad{background:#F7E6E5}
   .empty{color:var(--muted);font-size:14px;padding:8px 0}
-  .win{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:middle;margin-right:6px}
-  details{margin-top:24px;border-top:1px solid var(--line);padding-top:10px}
-  summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between}
-  summary::after{content:"+";color:var(--muted)} details[open] summary::after{content:"–"}
-  .vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px;margin:14px 0 6px}
-  .vitals div span{display:block;font-size:13px;color:var(--muted)} .vitals div b{font-size:18px;font-weight:500}
-  .mode.NORMAL{color:var(--up)} .mode.CAUTIOUS{color:var(--warn)} .mode.HIBERNATE{color:var(--sleep)} .mode.DEAD{color:var(--down)}
-  .journal{font-size:13.5px;margin:0;padding:0;list-style:none}
-  .journal li{padding:6px 0;border-bottom:1px solid var(--line)} .journal li time{color:var(--muted);margin-right:8px}
-  .act{margin-top:10px;padding:12px 14px;border-radius:6px;background:#E3F2EF;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .act.on{display:flex}
-  .act a{background:var(--up);color:#fff;text-decoration:none;padding:10px 14px;border-radius:5px;font-weight:600;white-space:nowrap}
-  .toolbar{display:flex;gap:8px;margin-top:10px}
-  button{font:inherit;font-size:13.5px;padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:5px;color:var(--ink)}
-  button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .rules{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;font-size:14px}
+  .rules div span{display:block;color:var(--muted);font-size:12.5px} .rules div b{font-weight:500}
+  .meter{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:4px} .meter div{height:100%;background:var(--warn)}
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;margin:0 0 12px}
   .stats div span{display:block;font-size:12.5px;color:var(--muted)} .stats div b{font-size:18px;font-weight:500}
+  .mode.NORMAL{color:var(--up)} .mode.CAUTIOUS{color:var(--warn)} .mode.HIBERNATE{color:var(--sleep)} .mode.DEAD{color:var(--down)}
+  details{margin-top:24px;border-top:1px solid var(--line);padding-top:10px}
+  summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between} summary::after{content:"+";color:var(--muted)} details[open] summary::after{content:"–"}
+  .journal{font-size:13.5px;margin:0;padding:0;list-style:none} .journal li{padding:6px 0;border-bottom:1px solid var(--line)} .journal li time{color:var(--muted);margin-right:8px}
   footer{margin-top:36px;color:var(--muted);font-size:13px} footer a{color:var(--ink)}
 </style>
 </head>
 <body>
-<header>
-  <h1>SURVIVOR</h1>
-  <div class="status"><span class="dot" id="dot"></span><span id="run">connecting…</span></div>
-</header>
+<header><h1>SURVIVOR</h1><div class="status"><span class="dot" id="dot"></span><span id="run">connecting…</span></div></header>
 
-<div class="live">
-  <div class="clock"><div class="t" id="left">—</div><div class="slug" id="slug">finding the live window…</div></div>
-  <div class="bar"><div id="prog"></div></div>
-  <div class="sides">
-    <div class="side up" id="side-up"><div class="name">Up</div><div class="ask" id="up-ask">—</div><div class="bidsz" id="up-meta">ask · size</div></div>
-    <div class="side down" id="side-down"><div class="name">Down</div><div class="ask" id="down-ask">—</div><div class="bidsz" id="down-meta">ask · size</div></div>
-  </div>
-  <div class="spot">
-    <div><span>BTC now</span><b id="spot">—</b></div>
-    <div><span>window open</span><b id="open">—</b></div>
-    <div><span>move</span><b id="move">—</b></div>
-  </div>
-  <div class="verdict" id="verdict">Waiting for first tick…</div>
-  <div class="act" id="act"><div id="act-text"></div><a id="act-link" href="#" target="_blank" rel="noopener">Open on Polymarket</a></div>
-  <div class="toolbar"><button id="alerts">Alerts off</button><button id="clear">Clear session</button></div>
-  <svg class="tape" id="tape" viewBox="0 0 600 70" preserveAspectRatio="none"></svg>
-  <div class="legend">Up ask through this window (line) and BTC move in bps (bars, teal up / red down). Up+Down = <span id="sum">—</span>; a taker arb needs &lt; 0.965.</div>
-</div>
+<div class="clock"><div class="t" id="left">—</div><div class="sub" id="sub">finding the live windows…</div></div>
+<div class="bar"><div id="prog"></div></div>
+
+<table class="board" id="board"><thead><tr><th>market</th><th>Up</th><th>Down</th><th>move</th><th>Σ</th><th class="v" style="text-align:left">rule says</th></tr></thead><tbody></tbody></table>
+
+<div class="detail" id="detail"><div class="verdict" id="verdict">Tap a row to follow that market.</div><svg class="tape" id="tape" viewBox="0 0 600 64" preserveAspectRatio="none"></svg></div>
+<div class="act" id="act"><div id="act-text"></div><a id="act-link" href="#" target="_blank" rel="noopener">Open on Polymarket</a></div>
+<div class="toolbar"><button id="alerts">Alerts off</button><button id="clear">Clear session</button></div>
+
+<section>
+  <h2>Rules in force</h2>
+  <p class="hint">Hard limits are in code and never move. Entry/exit numbers come from params.json and hot-reload into the bot every 2 minutes.</p>
+  <div class="rules" id="rules"></div>
+</section>
 
 <section>
   <h2>Signals this session</h2>
-  <p class="hint">Every time the rule flipped to BUY while this page was open, then checked against what actually resolved. PnL is per 5 shares, after fee.</p>
+  <p class="hint">Every time the rule fired on any market while this page was open, checked against what resolved. PnL per 5 shares, after fee.</p>
   <div class="stats"><div><span>fired</span><b id="sg-n">0</b></div><div><span>hit rate</span><b id="sg-hit">—</b></div><div><span>avg edge</span><b id="sg-edge">—</b></div><div><span>pnl / 5 sh</span><b id="sg-pnl">—</b></div></div>
-  <table id="signals"><thead><tr><th>time</th><th>side @ ask</th><th>T−</th><th>move</th><th>edge</th><th>result</th></tr></thead><tbody></tbody></table>
-  <p class="empty" id="signals-empty">Nothing fired yet. Leave the page open through a few windows.</p>
+  <table id="signals"><thead><tr><th>time</th><th>market</th><th>side @ ask</th><th>T−</th><th>move</th><th>peers</th><th>result</th></tr></thead><tbody></tbody></table>
+  <p class="empty" id="signals-empty">Nothing fired yet.</p>
 </section>
 
 <section>
   <h2>Bot actions</h2>
-  <p class="hint">Positions the bot holds right now, marked to the live book, and its last fills.</p>
-  <table id="positions"><thead><tr><th>window</th><th>type</th><th>stake</th><th>now</th><th>status</th></tr></thead><tbody></tbody></table>
+  <div class="stats"><div><span>bankroll</span><b id="bank">—</b></div><div><span>today</span><b id="today">—</b></div><div><span>mode</span><b id="mode" class="mode">—</b></div><div><span>closed · win</span><b id="closed">—</b></div></div>
+  <table id="positions"><thead><tr><th>market</th><th>type</th><th>stake</th><th>now</th><th>status</th></tr></thead><tbody></tbody></table>
   <p class="empty" id="positions-empty">No open positions.</p>
 </section>
 
 <section>
-  <h2>Signal analytics</h2>
-  <p class="hint">From the bot's recorded windows. "Called by T−30" = the T−30 move sign matched the winner. "Decided early" = one side already asked ≥ 0.90 at T−60.</p>
-  <div class="stats"><div><span>windows</span><b id="an-n">0</b></div><div><span>called by T−30</span><b id="an-30">—</b></div><div><span>decided early</span><b id="an-early">—</b></div><div><span>winner ask @T−15</span><b id="an-ask">—</b></div></div>
-  <table id="dist"><thead><tr><th>|move| at T−30</th><th>windows</th><th>sign right</th><th>avg winner ask</th></tr></thead><tbody></tbody></table>
+  <h2>All markets, one picture</h2>
+  <p class="hint">From every window the bot recorded, all assets pooled. "Called by T−30/T−60" = the move's sign at that point matched the winner. "Decided by T−60" = one side already asked ≥ 0.90.</p>
+  <div class="stats"><div><span>windows</span><b id="an-n">0</b></div><div><span>called by T−60</span><b id="an-60">—</b></div><div><span>called by T−30</span><b id="an-30">—</b></div><div><span>decided by T−60</span><b id="an-early">—</b></div></div>
+  <table id="byasset"><thead><tr><th>asset</th><th>windows</th><th>called T−60</th><th>called T−30</th><th>decided T−60</th><th>winner ask T−60</th></tr></thead><tbody></tbody></table>
 </section>
 
 <section>
-  <h2>Is there an edge?</h2>
-  <p class="hint">Every window the bot recorded: if the move at T−seconds pointed at the winner, and what that side cost. EV per share after the 7%·p(1−p) fee. Green rows are paying, once n ≥ 15.</p>
+  <h2>Is there an edge? (all assets)</h2>
+  <p class="hint">If the move at T−seconds pointed at the winner, and what that side cost then. EV per share after the 7%·p(1−p) fee. Green once n ≥ 15 and positive.</p>
   <table id="edge"><thead><tr><th>T−</th><th>|move| ≥</th><th>n</th><th>right</th><th>ask</th><th>EV/share</th></tr></thead><tbody></tbody></table>
-  <p class="empty" id="edge-empty">No windows recorded yet — the first one lands ~6 minutes after a window closes.</p>
+  <p class="empty" id="edge-empty">No windows recorded yet.</p>
 </section>
 
-<section>
-  <h2>Last windows</h2>
-  <p class="hint">Move at T−15 vs what actually resolved.</p>
-  <table id="wins"><thead><tr><th>window</th><th>T−15 move</th><th>T−15 asks</th><th>result</th></tr></thead><tbody></tbody></table>
-  <p class="empty" id="wins-empty">Nothing resolved yet.</p>
-</section>
-
-<details><summary>Bot vitals &amp; trades</summary>
-  <div class="vitals">
-    <div><span>bankroll</span><b id="bank">—</b></div><div><span>today</span><b id="today">—</b></div><div><span>mode</span><b id="mode" class="mode">—</b></div>
-    <div><span>open</span><b id="open-n">—</b></div><div><span>closed</span><b id="closed">—</b></div><div><span>win rate</span><b id="wr">—</b></div>
-  </div>
-  <table id="trades"><thead><tr><th>when</th><th>type</th><th>stake</th><th>pnl</th></tr></thead><tbody></tbody></table>
-  <p class="empty" id="trades-empty">No closed trades yet.</p>
-</details>
+<details><summary>Trades</summary><table id="trades"><thead><tr><th>when</th><th>market</th><th>type</th><th>stake</th><th>pnl</th><th>note</th></tr></thead><tbody></tbody></table><p class="empty" id="trades-empty">No closed trades yet.</p></details>
 <details><summary>Journal</summary><ul class="journal" id="journal"></ul></details>
-
-<footer>Live prices straight from Polymarket and Coinbase, every second. Recorded windows, trades and journal from <a id="repo" href="#">the repo</a>, every 60 s.</footer>
+<footer>Live prices from Polymarket and Coinbase every 1–2 s. Recorded windows, trades, journal and params from <a id="repo" href="#">the repo</a> every 60 s.</footer>
 
 <script>
-const OWNER="Thithas", REPO="survivor", BRANCH="main", FEE=0.07;
-const RAW=`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`;
-const GAMMA="https://gamma-api.polymarket.com", CLOB="https://clob.polymarket.com";
-const EXPLORE={momentum_min_move_bps:3,momentum_min_confidence:0.55,momentum_window_sec:45,momentum_max_ask:0.90,min_liquidity_usd:20};
+const OWNER="Thithas", REPO="survivor", BRANCH="main", FEE=0.07, ASSETS={btc:"BTC",eth:"ETH",sol:"SOL",xrp:"XRP",doge:"DOGE"};
+const HARD={floor:10,daily:5,cap:0.25,slots:2,arbs:3};
+const RAW=`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`, GAMMA="https://gamma-api.polymarket.com", CLOB="https://clob.polymarket.com";
 document.getElementById("repo").href=`https://github.com/${OWNER}/${REPO}`;
-const $=id=>document.getElementById(id);
+const $=id=>document.getElementById(id), fee=p=>FEE*p*(1-p);
 const money=v=>(v<0?"−":"")+"$"+Math.abs(v).toFixed(2), signed=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(2);
 const ago=iso=>{const s=(Date.now()-new Date(iso))/1000;return s<90?`${Math.round(s)}s ago`:s<5400?`${Math.round(s/60)}m ago`:`${(s/3600).toFixed(1)}h ago`};
-const fee=p=>FEE*p*(1-p);
-let P={min_edge:0.03,slippage:0.01,fee_rate:0.07,...EXPLORE}, live=false, state={}, opens={};
-let series=[], lastSlug=null, marketsCache=[], marketsAt=0, lastBook={};
-let signals=JSON.parse(localStorage.getItem("sv_signals")||"[]"), alerts=false, lastVerdictKey="";
-const saveSignals=()=>localStorage.setItem("sv_signals",JSON.stringify(signals.slice(-200)));
+let P={min_edge:0.01,slippage:0.01,momentum_min_move_bps:5,momentum_min_confidence:0.60,momentum_window_sec:120,momentum_max_ask:0.85,min_liquidity_usd:20,take_profit_bid:0.97,stop_loss_bid:0.25,stop_loss_min_left_sec:8};
+let live=false, state={}, opens={}, series={}, cache={}, cacheAt={}, books={}, sel="btc", moves={};
+let signals=JSON.parse(localStorage.getItem("sv_signals")||"[]"), alerts=false;
+const saveSignals=()=>localStorage.setItem("sv_signals",JSON.stringify(signals.slice(-300)));
 $("alerts").onclick=()=>{alerts=!alerts;$("alerts").textContent=alerts?"Alerts on":"Alerts off";$("alerts").className=alerts?"on":"";if(alerts&&navigator.vibrate)navigator.vibrate(80)};
 $("clear").onclick=()=>{signals=[];saveSignals();renderSignals()};
-function fire(sig){ // one entry per window+side; first firing wins
-  if(signals.some(x=>x.slug===sig.slug&&x.side===sig.side)) return;
-  signals.push({...sig,ts:new Date().toISOString(),result:null}); saveSignals(); renderSignals();
-  if(alerts){ if(navigator.vibrate) navigator.vibrate([200,100,200]); try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(c.currentTime+.25)}catch{} }
-}
-async function resolveSignals(){
-  for(const sg of signals){ if(sg.result!==null||Date.now()-new Date(sg.end)<60000) continue;
-    try{const ev=await (await fetch(`${GAMMA}/events?slug=${sg.slug}`)).json(); const m=ev[0]?.markets?.[0]; if(!m?.closed) continue;
-      const pr=JSON.parse(m.outcomePrices||"[]").map(Number); if(!pr.length||Math.max(...pr)<0.99) continue;
-      const w=pr.indexOf(Math.max(...pr)); sg.result=(w===0?"Up":"Down"); sg.hit=(sg.side==="UP")===(w===0);
-      sg.pnl=+(5*((sg.hit?1:0)-sg.ask-fee(sg.ask))).toFixed(2)}
-    catch{} }
-  saveSignals(); renderSignals();
-}
-function renderSignals(){
-  const tb=$("signals").querySelector("tbody"); tb.innerHTML="";
-  for(const sg of signals.slice(-20).reverse()){const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${sg.ts.slice(11,16)}</td><td class="${sg.side==="UP"?"pos":"neg"}">${sg.side} @ ${sg.ask.toFixed(2)}</td><td>${sg.left}s</td><td>${signed(sg.mv)}</td><td>${signed(sg.edge)}</td><td>${sg.result===null?"open":(sg.hit?"✓ ":"✗ ")+sg.result+" "+signed(sg.pnl)}</td>`; tb.appendChild(tr)}
-  const done=signals.filter(x=>x.result!==null); $("sg-n").textContent=signals.length;
-  $("sg-hit").textContent=done.length?Math.round(100*done.filter(x=>x.hit).length/done.length)+"%":"—";
-  $("sg-edge").textContent=signals.length?signed(signals.reduce((a,x)=>a+x.edge,0)/signals.length):"—";
-  const pnl=done.reduce((a,x)=>a+x.pnl,0); $("sg-pnl").textContent=done.length?signed(pnl):"—"; $("sg-pnl").className=pnl>0?"pos":pnl<0?"neg":"";
-  $("signals-empty").style.display=signals.length?"none":"block"; $("signals").style.display=signals.length?"table":"none";
-}
-function sizing(ask,conf){
-  const bank=state.bankroll_usd||20, caut=state.mode==="CAUTIOUS", CAP=0.25, FLOOR=10;
-  let stake=bank*Math.min(CAP,P.max_trade_pct||CAP)*conf*(caut?0.5:1); stake=Math.max(stake,5*ask);
-  const shares=Math.floor(stake/ask); return {shares,cost:+(shares*ask).toFixed(2),ok:shares*ask<=bank*CAP+0.01&&bank-shares*ask>=FLOOR};
-}
 
-async function findLive(){
+async function marketFor(a){
   const now=Date.now();
-  if(now-marketsAt>30000||!marketsCache.length){
-    try{const r=await fetch(`${GAMMA}/events?series_slug=btc-up-or-down-5m&closed=false&limit=30&order=endDate&ascending=true`);
-      const ev=await r.json();
-      marketsCache=ev.map(e=>{const m=(e.markets||[])[0]; if(!m||!e.slug?.startsWith("btc-updown-5m-")) return null;
+  if(!cache[a]||now-(cacheAt[a]||0)>30000){
+    try{const ev=await (await fetch(`${GAMMA}/events?series_slug=${a}-up-or-down-5m&closed=false&limit=20&order=endDate&ascending=true`)).json();
+      cache[a]=ev.map(e=>{const m=(e.markets||[])[0]; if(!m||!e.slug?.startsWith(`${a}-updown-5m-`)) return null;
         const ts=+e.slug.split("-").pop(); const start=isNaN(ts)?new Date(m.startDate):new Date(ts*1000);
         const toks=JSON.parse(m.clobTokenIds), outs=JSON.parse(m.outcomes);
-        return {slug:e.slug,start,end:new Date(start.getTime()+300000),up:toks[outs.indexOf("Up")],down:toks[outs.indexOf("Down")]}}).filter(Boolean);
-      marketsAt=now;}
-    catch(e){throw new Error("Polymarket market list unreachable from this browser")}
+        return {asset:a,slug:e.slug,start,end:new Date(start.getTime()+300000),up:toks[outs.indexOf("Up")],down:toks[outs.indexOf("Down")]}}).filter(Boolean);
+      cacheAt[a]=now}catch{cache[a]=cache[a]||[]}
   }
-  return marketsCache.find(m=>m.end>now&&m.start<=now)||marketsCache.find(m=>m.start>now)||null;
+  return cache[a].find(m=>m.end>now&&m.start<=now)||cache[a].find(m=>m.start>now)||null;
 }
-async function book(token){
-  const r=await fetch(`${CLOB}/book?token_id=${token}`); const b=await r.json();
-  const asks=(b.asks||[]).map(a=>[+a.price,+a.size]).sort((x,y)=>x[0]-y[0]);
-  const bids=(b.bids||[]).map(a=>[+a.price,+a.size]).sort((x,y)=>y[0]-x[0]);
-  return {ask:asks[0]?.[0]??null,askSize:asks[0]?.[1]??0,bid:bids[0]?.[0]??null};
-}
-async function spot(){
-  try{const r=await fetch("https://api.coinbase.com/v2/prices/BTC-USD/spot");return +(await r.json()).data.amount}
-  catch{const r=await fetch("https://api.kraken.com/0/public/Ticker?pair=XBTUSD");return +Object.values((await r.json()).result)[0].c[0]}
-}
+async function book(token){const b=await (await fetch(`${CLOB}/book?token_id=${token}`)).json();
+  const asks=(b.asks||[]).map(a=>[+a.price,+a.size]).sort((x,y)=>x[0]-y[0]), bids=(b.bids||[]).map(a=>[+a.price,+a.size]).sort((x,y)=>y[0]-x[0]);
+  return {ask:asks[0]?.[0]??null,askSize:asks[0]?.[1]??0,bid:bids[0]?.[0]??null}}
+async function spots(){const r=await (await fetch("https://api.coinbase.com/v2/exchange-rates?currency=USD")).json(); const out={};
+  for(const [a,sym] of Object.entries(ASSETS)){const v=+r.data.rates[sym]; if(v>0) out[a]=1/v} return out}
 
+let busy=false;
 async function tick(){
+  if(busy) return; busy=true;
   try{
-    const m=await findLive(); if(!m){$("slug").textContent="no live window found";return}
-    const now=Date.now(), left=Math.max(0,(m.end-now)/1000), pre=m.start>now;
-    if(m.slug!==lastSlug){lastSlug=m.slug;series=[];}
-    const [u,d,px]=await Promise.all([book(m.up),book(m.down),spot()]);
-    if(!opens[m.slug]){ if(state.opens?.[m.slug]) opens[m.slug]=state.opens[m.slug]; else if(Math.abs((m.start-now)/1000)<=3) opens[m.slug]=px; }
-    const op=opens[m.slug], mv=op?(px-op)/op*1e4:null;
-    series.push({left,up:u.ask,mv}); if(series.length>400) series.shift();
-    lastBook={slug:m.slug,upBid:u.bid,downBid:d.bid};
-
-    $("left").textContent=pre?`+${Math.ceil((m.start-now)/1000)}`:`${Math.floor(left/60)}:${String(Math.floor(left%60)).padStart(2,"0")}`;
-    $("slug").textContent=(pre?"next window · ":"")+m.slug+` · closes ${m.end.toISOString().slice(11,16)} UTC`;
+    const sp=await spots(); const ms=(await Promise.all(Object.keys(ASSETS).map(marketFor))).filter(Boolean);
+    const now=Date.now(); const rows=[]; moves={};
+    // pass 1: opens + moves
+    for(const m of ms){ if(!opens[m.slug]){ if(state.opens?.[m.slug]) opens[m.slug]=state.opens[m.slug]; else if(Math.abs((m.start-now)/1000)<=3&&sp[m.asset]) opens[m.slug]=sp[m.asset]; }
+      const op=opens[m.slug]; if(op&&sp[m.asset]&&m.start<=now) moves[m.asset]=(sp[m.asset]-op)/op*1e4 }
+    // pass 2: books
+    const bk=await Promise.all(ms.map(async m=>{try{const [u,d]=await Promise.all([book(m.up),book(m.down)]);return [m.slug,u,d]}catch{return [m.slug,null,null]}}));
+    for(const [slug,u,d] of bk) books[slug]={u,d};
+    const ref=ms.find(m=>m.start<=now)||ms[0]; const left=ref?Math.max(0,(ref.end-now)/1000):0; const pre=ref&&ref.start>now;
+    $("left").textContent=ref?(pre?`+${Math.ceil((ref.start-now)/1000)}`:`${Math.floor(left/60)}:${String(Math.floor(left%60)).padStart(2,"0")}`):"—";
+    $("sub").textContent=ref?`${ms.length} live windows · close ${ref.end.toISOString().slice(11,16)} UTC`:"no live windows";
     $("prog").style.width=(pre?0:(300-left)/3)+"%";
-    $("up-ask").textContent=u.ask==null?"—":u.ask.toFixed(2); $("up-meta").textContent=`bid ${u.bid?.toFixed(2)??"—"} · ${u.askSize} sh at ask`;
-    $("down-ask").textContent=d.ask==null?"—":d.ask.toFixed(2); $("down-meta").textContent=`bid ${d.bid?.toFixed(2)??"—"} · ${d.askSize} sh at ask`;
-    $("sum").textContent=(u.ask!=null&&d.ask!=null)?(u.ask+d.ask).toFixed(2):"—";
-    $("spot").textContent=Math.round(px).toLocaleString(); $("open").textContent=op?Math.round(op).toLocaleString():"not captured";
-    $("move").textContent=mv==null?"—":`${signed(mv)} bps`; $("move").className=mv>0?"pos":mv<0?"neg":"";
-    verdict(m,left,pre,u,d,mv); tape();
+    const tb=$("board").querySelector("tbody"); tb.innerHTML="";
+    for(const m of ms){
+      const {u,d}=books[m.slug]||{}; const mv=moves[m.asset]; const l=Math.max(0,(m.end-now)/1000);
+      const v=verdict(m,l,m.start>now,u,d,mv);
+      (series[m.slug]=series[m.slug]||[]).push({up:u?.ask??null,mv:mv??null}); if(series[m.slug].length>300) series[m.slug].shift();
+      const tr=document.createElement("tr"); tr.className=(m.asset===sel?"sel ":"")+(v.buy?"buy":""); tr.onclick=()=>{sel=m.asset;renderDetail()};
+      tr.innerHTML=`<td>${ASSETS[m.asset]}</td><td class="${mv>=0&&u?.ask?'pos':''}">${u?.ask==null?"—":u.ask.toFixed(2)}</td><td class="${mv<0&&d?.ask?'neg':''}">${d?.ask==null?"—":d.ask.toFixed(2)}</td><td class="${mv>0?"pos":mv<0?"neg":""}">${mv==null?"—":signed(mv)}</td><td>${u?.ask!=null&&d?.ask!=null?(u.ask+d.ask).toFixed(2):"—"}</td><td class="v">${v.short}</td>`;
+      tb.appendChild(tr);
+      if(v.buy) fire({slug:m.slug,asset:m.asset,end:m.end.toISOString(),side:v.side,ask:v.ask,mv:+mv.toFixed(1),conf:+v.conf.toFixed(2),edge:+v.edge.toFixed(3),left:Math.round(l),peers:v.peers});
+      if(m.asset===sel){ $("verdict").innerHTML=`<b>${ASSETS[m.asset]}</b> · ${m.slug} · ${v.long}`; tape(m.slug);
+        if(v.buy){const sz=sizing(v.ask,v.conf); $("act-text").innerHTML=`<b>${sz.shares} shares ${v.side} ${ASSETS[m.asset]} at ${v.ask.toFixed(2)} = $${sz.cost}</b><br><span style="color:var(--muted);font-size:13px">${sz.ok?"within the bot's caps":"over the bot's cap — it would skip this"}</span>`; $("act-link").href=`https://polymarket.com/event/${m.slug}`; $("act").className="act on"} else $("act").className="act"; }
+    }
     setStatus("alive");
-  }catch(e){ $("verdict").textContent=e.message||"tick failed"; $("verdict").className="verdict err"; setStatus("warn"); }
+  }catch(e){ $("verdict").textContent="Live feed error: "+(e.message||e); setStatus("warn") }
+  busy=false;
 }
-
+function renderDetail(){ /* next tick repaints */ }
 function verdict(m,left,pre,u,d,mv){
-  const v=$("verdict"); v.className="verdict"; $("side-up").classList.remove("fav"); $("side-down").classList.remove("fav");
-  const why=[];
-  $("act").className="act";
-  if(pre){v.textContent="Window hasn't opened. The open price is captured at the first second.";return}
-  if(mv==null){v.textContent="No open price for this window (the page or the bot must be watching at the first second). Momentum rule can't run; arb rule still can.";return}
+  const r={buy:false,short:"",long:""};
+  if(pre){r.short="opens soon";r.long="Window hasn't opened yet.";return r}
+  if(!u||!d){r.short="no book";r.long="Order book unavailable.";return r}
+  if(u.ask!=null&&d.ask!=null){const g=1-(u.ask+d.ask)-fee(u.ask)-fee(d.ask); if(g>=P.min_edge){r.buy=true;r.side="BOTH";r.ask=u.ask+d.ask;r.conf=1;r.edge=g;r.peers="—";r.short=`ARB Σ ${(u.ask+d.ask).toFixed(2)}`;r.long=`<b>ARB</b> Up+Down = ${(u.ask+d.ask).toFixed(3)} — buy both, +${signed(g)}/share riskless.`;return r}}
+  if(mv==null){r.short="no open px";r.long="No open price captured for this window; momentum rule can't run.";return r}
   const upFav=mv>=0, ask=upFav?u.ask:d.ask, size=upFav?u.askSize:d.askSize;
-  if(ask!=null&&u.ask!=null&&d.ask!=null&&1-(u.ask+d.ask)-fee(u.ask)-fee(d.ask)-P.slippage>=P.min_edge){v.className="verdict trade";v.innerHTML=`<b>ARB</b> Up+Down = ${(u.ask+d.ask).toFixed(3)} — buy both.`;return}
-  if(left>P.momentum_window_sec){v.textContent=`HOLD — momentum rule starts at T−${P.momentum_window_sec}s. Move so far ${signed(mv)} bps, ${upFav?"Up":"Down"} ask ${ask?.toFixed(2)??"—"}.`;return}
-  const conf=Math.min(0.95,Math.abs(mv)/(2*P.momentum_min_move_bps));
-  if(Math.abs(mv)<P.momentum_min_move_bps) why.push(`move ${Math.abs(mv).toFixed(1)} < ${P.momentum_min_move_bps} bps`);
-  if(conf<P.momentum_min_confidence) why.push(`confidence ${conf.toFixed(2)} < ${P.momentum_min_confidence}`);
-  if(ask==null) why.push("no ask on the favoured side"); else{
-    if(ask>P.momentum_max_ask) why.push(`ask ${ask.toFixed(2)} > ${P.momentum_max_ask}`);
-    if(ask*size<P.min_liquidity_usd) why.push(`only $${(ask*size).toFixed(0)} at ask`);
-    const net=conf-ask-fee(ask)-P.slippage; if(net<P.min_edge) why.push(`edge ${signed(net)} < ${P.min_edge}`);
-  }
-  (upFav?$("side-up"):$("side-down")).classList.add("fav");
-  if(why.length){v.textContent=`HOLD at T−${Math.round(left)}s — ${why.join(", ")}.`;$("act").className="act"}
-  else{const edge=conf-ask-fee(ask)-P.slippage, side=upFav?"UP":"DOWN", sz=sizing(ask,conf);
-    v.className="verdict trade";v.innerHTML=`<b>BUY ${side} @ ${ask.toFixed(2)}</b> — move ${signed(mv)} bps, confidence ${conf.toFixed(2)}, edge ${signed(edge)}/share ${live?"":"(bot is on paper)"}`;
-    $("act-text").innerHTML=`<b>${sz.shares} shares ${side} at ${ask.toFixed(2)} = $${sz.cost}</b><br><span style="color:var(--muted);font-size:13px">${sz.ok?"within the bot's caps":"over the bot's cap — it would skip this"}</span>`;
-    $("act-link").href=`https://polymarket.com/event/${m.slug}`; $("act").className="act on";
-    fire({slug:m.slug,end:m.end.toISOString(),side,ask,mv:+mv.toFixed(1),conf:+conf.toFixed(2),edge:+edge.toFixed(3),left:Math.round(left)})}
+  if(left>P.momentum_window_sec){r.short=`wait T−${P.momentum_window_sec}`;r.long=`HOLD — momentum rule starts at T−${P.momentum_window_sec}s. Move ${signed(mv)} bps, ${upFav?"Up":"Down"} ask ${ask?.toFixed(2)??"—"}.`;return r}
+  let conf=Math.min(0.95,Math.abs(mv)/(2*P.momentum_min_move_bps)); let agree=0,against=0;
+  for(const [a2,v] of Object.entries(moves)){ if(a2===m.asset||Math.abs(v)<P.momentum_min_move_bps/2) continue; if((v>0)===upFav) agree++; else against++ }
+  conf=Math.min(0.95,conf+0.08*agree-0.10*against); r.peers=`${agree}/${against}`;
+  const why=[]; if(Math.abs(mv)<P.momentum_min_move_bps) why.push(`move ${Math.abs(mv).toFixed(1)}<${P.momentum_min_move_bps}`);
+  if(conf<P.momentum_min_confidence) why.push(`conf ${conf.toFixed(2)}<${P.momentum_min_confidence}`);
+  if(ask==null) why.push("no ask"); else { if(ask>P.momentum_max_ask) why.push(`ask ${ask.toFixed(2)}>${P.momentum_max_ask}`); if(ask*size<P.min_liquidity_usd) why.push(`$${(ask*size).toFixed(0)} at ask`); const net=conf-ask-fee(ask)-P.slippage; if(net<P.min_edge) why.push(`edge ${signed(net)}`) }
+  if(why.length){r.short=`hold: ${why[0]}`;r.long=`HOLD at T−${Math.round(left)}s — ${why.join(", ")}. Peers ${r.peers}.`;return r}
+  r.buy=true;r.side=upFav?"UP":"DOWN";r.ask=ask;r.conf=conf;r.edge=conf-ask-fee(ask)-P.slippage;
+  r.short=`BUY ${r.side} @ ${ask.toFixed(2)}`;r.long=`<b>BUY ${r.side} @ ${ask.toFixed(2)}</b> — move ${signed(mv)} bps, confidence ${conf.toFixed(2)} (peers ${r.peers}), edge ${signed(r.edge)}/share.`;
+  return r;
 }
-
-function tape(){
-  const svg=$("tape"); if(series.length<2){svg.innerHTML="";return}
-  const X=i=>i/(series.length-1)*600, ups=series.map(s=>s.up).filter(x=>x!=null), mvs=series.map(s=>s.mv).filter(x=>x!=null);
-  const mmax=Math.max(5,...mvs.map(Math.abs)); let out="";
-  series.forEach((s,i)=>{if(s.mv==null)return; const h=Math.abs(s.mv)/mmax*30; out+=`<rect x="${X(i)-1}" y="${s.mv>=0?35-h:35}" width="2" height="${h}" fill="${s.mv>=0?"#0E7C7B":"#B3261E"}" opacity=".55"/>`});
-  if(ups.length>1){out+=`<polyline fill="none" stroke="#16212B" stroke-width="1.5" points="${series.map((s,i)=>s.up==null?"":X(i)+","+(68-s.up*66)).join(" ")}"/>`}
-  out+=`<line x1="0" x2="600" y1="35" y2="35" stroke="#CBD3D9"/>`; svg.innerHTML=out;
-}
+function sizing(ask,conf){const bank=state.bankroll_usd||20, caut=state.mode==="CAUTIOUS"; let stake=bank*Math.min(HARD.cap,P.max_trade_pct||HARD.cap)*conf*(caut?0.5:1); stake=Math.max(stake,5*ask);
+  const shares=Math.floor(stake/ask); return {shares,cost:+(shares*ask).toFixed(2),ok:shares*ask<=bank*HARD.cap+0.01&&bank-shares*ask>=HARD.floor}}
+function tape(slug){const s=series[slug]||[]; const svg=$("tape"); if(s.length<2){svg.innerHTML="";return}
+  const X=i=>i/(s.length-1)*600, mvs=s.map(x=>x.mv).filter(x=>x!=null), mmax=Math.max(5,...mvs.map(Math.abs)); let out="";
+  s.forEach((x,i)=>{if(x.mv==null)return;const h=Math.abs(x.mv)/mmax*28;out+=`<rect x="${X(i)-1}" y="${x.mv>=0?32-h:32}" width="2" height="${h}" fill="${x.mv>=0?"#0E7C7B":"#B3261E"}" opacity=".55"/>`});
+  out+=`<polyline fill="none" stroke="#16212B" stroke-width="1.5" points="${s.map((x,i)=>x.up==null?"":X(i)+","+(62-x.up*60)).join(" ")}"/><line x1="0" x2="600" y1="32" y2="32" stroke="#CBD3D9"/>`; svg.innerHTML=out}
+function fire(sig){ if(signals.some(x=>x.slug===sig.slug&&x.side===sig.side)) return; signals.push({...sig,ts:new Date().toISOString(),result:null}); saveSignals(); renderSignals();
+  if(alerts){ if(navigator.vibrate) navigator.vibrate([200,100,200]); try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(c.currentTime+.25)}catch{} } }
+async function resolveSignals(){ for(const sg of signals){ if(sg.result!==null||Date.now()-new Date(sg.end)<60000) continue;
+    try{const ev=await (await fetch(`${GAMMA}/events?slug=${sg.slug}`)).json(); const m=ev[0]?.markets?.[0]; if(!m?.closed) continue; const pr=JSON.parse(m.outcomePrices||"[]").map(Number); if(!pr.length||Math.max(...pr)<0.99) continue;
+      const w=pr.indexOf(Math.max(...pr)); sg.result=w===0?"Up":"Down";
+      if(sg.side==="BOTH"){sg.hit=true;sg.pnl=+(5*(1-sg.ask)).toFixed(2)} else {sg.hit=(sg.side==="UP")===(w===0); sg.pnl=+(5*((sg.hit?1:0)-sg.ask-fee(sg.ask))).toFixed(2)} }catch{} }
+  saveSignals(); renderSignals() }
+function renderSignals(){ const tb=$("signals").querySelector("tbody"); tb.innerHTML="";
+  for(const sg of signals.slice(-25).reverse()){const tr=document.createElement("tr"); tr.innerHTML=`<td>${sg.ts.slice(11,16)}</td><td>${ASSETS[sg.asset]||sg.asset||"BTC"}</td><td class="${sg.side==="UP"?"pos":sg.side==="DOWN"?"neg":""}">${sg.side} @ ${sg.ask.toFixed(2)}</td><td>${sg.left}s</td><td>${signed(sg.mv)}</td><td>${sg.peers??"—"}</td><td>${sg.result===null?"open":(sg.hit?"✓ ":"✗ ")+sg.result+" "+signed(sg.pnl)}</td>`; tb.appendChild(tr)}
+  const done=signals.filter(x=>x.result!==null); $("sg-n").textContent=signals.length; $("sg-hit").textContent=done.length?Math.round(100*done.filter(x=>x.hit).length/done.length)+"%":"—";
+  $("sg-edge").textContent=signals.length?signed(signals.reduce((a,x)=>a+x.edge,0)/signals.length):"—"; const pnl=done.reduce((a,x)=>a+x.pnl,0); $("sg-pnl").textContent=done.length?signed(pnl):"—"; $("sg-pnl").className=pnl>0?"pos":pnl<0?"neg":"";
+  $("signals-empty").style.display=signals.length?"none":"block"; $("signals").style.display=signals.length?"table":"none" }
 
 async function get(path){const r=await fetch(RAW+path+"?t="+Date.now(),{cache:"no-store"});return r.ok?r.text():""}
 const lines=t=>t.split("\n").filter(Boolean), parse=t=>lines(t).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
 async function loadRepo(){
   const [st,tr,jo,wi,pa,lv]=await Promise.all(["state.json","trades.jsonl","journal.md","windows.jsonl","params.json","LIVE"].map(get));
-  try{state=JSON.parse(st)}catch{} try{const p=JSON.parse(pa);live=!!lv;P={...P,...p,...(live?{}:EXPLORE)}}catch{}
+  try{state=JSON.parse(st)}catch{} try{P={...P,...JSON.parse(pa)}}catch{} live=!!lv;
   const trades=parse(tr), windows=parse(wi), journal=lines(jo).map(l=>l.replace(/^- /,""));
-  const rows=[]; for(const [label,lo,hi] of [[45,40,50],[30,25,35],[15,10,20]]) for(const th of [3,6,10]){
-    let n=0,right=0,askSum=0;
-    for(const w of windows){ if(w.winner!==0&&w.winner!==1) continue;
-      const s=(w.snaps||[]).find(x=>x.t>=lo&&x.t<=hi&&x.mv!=null); if(!s||Math.abs(s.mv)<th) continue;
-      const pred=s.mv>=0?0:1, ask=pred===0?s.up:s.down; if(ask==null) continue; n++; right+=pred===w.winner; askSum+=ask }
-    if(n){const acc=right/n,ask=askSum/n; rows.push({label,th,n,acc,ask,ev:acc-ask-fee(ask)})}}
-  const eb=$("edge").querySelector("tbody"); eb.innerHTML="";
-  for(const r of rows){const tr=document.createElement("tr"); tr.className=r.n>=15?(r.ev>0?"ev-good":"ev-bad"):"";
-    tr.innerHTML=`<td>${r.label}s</td><td>${r.th} bps</td><td>${r.n}</td><td>${Math.round(r.acc*100)}%</td><td>${r.ask.toFixed(2)}</td><td>${signed(r.ev)}</td>`; eb.appendChild(tr)}
-  $("edge-empty").style.display=rows.length?"none":"block"; $("edge").style.display=rows.length?"table":"none";
-  // signal analytics
+  // rules panel
+  const t=state.today_pnl_usd??0, bank=state.bankroll_usd??0, ops=state.open_positions||[], risk=ops.filter(p=>p.type!=="ARB").length, arbs=ops.filter(p=>p.type==="ARB").length;
+  $("rules").innerHTML=`
+    <div><span>floor (dead below)</span><b>$${HARD.floor}</b><div class="meter"><div style="width:${Math.min(100,Math.max(0,(bank-HARD.floor)/(Math.max(bank,20)-HARD.floor)*100))}%;background:var(--up)"></div></div></div>
+    <div><span>daily loss cap → hibernate</span><b>${signed(t)} of −$${HARD.daily}</b><div class="meter"><div style="width:${Math.min(100,Math.max(0,-t/HARD.daily*100))}%"></div></div></div>
+    <div><span>per trade</span><b>≤ ${HARD.cap*100}% of bankroll, 5-share min</b></div>
+    <div><span>positions</span><b>${risk}/${HARD.slots} directional · ${arbs}/${HARD.arbs} arb</b></div>
+    <div><span>open when</span><b>move ≥ ${P.momentum_min_move_bps} bps, conf ≥ ${P.momentum_min_confidence}, ask ≤ ${P.momentum_max_ask}, last ${P.momentum_window_sec}s</b></div>
+    <div><span>arb when</span><b>Up+Down − fees ≥ ${P.min_edge}</b></div>
+    <div><span>close</span><b>take profit bid ≥ ${P.take_profit_bid} · stop bid ≤ ${P.stop_loss_bid} (≥${P.stop_loss_min_left_sec}s left)</b></div>
+    <div><span>mode</span><b class="mode ${state.mode||""}">${state.mode||"—"}${live?" · LIVE":" · paper"}</b></div>`;
+  // combined analytics
   const res=windows.filter(w=>w.winner===0||w.winner===1); $("an-n").textContent=res.length;
   const at=(w,lo,hi)=>(w.snaps||[]).find(x=>x.t>=lo&&x.t<=hi);
-  const c30=res.map(w=>[w,at(w,25,35)]).filter(([w,s])=>s&&s.mv!=null); 
-  $("an-30").textContent=c30.length?Math.round(100*c30.filter(([w,s])=>(s.mv>=0)===(w.winner===0)).length/c30.length)+"%":"—";
-  const e60=res.map(w=>at(w,55,65)).filter(Boolean); $("an-early").textContent=e60.length?Math.round(100*e60.filter(s=>Math.max(s.up??0,s.down??0)>=0.90).length/e60.length)+"%":"—";
-  const a15=res.map(w=>[w,at(w,10,20)]).filter(([w,s])=>s&&(w.winner===0?s.up:s.down)!=null); $("an-ask").textContent=a15.length?(a15.reduce((a,[w,s])=>a+(w.winner===0?s.up:s.down),0)/a15.length).toFixed(2):"—";
-  const db=$("dist").querySelector("tbody"); db.innerHTML="";
-  for(const [lab,lo,hi] of [["0–3 bps",0,3],["3–6 bps",3,6],["6–10 bps",6,10],["10+ bps",10,1e9]]){const g=c30.filter(([w,s])=>Math.abs(s.mv)>=lo&&Math.abs(s.mv)<hi); if(!g.length) continue;
-    const right=g.filter(([w,s])=>(s.mv>=0)===(w.winner===0)).length, wa=g.map(([w,s])=>w.winner===0?s.up:s.down).filter(x=>x!=null);
-    const tr=document.createElement("tr"); tr.innerHTML=`<td>${lab}</td><td>${g.length}</td><td>${Math.round(100*right/g.length)}%</td><td>${wa.length?(wa.reduce((a,b)=>a+b,0)/wa.length).toFixed(2):"—"}</td>`; db.appendChild(tr)}
-  // bot positions marked to live book
-  const pb=$("positions").querySelector("tbody"); pb.innerHTML=""; const ops=state.open_positions||[];
-  for(const p of ops){const tr=document.createElement("tr"); let nowV="—",stat="awaiting resolution";
-    if(p.slug===lastBook.slug){const v=p.legs.reduce((a,l)=>a+(l.ok?l.shares*((l.outcome===0?lastBook.upBid:lastBook.downBid)||0):0),0); nowV=money(v); stat=(v-p.stake>=0?"+":"−")+"$"+Math.abs(v-p.stake).toFixed(2)+" if sold now"}
-    tr.innerHTML=`<td>${p.end.slice(11,16)}</td><td>${p.type}${p.live?"":" (paper)"}</td><td>${money(p.stake)}</td><td>${nowV}</td><td>${stat}</td>`; pb.appendChild(tr)}
+  const called=(ws,lo,hi)=>{const c=ws.map(w=>[w,at(w,lo,hi)]).filter(([w,s])=>s&&s.mv!=null); return c.length?[c.filter(([w,s])=>(s.mv>=0)===(w.winner===0)).length,c.length]:null};
+  const early=ws=>{const e=ws.map(w=>at(w,55,65)).filter(Boolean); return e.length?[e.filter(s=>Math.max(s.up??0,s.down??0)>=0.90).length,e.length]:null};
+  const pct=x=>x?Math.round(100*x[0]/x[1])+"%":"—";
+  $("an-60").textContent=pct(called(res,55,65)); $("an-30").textContent=pct(called(res,25,35)); $("an-early").textContent=pct(early(res));
+  const ab=$("byasset").querySelector("tbody"); ab.innerHTML="";
+  for(const a of Object.keys(ASSETS)){const ws=res.filter(w=>(w.asset||"btc")===a); if(!ws.length) continue;
+    const wa=ws.map(w=>[w,at(w,55,65)]).filter(([w,s])=>s&&(w.winner===0?s.up:s.down)!=null).map(([w,s])=>w.winner===0?s.up:s.down);
+    const tr=document.createElement("tr"); tr.innerHTML=`<td>${ASSETS[a]}</td><td>${ws.length}</td><td>${pct(called(ws,55,65))}</td><td>${pct(called(ws,25,35))}</td><td>${pct(early(ws))}</td><td>${wa.length?(wa.reduce((x,y)=>x+y,0)/wa.length).toFixed(2):"—"}</td>`; ab.appendChild(tr)}
+  // edge table
+  const rows=[]; for(const [label,lo,hi] of [[90,85,95],[60,55,65],[45,40,50],[30,25,35],[15,10,20]]) for(const th of [3,6,10]){
+    let n=0,right=0,askSum=0; for(const w of res){const s=at(w,lo,hi); if(!s||s.mv==null||Math.abs(s.mv)<th) continue; const pred=s.mv>=0?0:1, ask=pred===0?s.up:s.down; if(ask==null) continue; n++; right+=pred===w.winner; askSum+=ask}
+    if(n){const acc=right/n,ask=askSum/n; rows.push({label,th,n,acc,ask,ev:acc-ask-fee(ask)})}}
+  const eb=$("edge").querySelector("tbody"); eb.innerHTML="";
+  for(const r of rows){const tr=document.createElement("tr"); tr.className=r.n>=15?(r.ev>0?"ev-good":"ev-bad"):""; tr.innerHTML=`<td>${r.label}s</td><td>${r.th} bps</td><td>${r.n}</td><td>${Math.round(r.acc*100)}%</td><td>${r.ask.toFixed(2)}</td><td>${signed(r.ev)}</td>`; eb.appendChild(tr)}
+  $("edge-empty").style.display=rows.length?"none":"block"; $("edge").style.display=rows.length?"table":"none";
+  // bot vitals + positions
+  $("bank").textContent=money(bank); $("today").textContent=signed(t); $("today").className=t>0?"pos":t<0?"neg":""; $("mode").textContent=state.mode||"—"; $("mode").className="mode "+(state.mode||"");
+  const s=state.stats||{},n=(s.wins||0)+(s.losses||0); $("closed").textContent=`${state.closed_trades??0} · ${n?Math.round(100*s.wins/n)+"%":"—"}`;
+  const pb=$("positions").querySelector("tbody"); pb.innerHTML="";
+  for(const p of ops){const b=books[p.slug]; let nowV="—",stat="awaiting resolution";
+    if(b&&b.u&&b.d){const v=p.legs.reduce((a,l)=>a+(l.ok?l.shares*((l.outcome===0?b.u.bid:b.d.bid)||0):0),0); nowV=money(v); stat=`${signed(v-p.stake)} if sold now`}
+    const tr=document.createElement("tr"); tr.innerHTML=`<td>${ASSETS[p.slug.split("-")[0]]||""} ${p.end.slice(11,16)}</td><td>${p.type}${p.live?"":" (paper)"}</td><td>${money(p.stake)}</td><td>${nowV}</td><td>${stat}</td>`; pb.appendChild(tr)}
   $("positions-empty").style.display=ops.length?"none":"block"; $("positions").style.display=ops.length?"table":"none";
-  resolveSignals();
-  const wb=$("wins").querySelector("tbody"); wb.innerHTML="";
-  for(const w of windows.slice(-12).reverse()){const s=(w.snaps||[]).find(x=>x.t>=10&&x.t<=20)||w.snaps?.at(-1); const tr=document.createElement("tr");
-    const res=w.winner===0?"Up":w.winner===1?"Down":"?"; const col=w.winner===0?"#0E7C7B":w.winner===1?"#B3261E":"#CBD3D9";
-    const mvTxt=s?.mv==null?"—":`${signed(s.mv)} bps`; const agree=s?.mv!=null&&w.winner!=null&&((s.mv>=0)===(w.winner===0));
-    tr.innerHTML=`<td>${w.end.slice(11,16)}</td><td class="${s?.mv>0?"pos":s?.mv<0?"neg":""}">${mvTxt}</td><td>${s?`${s.up?.toFixed(2)??"—"} / ${s.down?.toFixed(2)??"—"}`:"—"}</td><td><span class="win" style="background:${col}"></span>${res}${s?.mv!=null&&w.winner!=null?(agree?" ✓":" ✗"):""}</td>`; wb.appendChild(tr)}
-  $("wins-empty").style.display=windows.length?"none":"block"; $("wins").style.display=windows.length?"table":"none";
-  $("bank").textContent=money(state.bankroll_usd??0); const t=state.today_pnl_usd??0; $("today").textContent=signed(t); $("today").className=t>0?"pos":t<0?"neg":"";
-  $("mode").textContent=state.mode||"—"; $("mode").className="mode "+(state.mode||""); $("open-n").textContent=(state.open_positions||[]).length; $("closed").textContent=state.closed_trades??0;
-  const s=state.stats||{},n=(s.wins||0)+(s.losses||0); $("wr").textContent=n?Math.round(100*s.wins/n)+"%":"—";
+  // trades + journal
   const tb=$("trades").querySelector("tbody"); tb.innerHTML="";
-  for(const x of trades.slice(-15).reverse()){const tr=document.createElement("tr"); tr.innerHTML=`<td>${ago(x.ts)}</td><td>${x.type}${x.live?"":" (paper)"}</td><td>${money(x.stake)}</td><td class="${x.pnl>0?"pos":x.pnl<0?"neg":""}">${signed(x.pnl)}</td>`; tb.appendChild(tr)}
+  for(const x of trades.slice(-20).reverse()){const tr=document.createElement("tr"); tr.innerHTML=`<td>${ago(x.ts)}</td><td>${ASSETS[x.slug.split("-")[0]]||""}</td><td>${x.type}${x.live?"":" (paper)"}</td><td>${money(x.stake)}</td><td class="${x.pnl>0?"pos":x.pnl<0?"neg":""}">${signed(x.pnl)}</td><td>${x.note||(x.winner===0?"Up":x.winner===1?"Down":"")}</td>`; tb.appendChild(tr)}
   $("trades-empty").style.display=trades.length?"none":"block"; $("trades").style.display=trades.length?"table":"none";
   const jl=$("journal"); jl.innerHTML=""; for(const line of journal.slice(-20).reverse()){const m=line.match(/^(\S+)\s(.*)$/); const li=document.createElement("li"); li.innerHTML=m?`<time>${ago(m[1])}</time>${m[2]}`:line; jl.appendChild(li)}
   const lastT=journal.at(-1)?.match(/^(\S+)/)?.[1]; let txt=lastT?`bot heartbeat ${ago(lastT)}`:"bot: no heartbeat yet";
   try{const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/runs?per_page=1`,{cache:"no-store"}); if(r.ok){const run=(await r.json()).workflow_runs?.[0]; if(run) txt=`run #${run.run_number} ${run.status==="in_progress"?"running":run.status} · ${txt}`}}catch{}
-  $("run").textContent=txt+(live?" · LIVE":" · paper");
+  $("run").textContent=txt+(live?" · LIVE":" · paper"); resolveSignals();
 }
 function setStatus(c){$("dot").className="dot "+c}
-renderSignals(); loadRepo(); setInterval(loadRepo,60000);
-tick(); setInterval(tick,1000);
+renderSignals(); loadRepo(); setInterval(loadRepo,60000); tick(); setInterval(tick,1500);
 </script>
 </body>
 </html>
