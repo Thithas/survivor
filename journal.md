@@ -1362,3 +1362,4 @@
 - 2026-09-08T23:09:02+00:00 order failed MOMENTUM btc-updown-5m-1788908700: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-08T23:09:02+00:00 heartbeat: 1353 scans, 1 open, mode CAUTIOUS, bankroll 53.64, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788908700, opens 60
 - 2026-09-08T23:09:06+00:00 heartbeat: 1354 scans, 1 open, mode CAUTIOUS, bankroll 53.64, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788908700, opens 60
+- 2026-09-08T23:09:38+00:00 heartbeat: 1364 scans, 1 open, mode CAUTIOUS, bankroll 53.64, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.99 on btc-updown-5m-1788908700, opens 60
