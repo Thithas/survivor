@@ -117,29 +117,35 @@ def live_balance():
     return float(r["balance"]) / 1e6
 
 def diagnose_funds():
-    """Where is the money? Raw CLOB reply + on-chain USDC.e / USDC balances of funder and signer. Journaled, addresses masked."""
+    """Where is the money? CLOB view under both proxy types + on-chain USDC.e/USDC of funder and signer (several RPCs)."""
     out = []
-    try:
-        from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
-        r = clob().get_balance_allowance(BalanceAllowanceParams(asset_type=AssetType.COLLATERAL)); out.append(f"clob={r}")
-    except Exception as e: out.append(f"clob err {str(e)[:80]}")
+    from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
+    for st in (1, 2):
+        try:
+            r = clob().get_balance_allowance(BalanceAllowanceParams(asset_type=AssetType.COLLATERAL, signature_type=st))
+            out.append(f"clob sig{st} balance={float(r.get('balance', 0)) / 1e6:.2f}")
+        except Exception as e: out.append(f"clob sig{st} err {str(e)[:60]}")
     try:
         from eth_account import Account
         signer = Account.from_key(os.environ["POLY_PRIVATE_KEY"]).address
     except Exception as e: signer = None; out.append(f"signer err {str(e)[:60]}")
     funder = os.environ.get("POLY_FUNDER", "")
     mask = lambda a: f"{a[:6]}…{a[-4:]}" if a else "none"
-    out.append(f"funder={mask(funder)} signer={mask(signer or '')} same={bool(signer) and signer.lower() == funder.lower()}")
+    out.append(f"funder={mask(funder)} signer={mask(signer or '')}")
     tokens = {"USDC.e": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", "USDC": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"}
+    rpcs = ["https://polygon-bor-rpc.publicnode.com", "https://rpc.ankr.com/polygon", "https://polygon.llamarpc.com", "https://polygon-rpc.com"]
     for label, addr in (("funder", funder), ("signer", signer)):
         if not addr: continue
         for tname, taddr in tokens.items():
-            try:
-                data = "0x70a08231" + addr[2:].lower().rjust(64, "0")
-                r = requests.post("https://polygon-rpc.com", json={"jsonrpc": "2.0", "id": 1, "method": "eth_call",
-                                  "params": [{"to": taddr, "data": data}, "latest"]}, timeout=10).json()
-                out.append(f"{label} {tname}={int(r['result'], 16) / 1e6:.2f}")
-            except Exception as e: out.append(f"{label} {tname} err {str(e)[:50]}")
+            data = "0x70a08231" + addr[2:].lower().rjust(64, "0"); got = None; last = ""
+            for rpc in rpcs:
+                try:
+                    r = requests.post(rpc, json={"jsonrpc": "2.0", "id": 1, "method": "eth_call",
+                                      "params": [{"to": taddr, "data": data}, "latest"]}, timeout=10).json()
+                    if "result" in r: got = int(r["result"], 16) / 1e6; break
+                    last = str(r.get("error", r))[:60]
+                except Exception as e: last = str(e)[:60]
+            out.append(f"{label} {tname}={got:.2f}" if got is not None else f"{label} {tname} err {last}")
     journal("funds check: " + " | ".join(out)); notify("funds check: " + " | ".join(out))
 
 def buy(token_id, usd):
