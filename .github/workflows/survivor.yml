@@ -33,3 +33,4 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           RUN_SECONDS: ${{ vars.RUN_SECONDS || '21000' }}
           GH_PAT: ${{ secrets.GH_PAT }}
+          VERCEL_BYPASS: ${{ secrets.VERCEL_BYPASS }}
