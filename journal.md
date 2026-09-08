@@ -884,3 +884,16 @@
 - 2026-09-08T18:18:50+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
 - 2026-09-08T18:18:50+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
 - 2026-09-08T18:18:51+00:00 heartbeat: 560 scans, 3 open, mode NORMAL, bankroll 30.33, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on sol-updown-5m-1788891300, opens 60
+- 2026-09-08T18:18:56+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:56+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:18:56+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:00+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:00+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:00+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:03+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:04+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:04+00:00 sell failed (take profit) btc-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:05+00:00 closed MOMENTUM btc-updown-5m-1788891000 pnl +2.75 | today -1.95 | bankroll 30.33
+- 2026-09-08T18:19:08+00:00 sell failed (take profit) eth-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:08+00:00 sell failed (take profit) sol-updown-5m-1788891000: No orderbook exists for the requested token id
+- 2026-09-08T18:19:08+00:00 heartbeat: 564 scans, 2 open, mode NORMAL, bankroll 30.33, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.005 on sol-updown-5m-1788891300, opens 60
