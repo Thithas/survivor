@@ -190,25 +190,26 @@ def scan(state, P):
         if m["slug"] not in state["opens"] and abs((t - m["start"]).total_seconds()) <= 6:
             state["opens"][m["slug"]] = px
         ua, ul = best_ask(m["up"]); da, dl = best_ask(m["down"])
-        if ua is None or da is None: continue
-        if diag["best_sum"] is None or ua + da < diag["best_sum"]: diag["best_sum"], diag["slug"] = round(ua + da, 3), m["slug"]
+        # Near the close one side's asks often vanish (the winner gets hoarded). Keep recording; only skip what needs both sides.
         if left <= 75:   # window dataset: one snapshot every ~5s in the final stretch
             snaps = state.setdefault("snaps", {}).setdefault(m["slug"], {"end": m["end"].isoformat(), "open": state["opens"].get(m["slug"]), "s": []})
             if not snaps["s"] or snaps["s"][-1]["t"] - left >= 5:
                 op = snaps["open"]
                 snaps["s"].append({"t": round(left), "up": ua, "down": da, "mv": round((px - op) / op * 1e4, 1) if op else None})
         base = {"slug": m["slug"], "end": m["end"].isoformat(), "time_left_sec": round(left)}
-        gross = round(1 - (ua + da) - fee(ua, P) - fee(da, P), 4)
-        if gross > 0:
-            sigs.append({**base, "type": "ARB", "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
-                         "gross_edge": gross, "liquidity_usd": min(ul, dl), "confidence": 1.0})
+        if ua is not None and da is not None:
+            if diag["best_sum"] is None or ua + da < diag["best_sum"]: diag["best_sum"], diag["slug"] = round(ua + da, 3), m["slug"]
+            gross = round(1 - (ua + da) - fee(ua, P) - fee(da, P), 4)
+            if gross > 0:
+                sigs.append({**base, "type": "ARB", "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
+                             "gross_edge": gross, "liquidity_usd": min(ul, dl), "confidence": 1.0})
         op = state["opens"].get(m["slug"])
         if op and left <= P["momentum_window_sec"]:
             mv = (px - op) / op * 1e4
             up_side = mv > 0
             ask, liq = (ua, ul) if up_side else (da, dl)
             conf = min(0.95, abs(mv) / (2 * P["momentum_min_move_bps"]))
-            if abs(mv) >= P["momentum_min_move_bps"] and ask <= P["momentum_max_ask"]:
+            if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1)})
