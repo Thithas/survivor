@@ -25,11 +25,11 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.25, "max_open_positions": 2}   # daily cap off by owner's instruction; floor is the only brake
+HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.25, "max_open_positions": 5}   # daily cap off by owner's instruction; floor is the only brake
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
-          "momentum_window_sec": (10, 150), "max_open_positions": (1, 3), "min_liquidity_usd": (20, 200),
+          "momentum_window_sec": (10, 150), "max_open_positions": (1, 5), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
