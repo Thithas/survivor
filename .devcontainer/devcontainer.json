@@ -1,7 +1,6 @@
 {
   "name": "survivor relay",
-  "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "hostRequirements": { "cpus": 2 },
-  "postStartCommand": "nohup bash .devcontainer/start.sh > /tmp/relay.log 2>&1 &",
-  "portsAttributes": { "8787": { "label": "relay", "onAutoForward": "ignore" } }
+  "postCreateCommand": "bash .devcontainer/start.sh >> /tmp/relay.log 2>&1 &",
+  "postStartCommand": "bash .devcontainer/start.sh >> /tmp/relay.log 2>&1 &",
+  "postAttachCommand": "pgrep -f phone/relay.py >/dev/null || (bash .devcontainer/start.sh >> /tmp/relay.log 2>&1 &)"
 }
