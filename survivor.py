@@ -25,7 +25,7 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 10.0, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.25, "max_open_positions": 5}   # daily cap off by owner's instruction; floor is the only brake
+HARD = {"floor_usd": 1.0, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.25, "max_open_positions": 5}   # owner removed the daily cap and the floor: the bot may trade the account to zero. 25%/trade is the only pacing left.
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
