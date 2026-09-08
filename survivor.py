@@ -602,14 +602,14 @@ def main():
             notify("DEAD. Floor breached. Trading stopped permanently."); commit(state, "survivor: DEAD"); return
         try:
             sigs = scan(state, P); scans += 1; scan_errs = 0
-            try: dirty |= manage(state, P)
-            except Exception as e: log("manage err", e)
         except Exception as e:
             sigs, scan_errs, last_err = [], scan_errs + 1, f"{type(e).__name__}: {str(e)[:120]}"
             log("scan err", last_err)
             if scan_errs in (5, 100, 1000):
                 journal(f"scan failing ({scan_errs} in a row): {last_err}"); notify(f"scan failing: {last_err}")
             time.sleep(5)
+        try: dirty |= manage(state, P)          # runs even when the scan failed: a held position must never go unwatched
+        except Exception as e: log("manage err", e)
         for s, stake, net in decide(state, P, sigs):
             execute(state, s, stake, net); dirty = True
         try:
