@@ -51,3 +51,5 @@
 - 2026-09-08T12:25:53+00:00 LIVE mode on. Polymarket balance 20.20
 - 2026-09-08T12:25:54+00:00 heartbeat: 266 scans, 0 open, mode NORMAL, bankroll 20.20, markets None/None in window across None, best up+down None on None, opens 0
 - 2026-09-08T12:25:56+00:00 code updated on main, restarting on next run
+- 2026-09-08T12:29:04+00:00 order failed ARB btc-updown-5m-1788870300: Trading restricted in your region, please refer to available regions - https://docs.polymarket.com/developers/CLOB/geoblock
+- 2026-09-08T12:29:04+00:00 heartbeat: 54 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.96 on btc-updown-5m-1788870300, opens 0
