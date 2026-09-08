@@ -16,7 +16,7 @@ import requests
 GAMMA, CLOB = "https://gamma-api.polymarket.com", "https://clob.polymarket.com"
 SLUG_PREFIX, SERIES_SLUG = "btc-updown-5m-", "btc-up-or-down-5m"
 MIN_SHARES = 5          # Polymarket engine minimum per order
-STATE_FILE, TRADES_FILE, JOURNAL_FILE = "state.json", "trades.jsonl", "journal.md"
+STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE = "state.json", "trades.jsonl", "journal.md", "windows.jsonl"
 RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
@@ -30,6 +30,14 @@ DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confide
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07}
+
+# Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
+EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
+           "momentum_max_ask": 0.90, "max_open_positions": 3, "min_liquidity_usd": 20}
+def params():
+    P = load_params()
+    if not is_live(): P.update(EXPLORE)
+    return P
 
 def fee(p, P):
     """Polymarket crypto_fees_v2: taker pays rate * p * (1-p) per share; makers pay nothing."""
@@ -73,10 +81,10 @@ def pull():
         if "survivor.py" in changed or "survivor.yml" in changed: RESTART = True
 def commit(state, msg="survivor: state"):
     save_json(STATE_FILE, state)
-    for f in (TRADES_FILE, JOURNAL_FILE):
+    for f in (TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE):
         if not os.path.exists(f): open(f, "a").close()   # git add fails outright on a missing path
     if not IN_ACTIONS: return
-    a = git("add", "--", STATE_FILE, TRADES_FILE, JOURNAL_FILE)
+    a = git("add", "--", STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE)
     if a.returncode: log("git add failed", a.stderr[-200:]); return
     c = git("commit", "-q", "-m", msg)
     if c.returncode: log("nothing to commit"); return
@@ -184,6 +192,11 @@ def scan(state, P):
         ua, ul = best_ask(m["up"]); da, dl = best_ask(m["down"])
         if ua is None or da is None: continue
         if diag["best_sum"] is None or ua + da < diag["best_sum"]: diag["best_sum"], diag["slug"] = round(ua + da, 3), m["slug"]
+        if left <= 75:   # window dataset: one snapshot every ~5s in the final stretch
+            snaps = state.setdefault("snaps", {}).setdefault(m["slug"], {"end": m["end"].isoformat(), "open": state["opens"].get(m["slug"]), "s": []})
+            if not snaps["s"] or snaps["s"][-1]["t"] - left >= 5:
+                op = snaps["open"]
+                snaps["s"].append({"t": round(left), "up": ua, "down": da, "mv": round((px - op) / op * 1e4, 1) if op else None})
         base = {"slug": m["slug"], "end": m["end"].isoformat(), "time_left_sec": round(left)}
         gross = round(1 - (ua + da) - fee(ua, P) - fee(da, P), 4)
         if gross > 0:
@@ -200,6 +213,7 @@ def scan(state, P):
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1)})
     state["opens"] = dict(list(state["opens"].items())[-30:])
+    diag["hot"] = diag["hot"] or any(0 < (m["end"] - t).total_seconds() <= 75 for m in ms)
     state["diag"] = diag
     return sigs
 
@@ -247,16 +261,36 @@ def execute(state, s, stake, net):
     msg = f"{'LIVE' if is_live() else 'PAPER'} {s['type']}{partial} {s['slug']} ${cost} edge {net}"
     journal(msg); notify(msg)
 
+def resolve(slug):
+    """Winner index (0=Up, 1=Down) once Gamma marks the market closed, else None."""
+    ev = requests.get(f"{GAMMA}/events", params={"slug": slug}, timeout=10).json()
+    m = (ev[0].get("markets") or [None])[0] if ev else None
+    if not m: return None
+    prices = [float(x) for x in json.loads(m.get("outcomePrices", "[]"))]
+    return prices.index(max(prices)) if m.get("closed") and prices and max(prices) >= 0.99 else None
+
+def settle_windows(state):
+    """Write one line per finished window: open, snapshots, winner. This is the research dataset."""
+    t, done = now(), []
+    for slug, w in list(state.get("snaps", {}).items()):
+        age = (t - parse(w["end"])).total_seconds()
+        if age < 60: continue
+        try: winner = resolve(slug)
+        except Exception as e: log("window resolve err", e); continue
+        if winner is None and age < 1800: continue
+        with open(WINDOWS_FILE, "a") as f:
+            f.write(json.dumps({"slug": slug, "end": w["end"], "open": w["open"], "winner": winner, "snaps": w["s"]}) + "\n")
+        done.append(slug)
+    for slug in done: state["snaps"].pop(slug, None)
+    return bool(done)
+
 def settle(state):
     t, keep = now(), []
     for p in state["open_positions"]:
         age = (t - parse(p["end"])).total_seconds()
         if age < 45: keep.append(p); continue
         winner = None
-        try:
-            m = requests.get(f"{GAMMA}/markets", params={"slug": p["slug"]}, timeout=10).json()[0]
-            prices = [float(x) for x in json.loads(m.get("outcomePrices", "[]"))]
-            if m.get("closed") and prices and max(prices) >= 0.99: winner = prices.index(max(prices))
+        try: winner = resolve(p["slug"])
         except Exception as e: log("settle err", e)
         if winner is None:
             if age < 7200: keep.append(p); continue
@@ -282,7 +316,7 @@ def record(state, p, pnl, winner):
 
 # ---------- loop ----------
 def main():
-    P = load_params()
+    P = params()
     state = load_json(STATE_FILE, None) or new_state(live_balance() if is_live() else 50.0)
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
     scan_errs, last_err = 0, ""
@@ -297,6 +331,8 @@ def main():
             last_bal = time.time()
         state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], state["bankroll_usd"])
         before = state["closed_trades"]; settle(state); dirty |= state["closed_trades"] != before
+        try: dirty |= settle_windows(state)
+        except Exception as e: log("settle_windows err", e)
         set_mode(state)
         if state["mode"] == "DEAD":
             journal(f"DEAD at bankroll {state['bankroll_usd']:.2f}. Post-mortem: stats {state['stats']}")
@@ -312,10 +348,10 @@ def main():
         for s, stake, net in decide(state, P, sigs):
             execute(state, s, stake, net); dirty = True
         if time.time() - last_pull > PULL_EVERY:
-            pull(); P = load_params(); last_pull = time.time()
+            pull(); P = params(); last_pull = time.time()
         if dirty or time.time() - last_commit > COMMIT_EVERY:
             d = state.get("diag", {})
-            journal(f"heartbeat: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
+            journal(f"heartbeat{'' if is_live() else ' [paper/explore]'}: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
                     f"bankroll {state['bankroll_usd']:.2f}, markets {d.get('markets')}/{d.get('in_window')} in window, "
                     f"best up+down {d.get('best_sum')} on {d.get('slug')}, opens {len(state['opens'])}"
                     + (f", last error {last_err}" if scan_errs else ""))
@@ -323,7 +359,7 @@ def main():
         if RESTART:
             journal("code updated on main, restarting on next run"); notify("code updated, restarting")
             commit(state, "survivor: restart for new code"); return
-        time.sleep(1 if state.get("diag", {}).get("hot") else 3)
+        time.sleep(1 if state.get("diag", {}).get("hot") else 2)
     journal(f"run end: {scans} scans, mode {state['mode']}, bankroll {state['bankroll_usd']:.2f}, "
             f"today {state['today_pnl_usd']:+.2f}, open {len(state['open_positions'])}, stats {state['stats']}")
     commit(state, "survivor: run end")
