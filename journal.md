@@ -1115,3 +1115,5 @@
 - 2026-09-08T20:24:06+00:00 order failed MOMENTUM sol-updown-5m-1788898800: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-08T20:24:06+00:00 heartbeat: 92 scans, 0 open, mode CAUTIOUS, bankroll 48.29, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on btc-updown-5m-1788898800, opens 60
 - 2026-09-08T20:24:15+00:00 heartbeat: 94 scans, 0 open, mode CAUTIOUS, bankroll 48.29, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.04 on sol-updown-5m-1788898800, opens 60
+- 2026-09-08T20:26:25+00:00 LIVE ARB eth-updown-5m-1788899100 $4.7 edge 0.0307
+- 2026-09-08T20:26:25+00:00 heartbeat: 122 scans, 1 open, mode CAUTIOUS, bankroll 48.29, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.94 on eth-updown-5m-1788899100, opens 60
