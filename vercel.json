@@ -1,4 +1,4 @@
 {
   "regions": ["dub1"],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- api vercel.json"
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- api vercel.json package.json"
 }
