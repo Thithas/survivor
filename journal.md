@@ -1041,3 +1041,4 @@
 - 2026-09-08T19:32:25+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 56.51
 - 2026-09-08T19:32:27+00:00 closed ARB eth-updown-5m-1788895200 pnl +0.48 | today +2.00 | bankroll 51.57
 - 2026-09-08T19:32:31+00:00 heartbeat: 1 scans, 1 open, mode CAUTIOUS, bankroll 51.57, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.98 on eth-updown-5m-1788895800, opens 60
+- 2026-09-08T19:32:38+00:00 heartbeat: 2 scans, 1 open, mode CAUTIOUS, bankroll 51.57, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on eth-updown-5m-1788895800, opens 60
