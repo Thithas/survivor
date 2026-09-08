@@ -15,3 +15,5 @@
 - 2026-09-08T11:03:05+00:00 mode NORMAL -> DEAD
 - 2026-09-08T11:03:05+00:00 DEAD at bankroll 0.00. Post-mortem: stats {'wins': 0, 'losses': 0, 'pnl': 0.0, 'arb': 0, 'momentum': 0}
 - 2026-09-08T11:06:42+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land
+- 2026-09-08T11:08:46+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land
+- 2026-09-08T11:08:47+00:00 heartbeat [paper/explore]: 49 scans, 0 open, mode NORMAL, bankroll 50.00, markets None/None in window, best up+down None on None, opens 0

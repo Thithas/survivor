@@ -17,26 +17,5 @@
   "arb": 0,
   "momentum": 0
  },
- "live_mode": false,
- "books": {
-  "btc-updown-5m-1788865500": {
-   "up": [
-    0.01,
-    null
-   ],
-   "down": [
-    null,
-    0.99
-   ],
-   "left": 76
-  }
- },
- "diag": {
-  "markets": 30,
-  "in_window": 1,
-  "best_sum": null,
-  "slug": "",
-  "hot": false,
-  "spot": 78384.085
- }
+ "live_mode": false
 }
