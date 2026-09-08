@@ -962,3 +962,4 @@
 - 2026-09-08T18:53:33+00:00 sell failed (stop loss) btc-updown-5m-1788893400: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-08T18:53:38+00:00 sold MOMENTUM btc-updown-5m-1788893400 pnl -2.34 (stop loss @ 0.15 with 85s left) | today +1.41 | bankroll 37.17
 - 2026-09-08T18:53:38+00:00 heartbeat: 199 scans, 0 open, mode CAUTIOUS, bankroll 37.17, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on eth-updown-5m-1788893400, opens 60
+- 2026-09-08T18:53:48+00:00 heartbeat: 201 scans, 0 open, mode CAUTIOUS, bankroll 37.17, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788893400, opens 60
