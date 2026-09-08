@@ -393,8 +393,12 @@ def main():
                 LIVE_BLOCKED = True
                 journal(f"LIVE requested but Polymarket auth/balance failed: {str(e)[:120]} — staying on paper"); notify(f"LIVE blocked: {str(e)[:120]}. Running paper until fixed.")
         st = new_state(50.0); st["live_mode"] = False; return st
-    if state is None or bool(state.get("live_mode")) != os.path.exists("LIVE") or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0):
+    if state is None or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0):
         state = fresh_state()
+    elif bool(state.get("live_mode")) != os.path.exists("LIVE"):
+        state = fresh_state()
+        if LIVE_BLOCKED and not state.get("live_mode"):   # LIVE asked for but not fundable: keep running paper quietly
+            pass
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
     scan_errs, last_err = 0, ""
     notify(f"run start {'LIVE' if is_live() else 'PAPER'} bankroll {state['bankroll_usd']:.2f} mode {state['mode']}")
@@ -432,7 +436,7 @@ def main():
             execute(state, s, stake, net); dirty = True
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = params(); last_pull = time.time()
-            if bool(state.get("live_mode")) != os.path.exists("LIVE") and not state["open_positions"]:
+            if bool(state.get("live_mode")) != is_live() and not state["open_positions"]:
                 commit(state, "survivor: mode switch"); state = fresh_state(); P = params(); dirty = True
         if dirty or time.time() - last_commit > COMMIT_EVERY:
             d = state.get("diag", {})
