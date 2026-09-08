@@ -1241,3 +1241,5 @@
 - 2026-09-08T21:42:04+00:00 closed MOMENTUM doge-updown-5m-1788903300 pnl +0.75 | today +5.46 | bankroll 51.97
 - 2026-09-08T21:42:07+00:00 heartbeat: 1144 scans, 0 open, mode CAUTIOUS, bankroll 51.97, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788903600, opens 60
 - 2026-09-08T21:42:09+00:00 code updated on main, restarting on next run
+- 2026-09-08T21:42:31+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 51.97
+- 2026-09-08T21:43:17+00:00 heartbeat: 12 scans, 0 open, mode CAUTIOUS, bankroll 51.97, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788903600, opens 60
