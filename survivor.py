@@ -55,8 +55,17 @@ def load_params():
 def journal(line):
     with open(JOURNAL_FILE, "a") as f: f.write(f"- {now().isoformat(timespec='seconds')} {line}\n")
 def git(*a): return subprocess.run(["git", *a], capture_output=True, text=True)
+RESTART = False
 def pull():
-    if IN_ACTIONS: git("pull", "--rebase", "--autostash", "-q")
+    """Fetch phone-side edits. If the code itself changed, flag a restart so the next cron run picks it up."""
+    global RESTART
+    if not IN_ACTIONS: return
+    before = git("rev-parse", "HEAD").stdout.strip()
+    git("pull", "--rebase", "--autostash", "-q")
+    after = git("rev-parse", "HEAD").stdout.strip()
+    if before and after and before != after:
+        changed = git("diff", "--name-only", before, after).stdout
+        if "survivor.py" in changed or "survivor.yml" in changed: RESTART = True
 def commit(state, msg="survivor: state"):
     save_json(STATE_FILE, state)
     for f in (TRADES_FILE, JOURNAL_FILE):
@@ -154,13 +163,18 @@ def set_mode(state):
 
 def scan(state, P):
     sigs, px, t = [], spot(), now()
-    for m in markets():
+    ms = markets()
+    diag = {"markets": len(ms), "in_window": 0, "best_sum": None, "slug": "", "hot": False, "spot": px}
+    for m in ms:
         left = (m["end"] - t).total_seconds()
         if left <= 0 or left > 330: continue
+        diag["in_window"] += 1
+        if left <= P["momentum_window_sec"] + 15 or left >= 290: diag["hot"] = True
         if m["slug"] not in state["opens"] and abs((t - m["start"]).total_seconds()) <= 6:
             state["opens"][m["slug"]] = px
         ua, ul = best_ask(m["up"]); da, dl = best_ask(m["down"])
         if ua is None or da is None: continue
+        if diag["best_sum"] is None or ua + da < diag["best_sum"]: diag["best_sum"], diag["slug"] = round(ua + da, 3), m["slug"]
         base = {"slug": m["slug"], "end": m["end"].isoformat(), "time_left_sec": round(left)}
         gross = round(1 - (ua + da), 4)
         if gross > 0:
@@ -177,6 +191,7 @@ def scan(state, P):
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask, 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1)})
     state["opens"] = dict(list(state["opens"].items())[-30:])
+    state["diag"] = diag
     return sigs
 
 def decide(state, P, sigs):
@@ -288,11 +303,16 @@ def main():
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = load_params(); last_pull = time.time()
         if dirty or time.time() - last_commit > COMMIT_EVERY:
+            d = state.get("diag", {})
             journal(f"heartbeat: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
-                    f"bankroll {state['bankroll_usd']:.2f}" + (f", last error {last_err}" if scan_errs else ""))
+                    f"bankroll {state['bankroll_usd']:.2f}, markets {d.get('markets')}/{d.get('in_window')} in window, "
+                    f"best up+down {d.get('best_sum')} on {d.get('slug')}, opens {len(state['opens'])}"
+                    + (f", last error {last_err}" if scan_errs else ""))
             commit(state); last_commit = time.time(); dirty = False
-        hot = any(s["time_left_sec"] <= P["momentum_window_sec"] + 15 for s in sigs) or bool(state["opens"])
-        time.sleep(1 if hot else 3)
+        if RESTART:
+            journal("code updated on main, restarting on next run"); notify("code updated, restarting")
+            commit(state, "survivor: restart for new code"); return
+        time.sleep(1 if state.get("diag", {}).get("hot") else 3)
     journal(f"run end: {scans} scans, mode {state['mode']}, bankroll {state['bankroll_usd']:.2f}, "
             f"today {state['today_pnl_usd']:+.2f}, open {len(state['open_positions'])}, stats {state['stats']}")
     commit(state, "survivor: run end")
