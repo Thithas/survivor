@@ -18,3 +18,4 @@
 {"ts": "2026-09-08T18:21:03+00:00", "slug": "sol-updown-5m-1788891600", "type": "ARB", "stake": 15.04, "pnl": 0.96, "predicted_edge": 0.0361, "winner": 0, "live": true, "note": ""}
 {"ts": "2026-09-08T18:34:03+00:00", "slug": "eth-updown-5m-1788892200", "type": "MOMENTUM", "stake": 4.6, "pnl": 0.4, "predicted_edge": -0.0052, "winner": 0, "live": true, "note": ""}
 {"ts": "2026-09-08T18:44:04+00:00", "slug": "eth-updown-5m-1788892800", "type": "MOMENTUM", "stake": 4.3, "pnl": 0.7, "predicted_edge": -0.0084, "winner": 0, "live": true, "note": ""}
+{"ts": "2026-09-08T18:53:18+00:00", "slug": "btc-updown-5m-1788893400", "type": "MOMENTUM", "stake": 3.05, "pnl": -2.3446, "predicted_edge": 0.2133, "winner": -2, "live": true, "note": "stop loss @ 0.15 with 85s left"}
