@@ -101,6 +101,21 @@ def commit(state, msg="survivor: state"):
 
 # ---------- polymarket (unified SDK: Deposit Wallet / pUSD, V2 CLOB) ----------
 _pm, _pm_relay = None, None
+def _install_bypass():
+    """Vercel's free plan keeps a login wall on the relay URL; VERCEL_BYPASS is its official automation key.
+    Attach it to every httpx client that targets the relay (the SDK builds its own clients, so hook the constructor)."""
+    key = os.environ.get("VERCEL_BYPASS")
+    if not key or getattr(_install_bypass, "done", False): return
+    import httpx
+    orig = httpx.Client.__init__
+    def patched(self, *a, **kw):
+        orig(self, *a, **kw)
+        base = str(kw.get("base_url") or "")
+        if "vercel.app" in base: self.headers["x-vercel-protection-bypass"] = key
+    httpx.Client.__init__ = patched; _install_bypass.done = True
+def _bypass_headers():
+    key = os.environ.get("VERCEL_BYPASS"); return {"x-vercel-protection-bypass": key} if key else {}
+
 def relay_url():
     """Public URL of the phone relay (file RELAY, written by phone/relay.py). GitHub runners are US IPs and
     Polymarket geoblocks order placement from there, so every CLOB call is routed through the phone."""
@@ -112,6 +127,7 @@ def pm():
     global _pm, _pm_relay
     relay = relay_url()
     if _pm is None or relay != _pm_relay:
+        _install_bypass()
         import dataclasses
         from polymarket import SecureClient
         from polymarket.environments import PRODUCTION, _create_environment
@@ -431,7 +447,7 @@ def relay_alive():
     url = relay_url()
     ok = False
     if url:
-        try: ok = bool((requests.get(url + "/health", timeout=10).json() or {}).get("ok"))   # a login page is not "ok"
+        try: ok = bool((requests.get(url + "/health", headers=_bypass_headers(), timeout=10).json() or {}).get("ok"))   # a login page is not "ok"
         except Exception: ok = False
     _relay_fail = 0 if ok else _relay_fail + 1
     if not ok and _relay_fail == 3 and not LIVE_BLOCKED and os.path.exists("LIVE"):
@@ -445,7 +461,7 @@ def check_relay(state):
     url = relay_url()
     if not url: journal("relay: none"); notify("relay: none — orders from GitHub are geoblocked"); return
     try:
-        h = requests.get(url + "/health", timeout=15); region = (h.json() or {}).get("region", "?") if h.ok else f"HTTP {h.status_code}"
+        h = requests.get(url + "/health", headers=_bypass_headers(), timeout=15); region = (h.json() or {}).get("region", "?") if h.ok else f"HTTP {h.status_code}"
     except Exception as e: region = f"unreachable: {str(e)[:80]}"
     global _pm; _pm = None
     try: bal = f"balance via relay {live_balance():.2f}"
