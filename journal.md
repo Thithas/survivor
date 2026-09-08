@@ -28,3 +28,4 @@
 - 2026-09-08T11:26:57+00:00 code updated on main, restarting on next run
 - 2026-09-08T11:27:19+00:00 funds check: clob sig1 balance=0.00 | clob sig2 balance=0.00 | funder=0x0D90…77d2 signer=0x4F54…f51B | funder USDC.e=0.00 | funder USDC=0.00 | signer USDC.e=0.00 | signer USDC=0.00
 - 2026-09-08T11:27:19+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land
+- 2026-09-08T11:33:25+00:00 code updated on main, restarting on next run
