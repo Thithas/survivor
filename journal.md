@@ -17,3 +17,5 @@
 - 2026-09-08T11:06:42+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land
 - 2026-09-08T11:08:46+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land
 - 2026-09-08T11:08:47+00:00 heartbeat [paper/explore]: 49 scans, 0 open, mode NORMAL, bankroll 50.00, markets None/None in window, best up+down None on None, opens 0
+- 2026-09-08T11:10:47+00:00 LIVE requested but Polymarket balance is 0.00 (need > 11) — paper until funds land
+- 2026-09-08T11:10:48+00:00 heartbeat [paper/explore]: 114 scans, 0 open, mode NORMAL, bankroll 50.00, markets None/None in window, best up+down None on None, opens 0
