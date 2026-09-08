@@ -258,7 +258,6 @@ def equity(state):
 def set_mode(state):
     if state["mode"] == "DEAD": return
     old = state["mode"]; eq = equity(state)
-    state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], eq)
     if eq <= HARD["floor_usd"]: state["mode"] = "DEAD"
     elif state["today_pnl_usd"] <= -HARD["daily_loss_cap_usd"]: state["mode"] = "HIBERNATE"
     elif state["consecutive_losses"] >= 2 or 1 - eq / state["peak_bankroll_usd"] > 0.10: state["mode"] = "CAUTIOUS"
@@ -472,6 +471,7 @@ def record(state, p, pnl, winner, note=""):
     if pnl > 0: st["wins"] += 1; state["consecutive_wins"] += 1; state["consecutive_losses"] = 0
     else: st["losses"] += 1; state["consecutive_losses"] += 1; state["consecutive_wins"] = 0
     state["closed_trades"] += 1
+    state["peak_bankroll_usd"] = max(state.get("peak_bankroll_usd", 0), equity(state))
     rec = {"ts": p["ts"], "slug": p["slug"], "type": p["type"], "stake": p["stake"], "pnl": pnl,
            "predicted_edge": p["predicted_edge"], "winner": winner, "live": p["live"], "note": note}
     with open(TRADES_FILE, "a") as f: f.write(json.dumps(rec) + "\n")
@@ -493,6 +493,22 @@ def relay_alive():
     if ok and LIVE_BLOCKED and os.path.exists("LIVE"):
         LIVE_BLOCKED = False; journal("relay back — live resumed"); notify("Relay back. LIVE resumed.")
     return ok
+
+def sweep_redeem(state):
+    """Winnings on Polymarket sit as resolved shares until redeemed; the cash balance (and our sizing) ignores them.
+    Every few minutes, claim everything the Data API marks redeemable."""
+    if not is_live(): return
+    try:
+        r = requests.get("https://data-api.polymarket.com/positions", params={"user": os.environ["POLY_FUNDER"], "sizeThreshold": 0, "limit": 100}, timeout=15).json()
+    except Exception as e: log("positions err", e); return
+    claimed = 0
+    for pos in r if isinstance(r, list) else []:
+        if not pos.get("redeemable") or float(pos.get("size", 0)) <= 0: continue
+        try:
+            h = pm().redeem_positions(condition_id=pos["conditionId"]); h.wait()
+            claimed += 1; journal(f"claimed {pos.get('title', pos['conditionId'][:10])}: {float(pos['size']):.2f} shares")
+        except Exception as e: log("redeem err", pos.get("title", ""), str(e)[:100])
+    if claimed: notify(f"claimed winnings on {claimed} market(s)")
 
 def check_relay(state):
     """Prove the relay path end to end: /health (which region answers) and a balance read through it."""
@@ -549,13 +565,15 @@ def main():
     if state is None or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0) or bool(state.get("live_mode")) != os.path.exists("LIVE"):
         state = fresh_state(); commit(state, "survivor: startup")
     if os.path.exists("LIVE"): state["relay_seen"] = relay_url(); check_relay(state)
-    t0 = time.time(); last_pull = last_commit = last_bal = time.time(); scans = 0; dirty = False
+    t0 = time.time(); last_pull = last_commit = last_bal = time.time(); last_sweep = 0; scans = 0; dirty = False
     scan_errs, last_err = 0, ""
     notify(f"run start {'LIVE' if is_live() else 'PAPER'} bankroll {state['bankroll_usd']:.2f} mode {state['mode']}")
     while time.time() - t0 < RUN_SECONDS:
         if os.path.exists("HALT"):
             journal("HALT found, exiting"); notify("HALT — stopped"); break
         day_roll(state)
+        if is_live() and time.time() - last_sweep > 300:
+            sweep_redeem(state); last_sweep = time.time()
         if os.path.exists("LIVE") and time.time() - last_bal > 60:
             try:
                 if not relay_alive(): raise RuntimeError("relay offline")
@@ -565,7 +583,7 @@ def main():
                 elif is_live(): state["bankroll_usd"] = b
             except Exception as e: log("balance err", e)
             last_bal = time.time()
-        state["peak_bankroll_usd"] = max(state["peak_bankroll_usd"], equity(state))
+        pass
         before = state["closed_trades"]; settle(state); dirty |= state["closed_trades"] != before
         try: dirty |= settle_windows(state)
         except Exception as e: log("settle_windows err", e)
