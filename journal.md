@@ -1408,3 +1408,5 @@
 - 2026-09-08T23:38:30+00:00 heartbeat: 1862 scans, 1 open, mode CAUTIOUS, bankroll 52.71, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on btc-updown-5m-1788910500, opens 60
 - 2026-09-08T23:39:01+00:00 order failed MOMENTUM eth-updown-5m-1788910500: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-08T23:39:01+00:00 heartbeat: 1873 scans, 1 open, mode CAUTIOUS, bankroll 52.71, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on xrp-updown-5m-1788910500, opens 60
+- 2026-09-08T23:39:47+00:00 closed MOMENTUM eth-updown-5m-1788910200 pnl +0.70 | today +13.26 | bankroll 52.71
+- 2026-09-08T23:39:50+00:00 heartbeat: 1888 scans, 0 open, mode CAUTIOUS, bankroll 52.71, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788910800, opens 60
