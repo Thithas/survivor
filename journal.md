@@ -265,3 +265,5 @@
 - 2026-09-08T13:24:36+00:00 relay: none
 - 2026-09-08T13:25:30+00:00 heartbeat: 15 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1788873900, opens 60
 - 2026-09-08T13:26:58+00:00 heartbeat: 38 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788873900, opens 60
+- 2026-09-08T13:27:44+00:00 relay offline — live blocked
+- 2026-09-08T13:27:55+00:00 heartbeat [paper/explore]: 53 scans, 0 open, mode NORMAL, bankroll 20.20, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788873900, opens 60
