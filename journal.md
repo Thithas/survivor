@@ -1612,3 +1612,5 @@
 - 2026-09-09T01:47:53+00:00 heartbeat: 4132 scans, 1 open, mode CAUTIOUS, bankroll 38.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788918300, opens 60
 - 2026-09-09T01:48:15+00:00 closed ARB_LEG eth-updown-5m-1788918000 pnl -2.20 | today -9.45 | bankroll 38.13
 - 2026-09-09T01:48:17+00:00 heartbeat: 4140 scans, 0 open, mode CAUTIOUS, bankroll 38.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788918300, opens 60
+- 2026-09-09T01:49:02+00:00 order failed MOMENTUM doge-updown-5m-1788918300: order couldn't be fully filled. FOK orders are fully filled or killed.
+- 2026-09-09T01:49:02+00:00 heartbeat: 4156 scans, 0 open, mode CAUTIOUS, bankroll 38.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788918300, opens 60
