@@ -119,3 +119,4 @@
 {"ts": "2026-09-09T09:13:20+00:00", "slug": "xrp-updown-5m-1788945000", "type": "MOMENTUM", "stake": 3.9, "pnl": -2.2296, "predicted_edge": 0.078, "winner": -2, "live": true, "note": "stop loss @ 0.35 with 63s left"}
 {"ts": "2026-09-09T09:13:51+00:00", "slug": "eth-updown-5m-1788945000", "type": "MOMENTUM", "stake": 4.15, "pnl": 0.85, "predicted_edge": 0.0301, "winner": 1, "live": true, "note": ""}
 {"ts": "2026-09-09T09:28:07+00:00", "slug": "sol-updown-5m-1788945900", "type": "MOMENTUM", "stake": 2.75, "pnl": 2.25, "predicted_edge": 0.1127, "winner": 1, "live": true, "note": ""}
+{"ts": "2026-09-09T09:48:20+00:00", "slug": "sol-updown-5m-1788947100", "type": "MOMENTUM", "stake": 4.0, "pnl": 1.0, "predicted_edge": 0.0588, "winner": 1, "live": true, "note": ""}
