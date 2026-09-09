@@ -1460,3 +1460,4 @@
 - 2026-09-09T00:14:55+00:00 heartbeat: 2500 scans, 0 open, mode CAUTIOUS, bankroll 53.00, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1788912900, opens 60
 - 2026-09-09T00:16:14+00:00 heartbeat: 2522 scans, 0 open, mode CAUTIOUS, bankroll 53.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788912900, opens 60
 - 2026-09-09T00:17:13+00:00 heartbeat: 2537 scans, 0 open, mode CAUTIOUS, bankroll 53.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on sol-updown-5m-1788912900, opens 60
+- 2026-09-09T00:18:02+00:00 heartbeat: 2551 scans, 0 open, mode CAUTIOUS, bankroll 53.00, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1788912900, opens 60
