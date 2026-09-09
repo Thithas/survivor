@@ -1600,3 +1600,11 @@
 - 2026-09-09T01:44:19+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
 - 2026-09-09T01:44:22+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
 - 2026-09-09T01:44:22+00:00 heartbeat: 4076 scans, 1 open, mode CAUTIOUS, bankroll 38.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788918000, opens 60
+- 2026-09-09T01:44:27+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:29+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:34+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:38+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:42+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:47+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:51+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:51+00:00 heartbeat: 4083 scans, 1 open, mode CAUTIOUS, bankroll 38.13, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788918300, opens 60
