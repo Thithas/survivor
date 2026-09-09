@@ -81,3 +81,4 @@
 {"ts": "2026-09-09T02:09:01+00:00", "slug": "eth-updown-5m-1788919500", "type": "MOMENTUM", "stake": 3.95, "pnl": 1.05, "predicted_edge": -0.0116, "winner": 0, "live": true, "note": ""}
 {"ts": "2026-09-09T02:16:22+00:00", "slug": "btc-updown-5m-1788920100", "type": "ARB_LEG", "stake": 4.2, "pnl": 0.8, "predicted_edge": 0.0232, "winner": 1, "live": true, "note": ""}
 {"ts": "2026-09-09T02:29:02+00:00", "slug": "btc-updown-5m-1788920700", "type": "MOMENTUM", "stake": 2.75, "pnl": -2.75, "predicted_edge": -0.0173, "winner": 1, "live": true, "note": ""}
+{"ts": "2026-09-09T02:34:03+00:00", "slug": "btc-updown-5m-1788921000", "type": "MOMENTUM", "stake": 4.6, "pnl": 0.4, "predicted_edge": -0.0052, "winner": 1, "live": true, "note": ""}
