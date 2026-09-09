@@ -2304,3 +2304,4 @@
 - 2026-09-09T10:48:15+00:00 sold MOMENTUM sol-updown-5m-1788950700 pnl -1.89 (stop loss @ 0.43 with 105s left) | today -29.91 | bankroll 17.69
 - 2026-09-09T10:48:15+00:00 heartbeat: 1175 scans, 0 open, mode CAUTIOUS, bankroll 17.69, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788950700, opens 60
 - 2026-09-09T10:48:42+00:00 heartbeat: 1185 scans, 0 open, mode CAUTIOUS, bankroll 17.69, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1788950700, opens 60
+- 2026-09-09T10:49:01+00:00 heartbeat: 1192 scans, 0 open, mode CAUTIOUS, bankroll 17.69, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788950700, opens 60
