@@ -371,7 +371,7 @@ def forced_trade(state, P):
     """Owner's rule: one minimum-size trade per 5-minute cycle even without a signal. Least-bad version:
     at T-forced_at_sec buy 5 shares of the market's own favourite (highest ask <= forced_max_ask) — the side the market
     already expects to win, so the expected cost is just the fee. Skipped if a signal already traded this cycle."""
-    if state["mode"] in ("DEAD", "HIBERNATE"): return None
+    if state["mode"] in ("DEAD", "HIBERNATE") or P.get("forced_at_sec", 0) <= 0: return None   # 0 disables forced trades
     books = state.get("books", {})
     cyc = {slug: b for slug, b in books.items() if b["left"] <= P["forced_at_sec"] and b["left"] >= P["forced_at_sec"] - 12}
     if not cyc: return None
