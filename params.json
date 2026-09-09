@@ -17,5 +17,6 @@
   "momentum_min_ask": 0.4,
   "lock_from_bid": 0.85,
   "lock_giveback": 0.25,
-  "arb_enabled": 0
+  "arb_enabled": 0,
+  "forced_at_sec": 0
 }
