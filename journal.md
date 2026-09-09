@@ -2139,3 +2139,5 @@
 - 2026-09-09T08:59:31+00:00 order failed MOMENTUM btc-updown-5m-1788944100: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-09T08:59:32+00:00 LIVE MOMENTUM doge-updown-5m-1788944100 $3.85 edge 0.0876 move 14.2 bps peers 3/0
 - 2026-09-09T08:59:32+00:00 heartbeat: 4498 scans, 1 open, mode CAUTIOUS, bankroll 26.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788944100, opens 60
+- 2026-09-09T08:59:40+00:00 sold MOMENTUM doge-updown-5m-1788944100 pnl -2.18 (stop loss @ 0.35 with 20s left) | today -18.11 | bankroll 26.01
+- 2026-09-09T08:59:41+00:00 heartbeat: 4499 scans, 0 open, mode CAUTIOUS, bankroll 26.01, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788944400, opens 60
