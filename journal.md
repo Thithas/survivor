@@ -1685,3 +1685,14 @@
 - 2026-09-09T02:36:26+00:00 heartbeat: 4994 scans, 1 open, mode CAUTIOUS, bankroll 36.57, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788921300, opens 60
 - 2026-09-09T02:37:02+00:00 LIVE ARB PARTIAL btc-updown-5m-1788921300 $2.56 edge 0.0498
 - 2026-09-09T02:37:03+00:00 heartbeat: 5003 scans, 2 open, mode CAUTIOUS, bankroll 36.57, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.92 on btc-updown-5m-1788921300, opens 60
+- 2026-09-09T02:37:31+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:37:36+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:37:40+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:37:44+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:37:48+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:37:51+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:37:54+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:37:57+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:38:00+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:38:03+00:00 sell failed (stop loss) btc-updown-5m-1788921300: not enough balance / allowance: the balance is not enough -> balance: 3710145, order amount: 4000000
+- 2026-09-09T02:38:03+00:00 heartbeat: 5019 scans, 2 open, mode CAUTIOUS, bankroll 33.96, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.97 on sol-updown-5m-1788921300, opens 60
