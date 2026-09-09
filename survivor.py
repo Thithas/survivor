@@ -35,13 +35,13 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
           "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95),
           "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9),
-          "max_edge": (0.10, 1.0)}
+          "max_edge": (0.10, 1.0), "arb_enabled": (0, 1)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "max_edge": 0.20}
+                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "max_edge": 0.20, "arb_enabled": 0}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -182,9 +182,22 @@ def buy(token_id, usd):
     try: return _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FOK"))
     except Exception as e: return False, str(e)[:160]
 
+def held_shares(token_id):
+    """Actual on-chain size for a token — fills can be partial, so our own record can overstate it."""
+    try:
+        r = requests.get("https://data-api.polymarket.com/positions", params={"user": os.environ["POLY_FUNDER"], "sizeThreshold": 0, "limit": 100}, timeout=15).json()
+        for pos in r if isinstance(r, list) else []:
+            if str(pos.get("asset")) == str(token_id): return float(pos.get("size", 0))
+    except Exception as e: log("held err", e)
+    return None
+
 def sell(token_id, shares):
-    """Market FOK sell of `shares`. Returns (ok, response)."""
+    """Market FOK sell. Never asks for more shares than we own."""
     if not is_live(): return True, "paper"
+    real = held_shares(token_id)
+    if real is not None:
+        if real < 1: return False, f"nothing to sell (held {real})"
+        shares = min(shares, real)
     try: return _resp(pm().place_market_order(token_id=token_id, side="SELL", shares=str(round(shares, 2)), order_type="FOK"))
     except Exception as e: return False, str(e)[:160]
 
@@ -330,7 +343,7 @@ def decide(state, P, sigs):
     orders = []
     n_mom = max(1, sum(1 for s in sigs if s["type"] == "MOMENTUM" and s["confidence"] >= P["momentum_min_confidence"]))
     for s in sorted(sigs, key=lambda s: (s["type"] != "ARB", -s["gross_edge"])):
-        if s["type"] == "ARB" and arb_room <= 0: continue
+        if s["type"] == "ARB" and (arb_room <= 0 or not P.get("arb_enabled", 1)): continue
         if s["type"] != "ARB" and room <= 0: continue
         if s["slug"] in taken: continue
         net = s["gross_edge"] - P["fees"] - (0 if s["type"] == "ARB" else P["slippage"])   # arb is FOK at the quoted ask: no slippage term
@@ -441,11 +454,20 @@ def manage(state, P):
     """Close momentum positions early: lock in near-certain wins, cut clear losers while a bid still exists."""
     keep, changed = [], False
     for p in state["open_positions"]:
+        if p["type"] not in ("MOMENTUM", "ARB_LEG") or p.get("no_exit"): keep.append(p); continue
+        leg = p["legs"][0]
+        left = (parse(p["end"]) - now()).total_seconds()
         b = state.get("books", {}).get(p["slug"])
-        if p["type"] not in ("MOMENTUM", "ARB_LEG") or not b:
-            keep.append(p); continue
-        leg = p["legs"][0]; bid = b["up"][1] if leg["outcome"] == 0 else b["down"][1]; left = b["left"]
-        if bid is None: keep.append(p); continue
+        bid = ask = None
+        if b and abs(b.get("left", 1e9) - left) <= 3:                 # snapshot still current
+            bid = b["up"][1] if leg["outcome"] == 0 else b["down"][1]
+            ask = b["up"][0] if leg["outcome"] == 0 else b["down"][0]
+        else:
+            try: ask, _l, bid, _z = top(leg["token"])                 # stale or missing: quote it ourselves
+            except Exception as e: log("manage quote err", p["slug"], e)
+        if bid is None:      # no bid at all: if the ask is on the floor the market has written this side off
+            if ask is not None and ask <= P["stop_loss_bid"] and left >= P["stop_loss_min_left_sec"]: bid = 0.0
+            else: keep.append(p); continue
         cyc = p["slug"].rsplit("-", 1)[-1]
         if state.get("bad_cycle") == cyc and bid < 0.6 and left >= P["stop_loss_min_left_sec"]:
             bid = min(bid, P["stop_loss_bid"])        # a sibling on this cycle already stopped: the whole tick was wrong
@@ -456,7 +478,10 @@ def manage(state, P):
         if not reason: keep.append(p); continue
         ok, resp = sell(leg["token"], leg["shares"])
         if not ok:
-            journal(f"sell failed ({reason}) {p['slug']}: {resp}"); keep.append(p); continue
+            p["sell_fails"] = p.get("sell_fails", 0) + 1
+            if p["sell_fails"] in (1, 5): journal(f"sell failed ({reason}) {p['slug']}: {resp}")
+            if p["sell_fails"] >= 5: p["no_exit"] = True              # can't exit: quit trying, let it resolve
+            keep.append(p); continue
         proceeds = round(leg["shares"] * (bid - fee(bid, P)), 4)
         record(state, p, round(proceeds - p["stake"], 4), -2, note=f"{reason} @ {bid:.2f} with {left:.0f}s left")
         if reason == "stop loss": state["bad_cycle"] = p["slug"].rsplit("-", 1)[-1]
