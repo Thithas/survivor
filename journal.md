@@ -1763,3 +1763,5 @@
 - 2026-09-09T03:59:41+00:00 heartbeat: 75 scans, 1 open, mode CAUTIOUS, bankroll 34.91, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788926400, opens 60
 - 2026-09-09T03:59:48+00:00 sell failed (stop loss) btc-updown-5m-1788926100: No resting liquidity.
 - 2026-09-09T04:01:45+00:00 heartbeat: 102 scans, 1 open, mode CAUTIOUS, bankroll 28.77, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788926400, opens 60
+- 2026-09-09T04:04:09+00:00 closed MOMENTUM btc-updown-5m-1788926100 pnl -3.14 | today -15.18 | bankroll 28.77
+- 2026-09-09T04:04:13+00:00 heartbeat: 138 scans, 0 open, mode CAUTIOUS, bankroll 28.77, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60
