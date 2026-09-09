@@ -91,3 +91,4 @@
 {"ts": "2026-09-09T04:08:59+00:00", "slug": "doge-updown-5m-1788926700", "type": "MOMENTUM", "stake": 2.9, "pnl": -1.619, "predicted_edge": 0.1129, "winner": -2, "live": true, "note": "stop loss @ 0.27 with 43s left"}
 {"ts": "2026-09-09T04:13:17+00:00", "slug": "btc-updown-5m-1788927000", "type": "MOMENTUM", "stake": 3.05, "pnl": -2.6287, "predicted_edge": 0.0833, "winner": -2, "live": true, "note": "stop loss @ 0.09 with 37s left"}
 {"ts": "2026-09-09T04:13:11+00:00", "slug": "eth-updown-5m-1788927000", "type": "MOMENTUM", "stake": 3.95, "pnl": 1.05, "predicted_edge": 0.0684, "winner": 1, "live": true, "note": ""}
+{"ts": "2026-09-09T04:33:05+00:00", "slug": "btc-updown-5m-1788928200", "type": "MOMENTUM", "stake": 3.8, "pnl": 1.2, "predicted_edge": 0.0972, "winner": 1, "live": true, "note": ""}
