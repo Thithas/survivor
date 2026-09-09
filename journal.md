@@ -1580,3 +1580,18 @@
 - 2026-09-09T01:41:34+00:00 heartbeat: 4027 scans, 0 open, mode CAUTIOUS, bankroll 40.38, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788918000, opens 60
 - 2026-09-09T01:43:21+00:00 LIVE ARB PARTIAL eth-updown-5m-1788918000 $2.2 edge 0.077
 - 2026-09-09T01:43:22+00:00 heartbeat: 4057 scans, 1 open, mode CAUTIOUS, bankroll 40.38, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.89 on eth-updown-5m-1788918000, opens 60
+- 2026-09-09T01:43:26+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:29+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:32+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:35+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:38+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:41+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:44+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:48+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:51+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:54+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:43:57+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:02+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:05+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:09+00:00 sell failed (stop loss) eth-updown-5m-1788918000: not enough balance / allowance: the balance is not enough -> balance: 3283583, order amount: 4000000
+- 2026-09-09T01:44:09+00:00 heartbeat: 4072 scans, 1 open, mode CAUTIOUS, bankroll 38.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.94 on eth-updown-5m-1788918000, opens 60
