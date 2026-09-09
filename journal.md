@@ -1810,3 +1810,4 @@
 - 2026-09-09T04:33:05+00:00 LIVE MOMENTUM btc-updown-5m-1788928200 $3.8 edge 0.0972 move -7.4 bps peers 4/0
 - 2026-09-09T04:33:05+00:00 heartbeat: 549 scans, 1 open, mode CAUTIOUS, bankroll 22.80, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on eth-updown-5m-1788928200, opens 60
 - 2026-09-09T04:33:10+00:00 heartbeat: 550 scans, 1 open, mode CAUTIOUS, bankroll 22.80, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on eth-updown-5m-1788928200, opens 60
+- 2026-09-09T04:34:45+00:00 heartbeat: 576 scans, 1 open, mode CAUTIOUS, bankroll 24.04, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788928500, opens 60
