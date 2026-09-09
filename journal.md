@@ -2113,3 +2113,4 @@
 - 2026-09-09T08:43:37+00:00 sell failed (stop loss) xrp-updown-5m-1788943200: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-09T08:43:45+00:00 sold MOMENTUM xrp-updown-5m-1788943200 pnl -2.62 (stop loss @ 0.28 with 75s left) | today -16.25 | bankroll 30.86
 - 2026-09-09T08:43:46+00:00 heartbeat: 4263 scans, 0 open, mode CAUTIOUS, bankroll 30.86, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788943200, opens 60
+- 2026-09-09T08:46:24+00:00 heartbeat: 4304 scans, 0 open, mode CAUTIOUS, bankroll 28.04, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788943500, opens 60
