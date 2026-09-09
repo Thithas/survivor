@@ -2418,3 +2418,5 @@
 - 2026-09-09T12:18:04+00:00 LIVE MOMENTUM eth-updown-5m-1788956100 $2.05 edge 0.1831 move 6.7 bps peers 4/0
 - 2026-09-09T12:18:05+00:00 order failed MOMENTUM btc-updown-5m-1788956100: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-09T12:18:05+00:00 heartbeat: 2827 scans, 1 open, mode CAUTIOUS, bankroll 14.23, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on btc-updown-5m-1788956100, opens 60
+- 2026-09-09T12:18:09+00:00 order failed MOMENTUM btc-updown-5m-1788956100: order couldn't be fully filled. FOK orders are fully filled or killed.
+- 2026-09-09T12:18:09+00:00 heartbeat: 2828 scans, 1 open, mode CAUTIOUS, bankroll 14.23, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1788956100, opens 60
