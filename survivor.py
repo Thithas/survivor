@@ -262,6 +262,7 @@ def new_state(bankroll):
 def day_roll(state):
     if state["today"] != today():
         state["today"], state["today_pnl_usd"] = today(), 0.0
+        state["peak_bankroll_usd"] = equity(state)      # drawdown is measured from today, not from an all-time high
         state["consecutive_losses"] = min(state["consecutive_losses"], 2)
         journal("day rolled")
 
@@ -316,9 +317,19 @@ def scan(state, P):
             mv = (px - op) / op * 1e4
             up_side = mv > 0
             ask, liq = (ua, ul) if up_side else (da, dl)
-            # calibrated on recorded windows (spot move vs actual winner): the proxy feed is right ~55% under 10 bps,
-            # ~70% at 10-20, ~80% above 20. Anything more optimistic than this lost paper money.
-            a = abs(mv); conf = 0.50 if a < 3 else 0.55 if a < 10 else 0.70 if a < 20 else 0.80
+            # Win rate measured on 865 recorded windows, keyed on where the market prices the favoured side.
+            # (0.40-0.55: 57%, 0.55-0.65: 67%, 0.65-0.75: 70%, 0.75-0.85: 83%.) A move-only score can never
+            # justify an 0.80 ask, which is why that band — the best one — never traded.
+            a = abs(mv)
+            _ask = ua if up_side else da
+            if _ask is None: conf = 0.0
+            elif _ask < 0.40: conf = 0.45
+            elif _ask < 0.55: conf = 0.57
+            elif _ask < 0.65: conf = 0.67
+            elif _ask < 0.75: conf = 0.70
+            elif _ask < 0.85: conf = 0.83
+            else: conf = 0.83
+            if a < 6: conf -= 0.10                       # weak move: the band's base rate isn't earned
             peers = [v for a2, v in moves.items() if a2 != m["asset"]]
             agree = sum(1 for v in peers if (v > 0) == up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
             against = sum(1 for v in peers if (v > 0) != up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
