@@ -1,0 +1,3 @@
+# One Daraz product URL per line. Lines starting with # are ignored.
+# Example:
+# https://www.daraz.com.bd/products/-i123456789-s987654321.html
