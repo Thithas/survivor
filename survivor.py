@@ -21,6 +21,67 @@ SERIES = {a: f"{a}-up-or-down-5m" for a in ASSETS}
 PREFIX = {a: f"{a}-updown-5m-" for a in ASSETS}
 MIN_SHARES = 5          # Polymarket engine minimum per order
 STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE = "state.json", "trades.jsonl", "journal.md", "windows.jsonl"
+DECISIONS_FILE, LESSONS_FILE = "decisions.jsonl", "lessons.json"
+
+# --- the learning loop -------------------------------------------------------------------------
+# Every closed trade is classified into three coarse buckets. When a bucket has enough history and is
+# clearly losing, entries in that bucket are vetoed. Bounded on purpose: it can only ever stop the agent
+# trading something, never loosen a rule, size up, or edit code. Turn off with lessons_enabled = 0.
+VETO_MIN_N, VETO_MAX_WIN, VETO_MAX_NET = 25, 0.45, 0.0
+
+def buckets_of(sig, left):
+    """The three dimensions we have enough data to judge: what we paid, who agreed, how late we were."""
+    a = sig.get("ask") or 0
+    price = "price<0.55" if a < 0.55 else "price0.55-0.70" if a < 0.70 else "price0.70+"
+    try: agree = int(str(sig.get("peers", "0/0")).split("/")[0])
+    except Exception: agree = 0
+    crowd = "alone" if agree <= 1 else "some-agree" if agree <= 3 else "all-agree"
+    when = "early" if left > 60 else "late"
+    return [price, crowd, when]
+
+def lessons(): return load_json(LESSONS_FILE, {})
+
+def learn(state, p, pnl, why):
+    """Fold one outcome into the bucket stats. Pure counting — no thresholds are moved here."""
+    L = lessons()
+    for b in p.get("buckets", []):
+        e = L.setdefault(b, {"n": 0, "wins": 0, "net": 0.0})
+        e["n"] += 1; e["wins"] += int(pnl > 0); e["net"] = round(e["net"] + pnl, 4)
+    r = L.setdefault("_why", {}); r[why] = r.get(why, 0) + 1
+    save_json(LESSONS_FILE, L)
+
+def vetoed(sig, left, P):
+    """A bucket is vetoed only with a real sample behind it, and only to stop a trade."""
+    if not P.get("lessons_enabled", 1): return None
+    L = lessons()
+    for b in buckets_of(sig, left):
+        e = L.get(b)
+        if e and e["n"] >= VETO_MIN_N and e["wins"] / e["n"] < VETO_MAX_WIN and e["net"] < VETO_MAX_NET:
+            return f"{b} has lost {e['net']:+.2f} over {e['n']} trades at {e['wins']/e['n']:.0%} wins"
+    return None
+
+def classify(p, pnl, note):
+    """Why did this trade end the way it did? Read from what we already recorded, nothing invented."""
+    if pnl > 0: return "won at expiry" if "stop" not in note and "lock" not in note else "won on exit rule"
+    if "stop" in note:
+        gap = (p.get("stop_at") or 0) - (p.get("exit_bid") or 0)
+        if gap > 0.10: return "stop filled far below trigger (book emptied)"
+        return "momentum reversed, stop did its job"
+    if "lock" in note: return "gave back a gain after reaching the lock level"
+    if (p.get("entry_left") or 999) < 30: return "entered too late in the window"
+    return "held to expiry and the prediction was wrong"
+
+def decide_log(state, action, sig, **kw):
+    """One line per decision — entry, skip or exit — so every action can be explained later."""
+    row = {"ts": now().isoformat(timespec="seconds"), "action": action,
+           "market": (sig or {}).get("slug", ""), "type": (sig or {}).get("type", ""),
+           "ask": (sig or {}).get("ask"), "move_bps": (sig or {}).get("move_bps"),
+           "peers": (sig or {}).get("peers"), "confidence": (sig or {}).get("confidence"),
+           "edge": (sig or {}).get("gross_edge"), "time_left_sec": (sig or {}).get("time_left_sec"),
+           "mode": state.get("mode"), "bankroll": round(state.get("bankroll_usd", 0), 2), **kw}
+    try:
+        with open(DECISIONS_FILE, "a") as f: f.write(json.dumps(row) + "\n")
+    except Exception as e: log("decide_log", e)
 RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
@@ -38,13 +99,13 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
           "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95),
           "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9),
-          "max_edge": (0.10, 1.0), "arb_enabled": (0, 1)}
+          "max_edge": (0.10, 1.0), "arb_enabled": (0, 1), "lessons_enabled": (0, 1)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "max_edge": 0.20, "arb_enabled": 0}
+                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lessons_enabled": 1, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "max_edge": 0.20, "arb_enabled": 0}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -99,10 +160,10 @@ def pull():
         if "survivor.py" in changed or "survivor.yml" in changed: RESTART = True
 def commit(state, msg="survivor: state"):
     save_json(STATE_FILE, state)
-    for f in (TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE):
+    for f in (TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE, DECISIONS_FILE, LESSONS_FILE):
         if not os.path.exists(f): open(f, "a").close()   # git add fails outright on a missing path
     if not IN_ACTIONS: return
-    a = git("add", "--", STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE)
+    a = git("add", "--", STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE, DECISIONS_FILE, LESSONS_FILE)
     if a.returncode: log("git add failed", a.stderr[-200:]); return
     c = git("commit", "-q", "-m", msg)
     if c.returncode: log("nothing to commit"); return
@@ -387,7 +448,7 @@ def decide(state, P, sigs):
     # same losing streak and shut the 0.65-0.85 band out entirely. Smaller size is the caution now.
     min_edge = P["min_edge"]
     room = min(HARD["max_open_positions"], P["max_open_positions"]) - sum(1 for p in state["open_positions"] if p["type"] != "ARB")
-    arb_room = 3 - sum(1 for p in state["open_positions"] if p["type"] == "ARB")
+    arb_room = HARD["max_open_positions"] - sum(1 for p in state["open_positions"] if p["type"] == "ARB")
     taken = {p["slug"] for p in state["open_positions"]} | set(state.get("traded", []))
     orders = []
     # Today, solo cycles went 7 for 7 (+$10.20) and multi-coin cycles went 0 for 5 (-$11.16). Coins in one window
@@ -412,7 +473,11 @@ def decide(state, P, sigs):
         if net < (P["min_edge"] if s["type"] == "ARB" else min_edge): continue        # CAUTIOUS doesn't apply to riskless arb
         if s["type"] == "MOMENTUM" and (s["liquidity_usd"] < P["min_liquidity_usd"] or s["confidence"] < P["momentum_min_confidence"]): continue
         # an implausibly large edge means the market strongly disagrees with our feed — those lost 100% every time
-        if s["type"] == "MOMENTUM" and not s.get("forced") and net > P["max_edge"]: continue
+        if s["type"] == "MOMENTUM" and not s.get("forced") and net > P["max_edge"]:
+            decide_log(state, "SKIP", s, reason=f"edge {net:.2f} implausibly large — the market disagrees too hard"); continue
+        if s["type"] == "MOMENTUM":
+            v = vetoed(s, s.get("time_left_sec", 999), P)
+            if v: decide_log(state, "SKIP", s, reason="lesson veto: " + v); continue
         unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
         if s["type"] == "ARB":
             shares = int(min(state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) / unit, s["liq_shares"] * 0.5))   # both legs must fill: never more than half the thinner book
@@ -469,7 +534,9 @@ def execute(state, s, stake, net, P):
         journal(f"order failed {s['type']} {s['slug']}: {legs[0]['resp']}"); return
     cost = round(sum(l["cost"] for l in filled), 2)
     pos = {"slug": s["slug"], "type": s["type"], "legs": legs, "stake": cost, "predicted_edge": net,
-           "entry_price": s.get("ask"), "confidence": s.get("confidence"), "move_bps": s.get("move_bps"), "peers": s.get("peers"),
+           "entry_price": s.get("ask"), "entry_left": s.get("time_left_sec"),
+           "confidence": s.get("confidence"), "move_bps": s.get("move_bps"), "peers": s.get("peers"),
+           "buckets": buckets_of(s, s.get("time_left_sec") or 999), "confidence": s.get("confidence"), "move_bps": s.get("move_bps"), "peers": s.get("peers"),
            "ts": now().isoformat(timespec="seconds"), "end": s["end"], "live": is_live()}
     if s["type"] == "MOMENTUM" and pos.get("entry_price") and filled:
         stop_at = max(P["stop_loss_bid"], P["stop_frac_of_entry"] * pos["entry_price"])
@@ -478,6 +545,9 @@ def execute(state, s, stake, net, P):
     state["open_positions"].append(pos)
     state["traded"] = (state.get("traded", []) + [s["slug"]])[-40:]
     if not is_live(): state["bankroll_usd"] -= cost
+    decide_log(state, "ENTER", s, stake=cost, shares=sum(l["shares"] for l in filled),
+               reason=f"move {s.get('move_bps')} bps, {s.get('peers')} peers agree, paying {s.get('ask')}, "
+                      f"{s.get('time_left_sec')}s left, edge {net}")
     partial = " PARTIAL" if len(filled) < len(legs) else ""
     if partial:
         # half an arb is a naked bet. Unwind it this second; only if the sell fails do we keep it as a managed leg.
@@ -557,6 +627,7 @@ def manage(state, P):
             if p["sell_fails"] >= 5: p["no_exit"] = True              # can't exit: quit trying, let it resolve
             keep.append(p); continue
         proceeds = round(leg["shares"] * (bid - fee(bid, P)), 4)
+        p["exit_bid"] = bid
         record(state, p, round(proceeds - p["stake"], 4), -2, note=f"{reason} @ {bid:.2f} with {left:.0f}s left")
         if reason == "stop loss": state["bad_cycle"] = p["slug"].rsplit("-", 1)[-1]
         changed = True
@@ -590,6 +661,13 @@ def record(state, p, pnl, winner, note=""):
     if pnl > 0: st["wins"] += 1; state["consecutive_wins"] += 1; state["consecutive_losses"] = 0
     else: st["losses"] += 1; state["consecutive_losses"] += 1; state["consecutive_wins"] = 0
     state["closed_trades"] += 1
+    why = classify(p, pnl, note)
+    learn(state, p, pnl, why)
+    decide_log(state, "EXIT", {"slug": p["slug"], "type": p["type"], "ask": p.get("entry_price"),
+                               "move_bps": p.get("move_bps"), "peers": p.get("peers"),
+                               "confidence": p.get("confidence")},
+               stake=p["stake"], pnl=pnl, exit_reason=note or "settled at expiry", lesson=why,
+               held_sec=round((now() - parse(p["ts"])).total_seconds()))
     state["peak_bankroll_usd"] = max(state.get("peak_bankroll_usd", 0), equity(state))
     rec = {"ts": p["ts"], "slug": p["slug"], "type": p["type"], "stake": p["stake"], "pnl": pnl,
            "predicted_edge": p["predicted_edge"], "winner": winner, "live": p["live"], "note": note,
@@ -738,7 +816,15 @@ def main():
             f = forced_trade(state, P)
             if f and f["slug"] not in {p["slug"] for p in state["open_positions"]}:
                 stake = round(MIN_SHARES * f["ask"], 2)
-                if stake <= state["bankroll_usd"]: execute(state, f, stake, f["gross_edge"], P); dirty = True
+                cap = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"])
+                over_cap = stake > cap + 0.01
+                below_floor = state["bankroll_usd"] - stake < HARD["floor_usd"]
+                slots_full = sum(1 for p in state["open_positions"] if p["type"] != "ARB") >= HARD["max_open_positions"]
+                if over_cap or below_floor or slots_full:
+                    decide_log(state, "SKIP", f, reason="forced trade blocked: " +
+                               ("over 10% cap" if over_cap else "would breach floor" if below_floor else "position slots full"))
+                elif stake <= state["bankroll_usd"]:
+                    execute(state, f, stake, f["gross_edge"], P); dirty = True
         except Exception as e: log("forced err", e)
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = params(); last_pull = time.time()
