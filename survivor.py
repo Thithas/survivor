@@ -380,7 +380,9 @@ def scan(state, P):
 def decide(state, P, sigs):
     if state["mode"] in ("DEAD", "HIBERNATE"): return []
     caut = state["mode"] == "CAUTIOUS"
-    min_edge = P["min_edge"] * (1.5 if caut else 1.0)
+    # CAUTIOUS already halves the stake; raising the entry bar on top of that was a second penalty for the
+    # same losing streak and shut the 0.65-0.85 band out entirely. Smaller size is the caution now.
+    min_edge = P["min_edge"]
     room = min(HARD["max_open_positions"], P["max_open_positions"]) - sum(1 for p in state["open_positions"] if p["type"] != "ARB")
     arb_room = 3 - sum(1 for p in state["open_positions"] if p["type"] == "ARB")
     taken = {p["slug"] for p in state["open_positions"]} | set(state.get("traded", []))
