@@ -1230,5 +1230,6 @@
   "daily_loss_cap_usd": 999.0,
   "max_trade_pct": 0.25,
   "max_open_positions": 5
- }
+ },
+ "freeze_at_trade": 151
 }
