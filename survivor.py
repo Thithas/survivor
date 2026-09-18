@@ -73,7 +73,9 @@ def notify(msg):
 def load_json(p, default):
     try: return json.load(open(p))
     except Exception: return default
-def save_json(p, d): json.dump(d, open(p, "w"), indent=1)
+def save_json(p, d):
+    if p == STATE_FILE: d["hard_limits"] = HARD      # dashboard reads the real limits from here
+    json.dump(d, open(p, "w"), indent=1)
 def load_params():
     p = dict(DEFAULT_PARAMS); p.update(load_json("params.json", {}))
     for k, (lo, hi) in BOUNDS.items(): p[k] = min(hi, max(lo, p.get(k, DEFAULT_PARAMS[k])))
@@ -265,7 +267,7 @@ def top(token):
 
 # ---------- brain (rules) ----------
 def new_state(bankroll):
-    return {"bankroll_usd": bankroll, "start_bankroll_usd": bankroll, "peak_bankroll_usd": bankroll,
+    return {"hard_limits": HARD, "bankroll_usd": bankroll, "start_bankroll_usd": bankroll, "peak_bankroll_usd": bankroll,
             "today": today(), "today_pnl_usd": 0.0, "consecutive_losses": 0, "consecutive_wins": 0,
             "mode": "NORMAL", "open_positions": [], "closed_trades": 0, "opens": {},
             "stats": {"wins": 0, "losses": 0, "pnl": 0.0, "arb": 0, "momentum": 0}}
