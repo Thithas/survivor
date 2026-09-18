@@ -2,275 +2,401 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SURVIVOR — live</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SURVIVOR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#E8ECEF;--ink:#16212B;--muted:#66737E;--line:#CBD3D9;--up:#0E7C7B;--down:#B3261E;--warn:#B7791F;--sleep:#5B6B7A;--soft:#F4F6F7}
-  *{box-sizing:border-box}
-  html{background:var(--bg)}
-  body{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;color:var(--ink);font-size:15px;line-height:1.45;font-variant-numeric:tabular-nums;max-width:720px;padding:18px 14px 48px;margin-inline:auto}
-  h1{font-size:20px;font-weight:600;letter-spacing:.06em;margin:0}
-  header{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-  .status{color:var(--muted);font-size:13.5px}
-  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--sleep);margin-right:6px;vertical-align:middle}
-  .dot.alive{background:var(--up)} .dot.warn{background:var(--warn)} .dot.dead{background:var(--down)}
-  .clock{display:flex;align-items:baseline;gap:14px;margin-top:18px}
-  .clock .t{font-size:56px;font-weight:600;line-height:1;letter-spacing:-.03em;min-width:3ch}
-  .clock .sub{color:var(--muted);font-size:13.5px}
-  .bar{height:6px;background:var(--line);border-radius:3px;margin:10px 0 14px;overflow:hidden} .bar div{height:100%;background:var(--ink);width:0}
+  :root{
+    --deep:#0C1922; --sea:#13242F; --shelf:#1B3140; --line:#27414F;
+    --foam:#EAF2F5; --mist:#7E9AA8;
+    --gain:#42C79A; --loss:#E4655F; --buoy:#F0B429;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{background:var(--deep)}
+  body{margin:0;font-family:Archivo,system-ui,sans-serif;background:var(--deep);color:var(--foam);
+       font-size:15px;line-height:1.4;font-variant-numeric:tabular-nums;
+       max-width:640px;margin-inline:auto;padding:16px 16px 56px}
+  .quiet{color:var(--mist)}
+  .gain{color:var(--gain)} .loss{color:var(--loss)}
 
-  .board{width:100%;border-collapse:collapse}
-  .board td,.board th{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-size:14.5px}
-  .board th{font-weight:500;color:var(--muted);font-size:13px}
-  .board td:first-child,.board th:first-child{text-align:left;font-weight:600}
-  .board tr.sel td{background:var(--soft)}
-  .board tr{cursor:pointer}
-  .board .v{font-size:12.5px;color:var(--muted);text-align:left;white-space:normal;max-width:180px}
-  .board tr.buy td{background:#E3F2EF} .board tr.buy .v{color:var(--up);font-weight:600}
-  .pos{color:var(--up)} .neg{color:var(--down)}
-  .detail{margin-top:14px;padding:12px 14px;border-radius:6px;background:var(--soft)}
-  .detail .verdict{font-size:15px;line-height:1.4}
-  .detail b{font-weight:600}
-  svg.tape{width:100%;height:64px;display:block;margin-top:10px}
-  .act{margin-top:10px;padding:12px 14px;border-radius:6px;background:#E3F2EF;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .act.on{display:flex} .act a{background:var(--up);color:#fff;text-decoration:none;padding:10px 14px;border-radius:5px;font-weight:600;white-space:nowrap}
-  .toolbar{display:flex;gap:8px;margin-top:10px}
-  button{font:inherit;font-size:13.5px;padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:5px;color:var(--ink)} button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  /* masthead */
+  header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:22px}
+  h1{font-size:15px;font-weight:700;letter-spacing:.22em;margin:0}
+  .pulse{font-size:12.5px;color:var(--mist);display:flex;align-items:center;gap:6px}
+  .beat{width:7px;height:7px;border-radius:50%;background:var(--mist);flex:none}
+  .beat.on{background:var(--gain);box-shadow:0 0 0 0 rgba(66,199,154,.6);animation:beat 2.6s infinite}
+  .beat.warn{background:var(--buoy)} .beat.dead{background:var(--loss)}
+  @keyframes beat{70%{box-shadow:0 0 0 7px rgba(66,199,154,0)}100%{box-shadow:0 0 0 0 rgba(66,199,154,0)}}
+  @media (prefers-reduced-motion:reduce){.beat.on{animation:none}}
 
-  section{margin-top:30px;border-top:1px solid var(--line);padding-top:14px}
-  h2{font-size:15px;font-weight:600;margin:0 0 4px}
-  .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
-  th:first-child,td:first-child{text-align:left} th{font-weight:500;color:var(--muted)}
-  .ev-good{background:#E3F2EF} .ev-bad{background:#F7E6E5}
-  .empty{color:var(--muted);font-size:14px;padding:8px 0}
-  .rules{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;font-size:14px}
-  .rules div span{display:block;color:var(--muted);font-size:12.5px} .rules div b{font-weight:500}
-  .meter{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:4px} .meter div{height:100%;background:var(--warn)}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;margin:0 0 12px}
-  .stats div span{display:block;font-size:12.5px;color:var(--muted)} .stats div b{font-size:18px;font-weight:500}
-  .mode.NORMAL{color:var(--up)} .mode.CAUTIOUS{color:var(--warn)} .mode.HIBERNATE{color:var(--sleep)} .mode.DEAD{color:var(--down)}
-  details{margin-top:24px;border-top:1px solid var(--line);padding-top:10px}
-  summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between} summary::after{content:"+";color:var(--muted)} details[open] summary::after{content:"–"}
-  .journal{font-size:13.5px;margin:0;padding:0;list-style:none} .journal li{padding:6px 0;border-bottom:1px solid var(--line)} .journal li time{color:var(--muted);margin-right:8px}
-  footer{margin-top:36px;color:var(--muted);font-size:13px} footer a{color:var(--ink)}
+  /* hero: the tide */
+  .tide{position:relative;margin:0 -16px 6px}
+  .tide svg{display:block;width:100%;height:190px}
+  .figure{position:absolute;left:16px;top:4px}
+  .figure .amt{font-size:46px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .figure .delta{font-size:15px;font-weight:500;margin-top:2px}
+  .ledger{display:flex;gap:22px;margin:4px 0 26px;font-size:13px}
+  .ledger b{display:block;font-size:17px;font-weight:600;line-height:1.25}
+  .ledger span{color:var(--mist);font-size:12px}
+
+  /* the clock + markets */
+  .strip{display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid var(--line);padding-top:14px}
+  .strip .count{font-size:34px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .strip .when{font-size:12.5px;color:var(--mist);text-align:right}
+  .mkts{margin:14px 0 0}
+  .mkt{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;
+       padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+  .mkt:last-child{border-bottom:0}
+  .mkt .tick{font-weight:600;font-size:14px}
+  .mkt.armed .tick{color:var(--buoy)}
+  .mkt.on .tick{color:var(--gain)}
+  .gauge{height:26px;position:relative;background:var(--sea);border-radius:3px;overflow:hidden}
+  .gauge i{position:absolute;inset:0 auto 0 0;background:var(--shelf);border-radius:3px}
+  .mkt.armed .gauge i{background:rgba(240,180,41,.35)}
+  .mkt.on .gauge i{background:rgba(66,199,154,.4)}
+  .gauge u{position:absolute;top:0;bottom:0;width:2px;background:var(--mist);opacity:.55}
+  .gauge span{position:absolute;inset:0;display:flex;align-items:center;padding:0 8px;
+              font-size:11.5px;color:var(--foam);justify-content:space-between;text-decoration:none}
+  .mkt .prices{font-size:13px;text-align:right;min-width:86px}
+  .mkt .prices em{font-style:normal;color:var(--mist)}
+
+  /* now */
+  .now{margin-top:18px;padding:13px 14px;background:var(--sea);border-left:3px solid var(--line);border-radius:0 4px 4px 0;font-size:14px}
+  .now.armed{border-left-color:var(--buoy)}
+  .now.on{border-left-color:var(--gain)}
+  .now b{font-weight:600}
+  .now .sub{color:var(--mist);font-size:12.5px;margin-top:4px}
+
+  /* the trial */
+  .trial{margin-top:30px;border-top:1px solid var(--line);padding-top:16px}
+  h2{font-size:14px;font-weight:600;margin:0 0 3px}
+  .note{color:var(--mist);font-size:12.5px;margin:0 0 12px;max-width:62ch}
+  .ticks{display:flex;gap:3px;margin:12px 0 8px;height:34px;align-items:flex-end}
+  .ticks i{flex:1;border-radius:1px;background:var(--shelf);min-height:3px}
+  .ticks i.w{background:var(--gain)} .ticks i.l{background:var(--loss)}
+  .verdict{font-size:14px;margin-top:6px}
+
+  /* ledger table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+  th,td{text-align:right;padding:8px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  th{font-weight:500;color:var(--mist);font-size:12px}
+  .empty{color:var(--mist);font-size:13.5px;padding:10px 0}
+
+  section{margin-top:30px;border-top:1px solid var(--line);padding-top:16px}
+  details summary{cursor:pointer;font-size:14px;font-weight:600;list-style:none;display:flex;justify-content:space-between}
+  details summary::after{content:"+";color:var(--mist)} details[open] summary::after{content:"–"}
+  .rules{font-size:13px;line-height:1.75;margin-top:10px}
+  .rules div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding:5px 0}
+  .rules span{color:var(--mist)}
+  footer{margin-top:34px;color:var(--mist);font-size:12px;line-height:1.6}
+  footer a{color:var(--foam)}
 </style>
 </head>
 <body>
-<header><h1>SURVIVOR</h1><div class="status"><span class="dot" id="dot"></span><span id="run">connecting…</span></div></header>
 
-<div class="clock"><div class="t" id="left">—</div><div class="sub" id="sub">finding the live windows…</div></div>
-<div class="bar"><div id="prog"></div></div>
+<header>
+  <h1>SURVIVOR</h1>
+  <div class="pulse"><i class="beat" id="beat"></i><span id="pulse">connecting</span></div>
+</header>
 
-<table class="board" id="board"><thead><tr><th>market</th><th>Up</th><th>Down</th><th>move</th><th>Σ</th><th class="v" style="text-align:left">rule says</th></tr></thead><tbody></tbody></table>
+<div class="tide">
+  <svg id="tide" viewBox="0 0 640 190" preserveAspectRatio="none" aria-label="Balance over time"></svg>
+  <div class="figure">
+    <div class="amt" id="amt">—</div>
+    <div class="delta quiet" id="delta">today</div>
+  </div>
+</div>
+<div class="ledger">
+  <div><b id="n">—</b><span>trades</span></div>
+  <div><b id="wr">—</b><span>won</span></div>
+  <div><b id="life">—</b><span>all time</span></div>
+  <div><b id="held">—</b><span>holding</span></div>
+</div>
 
-<div class="detail" id="detail"><div class="verdict" id="verdict">Tap a row to follow that market.</div><svg class="tape" id="tape" viewBox="0 0 600 64" preserveAspectRatio="none"></svg></div>
-<div class="act" id="act"><div id="act-text"></div><a id="act-link" href="#" target="_blank" rel="noopener">Open on Polymarket</a></div>
-<div class="toolbar"><button id="alerts">Alerts off</button><button id="clear">Clear session</button></div>
+<div class="strip">
+  <div class="count" id="count">—</div>
+  <div class="when" id="when">finding the live windows</div>
+</div>
+<div class="mkts" id="mkts"></div>
+<div class="now" id="now">Waiting for the first tick.</div>
+
+<div class="trial">
+  <h2>The thirty</h2>
+  <p class="note">Trades 152–181 run on frozen rules. Net positive, the agent continues. Net negative, the strategy is wrong.</p>
+  <div class="ticks" id="ticks"></div>
+  <div class="verdict" id="verdict">—</div>
+</div>
 
 <section>
-  <h2>Rules in force</h2>
-  <p class="hint">Hard limits are in code and never move. Entry/exit numbers come from params.json and hot-reload into the bot every 2 minutes.</p>
-  <div class="rules" id="rules"></div>
+  <h2>Recent trades</h2>
+  <table id="tr"><thead><tr><th>when</th><th>market</th><th>in</th><th>out</th><th>result</th></tr></thead><tbody></tbody></table>
+  <p class="empty" id="tr-empty">No trades yet.</p>
 </section>
 
 <section>
-  <h2>Signals this session</h2>
-  <p class="hint">Every time the rule fired on any market while this page was open, checked against what resolved. PnL per 5 shares, after fee.</p>
-  <div class="stats"><div><span>fired</span><b id="sg-n">0</b></div><div><span>hit rate</span><b id="sg-hit">—</b></div><div><span>avg edge</span><b id="sg-edge">—</b></div><div><span>pnl / 5 sh</span><b id="sg-pnl">—</b></div></div>
-  <table id="signals"><thead><tr><th>time</th><th>market</th><th>side @ ask</th><th>T−</th><th>move</th><th>peers</th><th>result</th></tr></thead><tbody></tbody></table>
-  <p class="empty" id="signals-empty">Nothing fired yet.</p>
+  <details><summary>Rules in force</summary><div class="rules" id="rules"></div></details>
+  <details><summary>What it said</summary><table id="jr"><tbody></tbody></table></details>
 </section>
 
-<section>
-  <h2>Bot actions</h2>
-  <div class="stats"><div><span>bankroll</span><b id="bank">—</b></div><div><span>today</span><b id="today">—</b></div><div><span>mode</span><b id="mode" class="mode">—</b></div><div><span>closed · win</span><b id="closed">—</b></div></div>
-  <table id="positions"><thead><tr><th>market</th><th>type</th><th>stake</th><th>now</th><th>status</th></tr></thead><tbody></tbody></table>
-  <p class="empty" id="positions-empty">No open positions.</p>
-</section>
-
-<section>
-  <h2>All markets, one picture</h2>
-  <p class="hint">From every window the bot recorded, all assets pooled. "Called by T−30/T−60" = the move's sign at that point matched the winner. "Decided by T−60" = one side already asked ≥ 0.90.</p>
-  <div class="stats"><div><span>windows</span><b id="an-n">0</b></div><div><span>called by T−60</span><b id="an-60">—</b></div><div><span>called by T−30</span><b id="an-30">—</b></div><div><span>decided by T−60</span><b id="an-early">—</b></div></div>
-  <table id="byasset"><thead><tr><th>asset</th><th>windows</th><th>called T−60</th><th>called T−30</th><th>decided T−60</th><th>winner ask T−60</th></tr></thead><tbody></tbody></table>
-</section>
-
-<section>
-  <h2>Is there an edge? (all assets)</h2>
-  <p class="hint">If the move at T−seconds pointed at the winner, and what that side cost then. EV per share after the 7%·p(1−p) fee. Green once n ≥ 15 and positive.</p>
-  <table id="edge"><thead><tr><th>T−</th><th>|move| ≥</th><th>n</th><th>right</th><th>ask</th><th>EV/share</th></tr></thead><tbody></tbody></table>
-  <p class="empty" id="edge-empty">No windows recorded yet.</p>
-</section>
-
-<details><summary>Trades</summary><table id="trades"><thead><tr><th>when</th><th>market</th><th>type</th><th>stake</th><th>pnl</th><th>note</th></tr></thead><tbody></tbody></table><p class="empty" id="trades-empty">No closed trades yet.</p></details>
-<details><summary>Journal</summary><ul class="journal" id="journal"></ul></details>
-<footer>Live prices from Polymarket and Coinbase every 1–2 s. Recorded windows, trades, journal and params from <a id="repo" href="#">the repo</a> every 60 s.</footer>
+<footer>
+  Prices from Polymarket and Coinbase, refreshed every second. Balance, trades and rules from
+  <a id="repo" href="#">the repo</a>, every 60 seconds.
+</footer>
 
 <script>
-const OWNER="Thithas", REPO="survivor", BRANCH="main", FEE=0.07, ASSETS={btc:"BTC",eth:"ETH",sol:"SOL",xrp:"XRP",doge:"DOGE"};
-let HARD={floor:1,daily:999,cap:0.10,slots:5,arbs:3};   // replaced each refresh by state.json's hard_limits
-const RAW=`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`, GAMMA="https://gamma-api.polymarket.com", CLOB="https://clob.polymarket.com";
+const OWNER="Thithas", REPO="survivor", BRANCH="main", FEE=0.07;
+const COINS={btc:"BTC",eth:"ETH",sol:"SOL",xrp:"XRP",doge:"DOGE"};
+const RAW=`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`;
+const GAMMA="https://gamma-api.polymarket.com", CLOB="https://clob.polymarket.com";
+const FREEZE=151;                         // trades after this are the trial
 document.getElementById("repo").href=`https://github.com/${OWNER}/${REPO}`;
-const $=id=>document.getElementById(id), fee=p=>FEE*p*(1-p);
-const money=v=>(v<0?"−":"")+"$"+Math.abs(v).toFixed(2), signed=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(2);
-const ago=iso=>{const s=(Date.now()-new Date(iso))/1000;return s<90?`${Math.round(s)}s ago`:s<5400?`${Math.round(s/60)}m ago`:`${(s/3600).toFixed(1)}h ago`};
-let P={min_edge:0.01,slippage:0.01,momentum_min_move_bps:5,momentum_min_confidence:0.60,momentum_window_sec:120,momentum_max_ask:0.85,min_liquidity_usd:20,take_profit_bid:0.97,stop_loss_bid:0.25,stop_loss_min_left_sec:8};
-let live=false, state={}, opens={}, series={}, cache={}, cacheAt={}, books={}, sel="btc", moves={};
-let signals=JSON.parse(localStorage.getItem("sv_signals")||"[]"), alerts=false;
-const saveSignals=()=>localStorage.setItem("sv_signals",JSON.stringify(signals.slice(-300)));
-$("alerts").onclick=()=>{alerts=!alerts;$("alerts").textContent=alerts?"Alerts on":"Alerts off";$("alerts").className=alerts?"on":"";if(alerts&&navigator.vibrate)navigator.vibrate(80)};
-$("clear").onclick=()=>{signals=[];saveSignals();renderSignals()};
 
-async function marketFor(a){
-  const now=Date.now();
-  if(!cache[a]||now-(cacheAt[a]||0)>30000){
-    try{const ev=await (await fetch(`${GAMMA}/events?series_slug=${a}-up-or-down-5m&closed=false&limit=20&order=endDate&ascending=true`)).json();
-      cache[a]=ev.map(e=>{const m=(e.markets||[])[0]; if(!m||!e.slug?.startsWith(`${a}-updown-5m-`)) return null;
-        const ts=+e.slug.split("-").pop(); const start=isNaN(ts)?new Date(m.startDate):new Date(ts*1000);
-        const toks=JSON.parse(m.clobTokenIds), outs=JSON.parse(m.outcomes);
-        return {asset:a,slug:e.slug,start,end:new Date(start.getTime()+300000),up:toks[outs.indexOf("Up")],down:toks[outs.indexOf("Down")]}}).filter(Boolean);
-      cacheAt[a]=now}catch{cache[a]=cache[a]||[]}
+const $=id=>document.getElementById(id);
+const fee=p=>FEE*p*(1-p);
+const usd=v=>(v<0?"−$":"$")+Math.abs(v).toFixed(2);
+const sgn=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(2);
+const clock=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+const ago=t=>{const s=(Date.now()-new Date(t))/1000;
+  return s<60?`${Math.round(s)}s`:s<3600?`${Math.round(s/60)}m`:s<86400?`${(s/3600).toFixed(1)}h`:`${Math.round(s/86400)}d`};
+
+let P={momentum_min_move_bps:6,momentum_min_ask:0.40,momentum_max_ask:0.85,momentum_window_sec:120,
+       min_edge:0.02,stop_loss_bid:0.35,take_profit_bid:1,lock_from_bid:0.85,lock_giveback:0.25,
+       max_trade_pct:0.10,max_open_positions:5,arb_enabled:0,forced_at_sec:0,stop_frac_of_entry:0.6};
+let HARD={}, state={}, trades=[], focus="btc", books={}, opens={}, wave=[];
+
+/* ---------- live market feed ---------- */
+let mcache={}, mstamp={};
+async function windowFor(a){
+  const t=Date.now();
+  if(!mcache[a]||t-(mstamp[a]||0)>30000){
+    try{
+      const ev=await (await fetch(`${GAMMA}/events?series_slug=${a}-up-or-down-5m&closed=false&limit=20&order=endDate&ascending=true`)).json();
+      mcache[a]=ev.map(e=>{
+        const m=(e.markets||[])[0]; if(!m||!e.slug?.startsWith(`${a}-updown-5m-`)) return null;
+        const ep=+e.slug.split("-").pop();
+        const start=isNaN(ep)?new Date(m.startDate):new Date(ep*1000);
+        const tok=JSON.parse(m.clobTokenIds), out=JSON.parse(m.outcomes);
+        return {coin:a,slug:e.slug,start,end:new Date(start.getTime()+3e5),
+                up:tok[out.indexOf("Up")],down:tok[out.indexOf("Down")]};
+      }).filter(Boolean);
+      mstamp[a]=t;
+    }catch{ mcache[a]=mcache[a]||[] }
   }
-  return cache[a].find(m=>m.end>now&&m.start<=now)||cache[a].find(m=>m.start>now)||null;
+  return mcache[a].find(m=>m.end>t&&m.start<=t)||mcache[a].find(m=>m.start>t)||null;
 }
-async function book(token){const b=await (await fetch(`${CLOB}/book?token_id=${token}`)).json();
-  const asks=(b.asks||[]).map(a=>[+a.price,+a.size]).sort((x,y)=>x[0]-y[0]), bids=(b.bids||[]).map(a=>[+a.price,+a.size]).sort((x,y)=>y[0]-x[0]);
-  return {ask:asks[0]?.[0]??null,askSize:asks[0]?.[1]??0,bid:bids[0]?.[0]??null}}
-async function spots(){const r=await (await fetch("https://api.coinbase.com/v2/exchange-rates?currency=USD")).json(); const out={};
-  for(const [a,sym] of Object.entries(ASSETS)){const v=+r.data.rates[sym]; if(v>0) out[a]=1/v} return out}
+async function book(tok){
+  const b=await (await fetch(`${CLOB}/book?token_id=${tok}`)).json();
+  const a=(b.asks||[]).map(x=>[+x.price,+x.size]).sort((p,q)=>p[0]-q[0]);
+  const d=(b.bids||[]).map(x=>[+x.price,+x.size]).sort((p,q)=>q[0]-p[0]);
+  return {ask:a[0]?.[0]??null, size:a[0]?.[1]??0, bid:d[0]?.[0]??null};
+}
+async function spots(){
+  const r=await (await fetch("https://api.coinbase.com/v2/exchange-rates?currency=USD")).json();
+  const o={}; for(const[a,s]of Object.entries(COINS)){const v=+r.data.rates[s]; if(v>0)o[a]=1/v} return o;
+}
 
-let busy=false;
-async function tick(){
-  if(busy) return; busy=true;
-  try{
-    const sp=await spots(); const ms=(await Promise.all(Object.keys(ASSETS).map(marketFor))).filter(Boolean);
-    const now=Date.now(); const rows=[]; moves={};
-    // pass 1: opens + moves
-    for(const m of ms){ if(!opens[m.slug]){ if(state.opens?.[m.slug]) opens[m.slug]=state.opens[m.slug]; else if(Math.abs((m.start-now)/1000)<=3&&sp[m.asset]) opens[m.slug]=sp[m.asset]; }
-      const op=opens[m.slug]; if(op&&sp[m.asset]&&m.start<=now) moves[m.asset]=(sp[m.asset]-op)/op*1e4 }
-    // pass 2: books
-    const bk=await Promise.all(ms.map(async m=>{try{const [u,d]=await Promise.all([book(m.up),book(m.down)]);return [m.slug,u,d]}catch{return [m.slug,null,null]}}));
-    for(const [slug,u,d] of bk) books[slug]={u,d};
-    const ref=ms.find(m=>m.start<=now)||ms[0]; const left=ref?Math.max(0,(ref.end-now)/1000):0; const pre=ref&&ref.start>now;
-    $("left").textContent=ref?(pre?`+${Math.ceil((ref.start-now)/1000)}`:`${Math.floor(left/60)}:${String(Math.floor(left%60)).padStart(2,"0")}`):"—";
-    $("sub").textContent=ref?`${ms.length} live windows · close ${ref.end.toISOString().slice(11,16)} UTC`:"no live windows";
-    $("prog").style.width=(pre?0:(300-left)/3)+"%";
-    const tb=$("board").querySelector("tbody"); tb.innerHTML="";
-    for(const m of ms){
-      const {u,d}=books[m.slug]||{}; const mv=moves[m.asset]; const l=Math.max(0,(m.end-now)/1000);
-      const v=verdict(m,l,m.start>now,u,d,mv);
-      (series[m.slug]=series[m.slug]||[]).push({up:u?.ask??null,mv:mv??null}); if(series[m.slug].length>300) series[m.slug].shift();
-      const tr=document.createElement("tr"); tr.className=(m.asset===sel?"sel ":"")+(v.buy?"buy":""); tr.onclick=()=>{sel=m.asset;renderDetail()};
-      tr.innerHTML=`<td>${ASSETS[m.asset]}</td><td class="${mv>=0&&u?.ask?'pos':''}">${u?.ask==null?"—":u.ask.toFixed(2)}</td><td class="${mv<0&&d?.ask?'neg':''}">${d?.ask==null?"—":d.ask.toFixed(2)}</td><td class="${mv>0?"pos":mv<0?"neg":""}">${mv==null?"—":signed(mv)}</td><td>${u?.ask!=null&&d?.ask!=null?(u.ask+d.ask).toFixed(2):"—"}</td><td class="v">${v.short}</td>`;
-      tb.appendChild(tr);
-      if(v.buy) fire({slug:m.slug,asset:m.asset,end:m.end.toISOString(),side:v.side,ask:v.ask,mv:+mv.toFixed(1),conf:+v.conf.toFixed(2),edge:+v.edge.toFixed(3),left:Math.round(l),peers:v.peers});
-      if(m.asset===sel){ $("verdict").innerHTML=`<b>${ASSETS[m.asset]}</b> · ${m.slug} · ${v.long}`; tape(m.slug);
-        if(v.buy){const sz=sizing(v.ask,v.conf); $("act-text").innerHTML=`<b>${sz.shares} shares ${v.side} ${ASSETS[m.asset]} at ${v.ask.toFixed(2)} = $${sz.cost}</b><br><span style="color:var(--muted);font-size:13px">${sz.ok?"within the bot's caps":"over the bot's cap — it would skip this"}</span>`; $("act-link").href=`https://polymarket.com/event/${m.slug}`; $("act").className="act on"} else $("act").className="act"; }
-    }
-    setStatus("alive");
-  }catch(e){ $("verdict").textContent="Live feed error: "+(e.message||e); setStatus("warn") }
-  busy=false;
-}
-function renderDetail(){ /* next tick repaints */ }
-function verdict(m,left,pre,u,d,mv){
-  const r={buy:false,short:"",long:""};
-  if(pre){r.short="opens soon";r.long="Window hasn't opened yet.";return r}
-  if(!u||!d){r.short="no book";r.long="Order book unavailable.";return r}
-  if(u.ask!=null&&d.ask!=null){const g=1-(u.ask+d.ask)-fee(u.ask)-fee(d.ask); if(g>=P.min_edge){r.buy=true;r.side="BOTH";r.ask=u.ask+d.ask;r.conf=1;r.edge=g;r.peers="—";r.short=`ARB Σ ${(u.ask+d.ask).toFixed(2)}`;r.long=`<b>ARB</b> Up+Down = ${(u.ask+d.ask).toFixed(3)} — buy both, +${signed(g)}/share riskless.`;return r}}
-  if(mv==null){r.short="no open px";r.long="No open price captured for this window; momentum rule can't run.";return r}
-  const upFav=mv>=0, ask=upFav?u.ask:d.ask, size=upFav?u.askSize:d.askSize;
-  if(left>P.momentum_window_sec){r.short=`wait T−${P.momentum_window_sec}`;r.long=`HOLD — momentum rule starts at T−${P.momentum_window_sec}s. Move ${signed(mv)} bps, ${upFav?"Up":"Down"} ask ${ask?.toFixed(2)??"—"}.`;return r}
-  let conf=Math.min(0.95,Math.abs(mv)/(2*P.momentum_min_move_bps)); let agree=0,against=0;
-  for(const [a2,v] of Object.entries(moves)){ if(a2===m.asset||Math.abs(v)<P.momentum_min_move_bps/2) continue; if((v>0)===upFav) agree++; else against++ }
-  conf=Math.min(0.95,conf+0.08*agree-0.10*against); r.peers=`${agree}/${against}`;
-  const why=[]; if(Math.abs(mv)<P.momentum_min_move_bps) why.push(`move ${Math.abs(mv).toFixed(1)}<${P.momentum_min_move_bps}`);
-  if(conf<P.momentum_min_confidence) why.push(`conf ${conf.toFixed(2)}<${P.momentum_min_confidence}`);
-  if(ask==null) why.push("no ask"); else { if(ask>P.momentum_max_ask) why.push(`ask ${ask.toFixed(2)}>${P.momentum_max_ask}`); if(ask*size<P.min_liquidity_usd) why.push(`$${(ask*size).toFixed(0)} at ask`); const net=conf-ask-fee(ask)-P.slippage; if(net<P.min_edge) why.push(`edge ${signed(net)}`) }
-  if(why.length){r.short=`hold: ${why[0]}`;r.long=`HOLD at T−${Math.round(left)}s — ${why.join(", ")}. Peers ${r.peers}.`;return r}
-  r.buy=true;r.side=upFav?"UP":"DOWN";r.ask=ask;r.conf=conf;r.edge=conf-ask-fee(ask)-P.slippage;
-  r.short=`BUY ${r.side} @ ${ask.toFixed(2)}`;r.long=`<b>BUY ${r.side} @ ${ask.toFixed(2)}</b> — move ${signed(mv)} bps, confidence ${conf.toFixed(2)} (peers ${r.peers}), edge ${signed(r.edge)}/share.`;
+/* ---------- what the rule would say ---------- */
+function read(m,left,px){
+  const b=books[m.slug]||{};
+  const open=opens[m.slug];
+  const mv=open&&px?(px-open)/open*1e4:null;
+  const r={mv,ready:0,state:"idle",line:"",sub:""};
+  if(m.start>Date.now()){ r.state="idle"; r.line=`${COINS[m.coin]} hasn't opened yet.`; return r }
+  if(!b.u||!b.d){ r.line="No order book."; return r }
+  if(mv==null){ r.line=`No opening price recorded for this window, so the move can't be measured.`;
+                r.sub="The agent keeps its own opening prices; this is only the page's view."; return r }
+
+  const upside=mv>=0, ask=upside?b.u.ask:b.d.ask, size=upside?b.u.size:b.d.size, side=upside?"Up":"Down";
+  const moveOK=Math.abs(mv)>=P.momentum_min_move_bps;
+  const bandOK=ask!=null&&ask>=P.momentum_min_ask&&ask<=P.momentum_max_ask;
+  const timeOK=left<=P.momentum_window_sec;
+  // how close this market is to firing, 0..1
+  r.ready=Math.min(1,(Math.min(1,Math.abs(mv)/P.momentum_min_move_bps)*0.5)+(bandOK?0.3:0)+(timeOK?0.2:0));
+
+  if(!timeOK){ r.state="idle";
+    r.line=`${COINS[m.coin]} waiting. The rule only looks in the last ${P.momentum_window_sec} seconds.`;
+    r.sub=`Move ${sgn(mv)} bps · ${side} costs ${ask?.toFixed(2)??"—"}`; return r }
+
+  const missing=[];
+  if(!moveOK) missing.push(`move ${Math.abs(mv).toFixed(1)} bps, needs ${P.momentum_min_move_bps}`);
+  if(ask==null) missing.push("nothing offered on that side");
+  else if(ask<P.momentum_min_ask) missing.push(`${side} at ${ask.toFixed(2)} is too cheap — the market disagrees`);
+  else if(ask>P.momentum_max_ask) missing.push(`${side} at ${ask.toFixed(2)} is too dear to be worth it`);
+  else if(ask*size<20) missing.push(`only ${usd(ask*size)} offered`);
+
+  if(missing.length){ r.state=r.ready>0.75?"armed":"idle";
+    r.line=`${COINS[m.coin]} held back — ${missing[0]}.`;
+    r.sub=`Move ${sgn(mv)} bps · ${side} ${ask?.toFixed(2)??"—"} · ${Math.round(left)}s left`; return r }
+
+  r.state="on"; r.ready=1;
+  r.line=`${COINS[m.coin]} qualifies: buy ${side} at ${ask.toFixed(2)}.`;
+  r.sub=`Move ${sgn(mv)} bps · ${Math.round(left)}s left · stake about ${usd(Math.max(5*ask,(state.bankroll_usd||0)*(P.max_trade_pct||0.1)*(state.mode==="CAUTIOUS"?0.5:1)))}`;
   return r;
 }
-function sizing(ask,conf){const bank=state.bankroll_usd||20, caut=state.mode==="CAUTIOUS"; let stake=bank*Math.min(HARD.cap,P.max_trade_pct||HARD.cap)*conf*(caut?0.5:1); stake=Math.max(stake,5*ask);
-  const shares=Math.floor(stake/ask); return {shares,cost:+(shares*ask).toFixed(2),ok:shares*ask<=bank*HARD.cap+0.01&&bank-shares*ask>=HARD.floor}}
-function tape(slug){const s=series[slug]||[]; const svg=$("tape"); if(s.length<2){svg.innerHTML="";return}
-  const X=i=>i/(s.length-1)*600, mvs=s.map(x=>x.mv).filter(x=>x!=null), mmax=Math.max(5,...mvs.map(Math.abs)); let out="";
-  s.forEach((x,i)=>{if(x.mv==null)return;const h=Math.abs(x.mv)/mmax*28;out+=`<rect x="${X(i)-1}" y="${x.mv>=0?32-h:32}" width="2" height="${h}" fill="${x.mv>=0?"#0E7C7B":"#B3261E"}" opacity=".55"/>`});
-  out+=`<polyline fill="none" stroke="#16212B" stroke-width="1.5" points="${s.map((x,i)=>x.up==null?"":X(i)+","+(62-x.up*60)).join(" ")}"/><line x1="0" x2="600" y1="32" y2="32" stroke="#CBD3D9"/>`; svg.innerHTML=out}
-function fire(sig){ if(signals.some(x=>x.slug===sig.slug&&x.side===sig.side)) return; signals.push({...sig,ts:new Date().toISOString(),result:null}); saveSignals(); renderSignals();
-  if(alerts){ if(navigator.vibrate) navigator.vibrate([200,100,200]); try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(c.currentTime+.25)}catch{} } }
-async function resolveSignals(){ for(const sg of signals){ if(sg.result!==null||Date.now()-new Date(sg.end)<60000) continue;
-    try{const ev=await (await fetch(`${GAMMA}/events?slug=${sg.slug}`)).json(); const m=ev[0]?.markets?.[0]; if(!m?.closed) continue; const pr=JSON.parse(m.outcomePrices||"[]").map(Number); if(!pr.length||Math.max(...pr)<0.99) continue;
-      const w=pr.indexOf(Math.max(...pr)); sg.result=w===0?"Up":"Down";
-      if(sg.side==="BOTH"){sg.hit=true;sg.pnl=+(5*(1-sg.ask)).toFixed(2)} else {sg.hit=(sg.side==="UP")===(w===0); sg.pnl=+(5*((sg.hit?1:0)-sg.ask-fee(sg.ask))).toFixed(2)} }catch{} }
-  saveSignals(); renderSignals() }
-function renderSignals(){ const tb=$("signals").querySelector("tbody"); tb.innerHTML="";
-  for(const sg of signals.slice(-25).reverse()){const tr=document.createElement("tr"); tr.innerHTML=`<td>${sg.ts.slice(11,16)}</td><td>${ASSETS[sg.asset]||sg.asset||"BTC"}</td><td class="${sg.side==="UP"?"pos":sg.side==="DOWN"?"neg":""}">${sg.side} @ ${sg.ask.toFixed(2)}</td><td>${sg.left}s</td><td>${signed(sg.mv)}</td><td>${sg.peers??"—"}</td><td>${sg.result===null?"open":(sg.hit?"✓ ":"✗ ")+sg.result+" "+signed(sg.pnl)}</td>`; tb.appendChild(tr)}
-  const done=signals.filter(x=>x.result!==null); $("sg-n").textContent=signals.length; $("sg-hit").textContent=done.length?Math.round(100*done.filter(x=>x.hit).length/done.length)+"%":"—";
-  $("sg-edge").textContent=signals.length?signed(signals.reduce((a,x)=>a+x.edge,0)/signals.length):"—"; const pnl=done.reduce((a,x)=>a+x.pnl,0); $("sg-pnl").textContent=done.length?signed(pnl):"—"; $("sg-pnl").className=pnl>0?"pos":pnl<0?"neg":"";
-  $("signals-empty").style.display=signals.length?"none":"block"; $("signals").style.display=signals.length?"table":"none" }
 
-async function get(path){const r=await fetch(RAW+path+"?t="+Date.now(),{cache:"no-store"});return r.ok?r.text():""}
-const lines=t=>t.split("\n").filter(Boolean), parse=t=>lines(t).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
-async function loadRepo(){
-  const [st,tr,jo,wi,pa,lv]=await Promise.all(["state.json","trades.jsonl","journal.md","windows.jsonl","params.json","LIVE"].map(get));
-  try{state=JSON.parse(st)}catch{} try{P={...P,...JSON.parse(pa)}}catch{}
-  const h=state.hard_limits||{};
-  HARD={floor:h.floor_usd??HARD.floor, daily:h.daily_loss_cap_usd??HARD.daily, cap:h.max_trade_pct??HARD.cap, slots:h.max_open_positions??HARD.slots, arbs:3};
-  live=state.live_mode===true;        // the LIVE file is empty, so its contents can't be the test
-  const trades=parse(tr), windows=parse(wi), journal=lines(jo).map(l=>l.replace(/^- /,""));
-  // rules panel
-  const t=state.today_pnl_usd??0, bank=state.bankroll_usd??0, ops=state.open_positions||[], risk=ops.filter(p=>p.type!=="ARB").length, arbs=ops.filter(p=>p.type==="ARB").length;
-  $("rules").innerHTML=`
-    <div><span>floor (dead below)</span><b>${HARD.floor<=1?"none — can trade to zero":"$"+HARD.floor}</b><div class="meter"><div style="width:${Math.min(100,Math.max(0,(bank-HARD.floor)/(Math.max(bank,20)-HARD.floor)*100))}%;background:var(--up)"></div></div></div>
-    <div><span>daily loss cap → hibernate</span><b>${HARD.daily>=999?"off":signed(t)+" of −$"+HARD.daily}</b>${HARD.daily>=999?"":`<div class="meter"><div style="width:${Math.min(100,Math.max(0,-t/HARD.daily*100))}%"></div></div>`}</div>
-    <div><span>per trade</span><b>≤ ${Math.round((P.max_trade_pct??HARD.cap)*100)}% of bankroll${state.mode==="CAUTIOUS"?" (halved: CAUTIOUS)":""}, 5-share min</b></div>
-    <div><span>positions</span><b>${risk}/${Math.min(HARD.slots, P.max_open_positions??HARD.slots)} directional${P.arb_enabled?` · ${arbs}/${HARD.arbs} arb`:""}</b></div>
-    <div><span>open when</span><b>move ≥ ${P.momentum_min_move_bps} bps, ask ${P.momentum_min_ask}–${P.momentum_max_ask}, edge ≥ ${P.min_edge}, last ${P.momentum_window_sec}s${P.forced_at_sec?"":" · no forced trades"}</b></div>
-    <div><span>arb</span><b>${P.arb_enabled?`on — Up+Down − fees ≥ ${P.min_edge}`:"off"}</b></div>
-    <div><span>close</span><b>${P.take_profit_bid>=1?"winners ride to full $1.00":"take profit bid ≥ "+P.take_profit_bid} · stop bid ≤ ${P.stop_loss_bid} or ${Math.round((P.stop_frac_of_entry??0.6)*100)}% of entry · reversal from ${P.lock_from_bid} giving back ${P.lock_giveback}</b></div>
-    <div><span>mode</span><b class="mode ${state.mode||""}">${state.mode||"—"}${live?" · LIVE":" · paper"}</b></div>`;
-  // combined analytics
-  const res=windows.filter(w=>w.winner===0||w.winner===1); $("an-n").textContent=res.length;
-  const at=(w,lo,hi)=>(w.snaps||[]).find(x=>x.t>=lo&&x.t<=hi);
-  const called=(ws,lo,hi)=>{const c=ws.map(w=>[w,at(w,lo,hi)]).filter(([w,s])=>s&&s.mv!=null); return c.length?[c.filter(([w,s])=>(s.mv>=0)===(w.winner===0)).length,c.length]:null};
-  const early=ws=>{const e=ws.map(w=>at(w,55,65)).filter(Boolean); return e.length?[e.filter(s=>Math.max(s.up??0,s.down??0)>=0.90).length,e.length]:null};
-  const pct=x=>x?Math.round(100*x[0]/x[1])+"%":"—";
-  $("an-60").textContent=pct(called(res,55,65)); $("an-30").textContent=pct(called(res,25,35)); $("an-early").textContent=pct(early(res));
-  const ab=$("byasset").querySelector("tbody"); ab.innerHTML="";
-  for(const a of Object.keys(ASSETS)){const ws=res.filter(w=>(w.asset||"btc")===a); if(!ws.length) continue;
-    const wa=ws.map(w=>[w,at(w,55,65)]).filter(([w,s])=>s&&(w.winner===0?s.up:s.down)!=null).map(([w,s])=>w.winner===0?s.up:s.down);
-    const tr=document.createElement("tr"); tr.innerHTML=`<td>${ASSETS[a]}</td><td>${ws.length}</td><td>${pct(called(ws,55,65))}</td><td>${pct(called(ws,25,35))}</td><td>${pct(early(ws))}</td><td>${wa.length?(wa.reduce((x,y)=>x+y,0)/wa.length).toFixed(2):"—"}</td>`; ab.appendChild(tr)}
-  // edge table
-  const rows=[]; for(const [label,lo,hi] of [[90,85,95],[60,55,65],[45,40,50],[30,25,35],[15,10,20]]) for(const th of [3,6,10]){
-    let n=0,right=0,askSum=0; for(const w of res){const s=at(w,lo,hi); if(!s||s.mv==null||Math.abs(s.mv)<th) continue; const pred=s.mv>=0?0:1, ask=pred===0?s.up:s.down; if(ask==null) continue; n++; right+=pred===w.winner; askSum+=ask}
-    if(n){const acc=right/n,ask=askSum/n; rows.push({label,th,n,acc,ask,ev:acc-ask-fee(ask)})}}
-  const eb=$("edge").querySelector("tbody"); eb.innerHTML="";
-  for(const r of rows){const tr=document.createElement("tr"); tr.className=r.n>=15?(r.ev>0?"ev-good":"ev-bad"):""; tr.innerHTML=`<td>${r.label}s</td><td>${r.th} bps</td><td>${r.n}</td><td>${Math.round(r.acc*100)}%</td><td>${r.ask.toFixed(2)}</td><td>${signed(r.ev)}</td>`; eb.appendChild(tr)}
-  $("edge-empty").style.display=rows.length?"none":"block"; $("edge").style.display=rows.length?"table":"none";
-  // bot vitals + positions
-  $("bank").textContent=money(bank); $("today").textContent=signed(t); $("today").className=t>0?"pos":t<0?"neg":""; $("mode").textContent=state.mode||"—"; $("mode").className="mode "+(state.mode||"");
-  const s=state.stats||{},n=(s.wins||0)+(s.losses||0); $("closed").textContent=`${state.closed_trades??0} · ${n?Math.round(100*s.wins/n)+"%":"—"}`;
-  const pb=$("positions").querySelector("tbody"); pb.innerHTML="";
-  for(const p of ops){const b=books[p.slug]; let nowV="—",stat="awaiting resolution";
-    if(b&&b.u&&b.d){const v=p.legs.reduce((a,l)=>a+(l.ok?l.shares*((l.outcome===0?b.u.bid:b.d.bid)||0):0),0); nowV=money(v); stat=`${signed(v-p.stake)} if sold now`}
-    const tr=document.createElement("tr"); tr.innerHTML=`<td>${ASSETS[p.slug.split("-")[0]]||""} ${p.end.slice(11,16)}</td><td>${p.type}${p.live?"":" (paper)"}</td><td>${money(p.stake)}</td><td>${nowV}</td><td>${stat}</td>`; pb.appendChild(tr)}
-  $("positions-empty").style.display=ops.length?"none":"block"; $("positions").style.display=ops.length?"table":"none";
-  // trades + journal
-  const tb=$("trades").querySelector("tbody"); tb.innerHTML="";
-  for(const x of trades.slice(-20).reverse()){const tr=document.createElement("tr"); tr.innerHTML=`<td>${ago(x.ts)}</td><td>${ASSETS[x.slug.split("-")[0]]||""}</td><td>${x.type}${x.live?"":" (paper)"}</td><td>${money(x.stake)}</td><td class="${x.pnl>0?"pos":x.pnl<0?"neg":""}">${signed(x.pnl)}</td><td>${x.note||(x.winner===0?"Up":x.winner===1?"Down":"")}</td>`; tb.appendChild(tr)}
-  $("trades-empty").style.display=trades.length?"none":"block"; $("trades").style.display=trades.length?"table":"none";
-  const jl=$("journal"); jl.innerHTML=""; for(const line of journal.slice(-20).reverse()){const m=line.match(/^(\S+)\s(.*)$/); const li=document.createElement("li"); li.innerHTML=m?`<time>${ago(m[1])}</time>${m[2]}`:line; jl.appendChild(li)}
-  const lastT=journal.at(-1)?.match(/^(\S+)/)?.[1]; let txt=lastT?`bot heartbeat ${ago(lastT)}`:"bot: no heartbeat yet";
-  try{const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/runs?per_page=1`,{cache:"no-store"}); if(r.ok){const run=(await r.json()).workflow_runs?.[0]; if(run) txt=`run #${run.run_number} ${run.status==="in_progress"?"running":run.status} · ${txt}`}}catch{}
-  $("run").textContent=txt+(live?" · LIVE":" · paper"); resolveSignals();
+/* ---------- the tide: balance over time ---------- */
+function drawTide(){
+  const svg=$("tide"); const W=640,H=190;
+  if(wave.length<2){svg.innerHTML="";return}
+  const ys=wave.map(p=>p.v), lo=Math.min(...ys), hi=Math.max(...ys), pad=(hi-lo)*0.22||1;
+  const top=hi+pad, bot=lo-pad;
+  const X=i=>i/(wave.length-1)*W, Y=v=>H-8-((v-bot)/(top-bot))*(H-46);
+  // smooth path
+  let d=`M ${X(0)} ${Y(wave[0].v)}`;
+  for(let i=1;i<wave.length;i++){
+    const x0=X(i-1),y0=Y(wave[i-1].v),x1=X(i),y1=Y(wave[i].v),xm=(x0+x1)/2;
+    d+=` C ${xm} ${y0}, ${xm} ${y1}, ${x1} ${y1}`;
+  }
+  const last=wave[wave.length-1], rising=last.v>=wave[0].v;
+  const col=rising?"var(--gain)":"var(--loss)";
+  const dots=wave.map((p,i)=>p.pnl==null?"":
+    `<circle cx="${X(i)}" cy="${Y(p.v)}" r="${Math.min(4.5,2+Math.abs(p.pnl))}" fill="${p.pnl>0?"var(--gain)":"var(--loss)"}" opacity=".85"/>`).join("");
+  svg.innerHTML=`
+    <defs><linearGradient id="fade" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="${rising?"#42C79A":"#E4655F"}" stop-opacity=".22"/>
+      <stop offset="1" stop-color="${rising?"#42C79A":"#E4655F"}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d} L ${W} ${H} L 0 ${H} Z" fill="url(#fade)"/>
+    <path d="${d}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round"/>
+    ${dots}
+    <circle cx="${X(wave.length-1)}" cy="${Y(last.v)}" r="4" fill="var(--foam)"/>`;
 }
-function setStatus(c){$("dot").className="dot "+c}
-renderSignals(); loadRepo(); setInterval(loadRepo,60000); tick(); setInterval(tick,1500);
+
+/* ---------- per-second paint ---------- */
+let busy=false;
+async function tick(){
+  if(busy)return; busy=true;
+  try{
+    const px=await spots();
+    const ms=(await Promise.all(Object.keys(COINS).map(windowFor))).filter(Boolean);
+    const t=Date.now();
+    // opening prices: prefer the agent's, fall back to our own if we catch the first seconds
+    for(const m of ms){
+      if(opens[m.slug]==null){
+        if(state.opens?.[m.slug]) opens[m.slug]=state.opens[m.slug];
+        else if(Math.abs((m.start-t)/1000)<=3&&px[m.coin]) opens[m.slug]=px[m.coin];
+      }
+    }
+    const got=await Promise.all(ms.map(async m=>{
+      try{const[u,d]=await Promise.all([book(m.up),book(m.down)]); return [m.slug,{u,d}]}
+      catch{return [m.slug,{}]}
+    }));
+    for(const[slug,b] of got) books[slug]=b;
+
+    const ref=ms.find(m=>m.start<=t)||ms[0];
+    const left=ref?Math.max(0,(ref.end-t)/1000):0;
+    $("count").textContent=ref?(ref.start>t?"soon":clock(left)):"—";
+    $("when").innerHTML=ref?`${ms.length} windows open<br>closes ${ref.end.toISOString().slice(11,16)} UTC`:"no live windows";
+
+    const rows=[];
+    for(const m of ms){
+      const l=Math.max(0,(m.end-t)/1000);
+      const r=read(m,l,px[m.coin]); m._r=r;
+      const b=books[m.slug]||{};
+      const bandL=((P.momentum_min_ask)*100).toFixed(0), bandH=((P.momentum_max_ask)*100).toFixed(0);
+      rows.push(`<div class="mkt ${r.state}" data-c="${m.coin}">
+        <div class="tick">${COINS[m.coin]}</div>
+        <div class="gauge"><i style="width:${Math.round(r.ready*100)}%"></i>
+          <u style="left:${bandL}%"></u><u style="left:${bandH}%"></u>
+          <span><em>${r.mv==null?"no open price":sgn(r.mv)+" bps"}</em><em>${Math.round(l)}s</em></span></div>
+        <div class="prices">${b.u?.ask?.toFixed(2)??"—"} <em>/</em> ${b.d?.ask?.toFixed(2)??"—"}</div>
+      </div>`);
+    }
+    $("mkts").innerHTML=rows.join("");
+    $("mkts").querySelectorAll(".mkt").forEach(el=>el.onclick=()=>{focus=el.dataset.c;paintNow(ms)});
+    paintNow(ms);
+    beat("on");
+  }catch(e){ $("now").textContent="Live prices unavailable from this browser right now."; beat("warn") }
+  busy=false;
+}
+function paintNow(ms){
+  const m=ms.find(x=>x.coin===focus)||ms[0]; if(!m||!m._r)return;
+  const r=m._r;
+  $("now").className="now "+(r.state==="on"?"on":r.state==="armed"?"armed":"");
+  $("now").innerHTML=`<b>${r.line}</b>${r.sub?`<div class="sub">${r.sub}</div>`:""}`;
+}
+function beat(c){ $("beat").className="beat "+c }
+
+/* ---------- repo data ---------- */
+async function get(p){const r=await fetch(RAW+p+"?t="+Date.now(),{cache:"no-store"});return r.ok?r.text():""}
+const rows=t=>t.split("\n").filter(Boolean).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
+
+async function load(){
+  const [st,tr,pa,jo]=await Promise.all(["state.json","trades.jsonl","params.json","journal.md"].map(get));
+  try{state=JSON.parse(st)}catch{}
+  try{P={...P,...JSON.parse(pa)}}catch{}
+  HARD=state.hard_limits||{};
+  trades=rows(tr).filter(x=>x.live);
+
+  const bank=state.bankroll_usd??0, today=state.today_pnl_usd??0;
+  $("amt").textContent=usd(bank);
+  $("delta").textContent=`${sgn(today)} today`;
+  $("delta").className="delta "+(today>0?"gain":today<0?"loss":"quiet");
+
+  const w=trades.filter(x=>x.pnl>0).length;
+  $("n").textContent=trades.length;
+  $("wr").textContent=trades.length?Math.round(100*w/trades.length)+"%":"—";
+  const life=trades.reduce((a,x)=>a+x.pnl,0);
+  $("life").textContent=sgn(life); $("life").className=life>0?"gain":"loss";
+  const held=(state.open_positions||[]).reduce((a,p)=>a+p.stake,0);
+  $("held").textContent=held?usd(held):"nothing";
+
+  // tide = balance reconstructed backwards from now
+  let v=bank; const pts=[{v,pnl:null}];
+  for(let i=trades.length-1;i>=Math.max(0,trades.length-60);i--){ v-=trades[i].pnl; pts.push({v,pnl:trades[i].pnl}) }
+  wave=pts.reverse(); drawTide();
+
+  // the thirty
+  const trial=trades.slice(FREEZE);
+  const bars=[]; for(let i=0;i<30;i++){ const x=trial[i];
+    bars.push(`<i class="${!x?"":x.pnl>0?"w":"l"}" style="height:${x?Math.min(34,8+Math.abs(x.pnl)*7):4}px"></i>`) }
+  $("ticks").innerHTML=bars.join("");
+  const net=trial.reduce((a,x)=>a+x.pnl,0);
+  $("verdict").innerHTML=trial.length
+    ? `<b class="${net>0?"gain":"loss"}">${sgn(net)}</b> over ${trial.length} of 30 · ${trial.filter(x=>x.pnl>0).length} won`
+    : `<span class="quiet">Trial starts with the next trade.</span>`;
+
+  // recent
+  const tb=$("tr").querySelector("tbody"); tb.innerHTML="";
+  for(const x of trades.slice(-12).reverse()){
+    const coin=COINS[x.slug.split("-")[0]]||x.slug.split("-")[0];
+    const how=(x.note||"").includes("stop")?"stopped":(x.note||"").includes("lock")?"locked in":"settled";
+    tb.innerHTML+=`<tr><td class="quiet">${ago(x.ts)} ago</td><td>${coin}</td><td>${usd(x.stake)}</td>
+      <td class="quiet">${how}</td><td class="${x.pnl>0?"gain":"loss"}">${sgn(x.pnl)}</td></tr>`;
+  }
+  $("tr-empty").style.display=trades.length?"none":"block";
+  $("tr").style.display=trades.length?"table":"none";
+
+  // rules
+  $("rules").innerHTML=[
+    ["Buys when", `the coin moves ${P.momentum_min_move_bps}+ bps and that side costs ${P.momentum_min_ask}–${P.momentum_max_ask}, in the last ${P.momentum_window_sec}s`],
+    ["One per window", `the best single market; never several coins on the same tick`],
+    ["Stake", `${Math.round((P.max_trade_pct||0.1)*100)}% of balance${state.mode==="CAUTIOUS"?", halved while cautious":""}`],
+    ["Sells when", `${P.take_profit_bid>=1?"it settles at $1.00":"bid reaches "+P.take_profit_bid}, or falls to ${P.stop_loss_bid}, or gives back ${P.lock_giveback} after reaching ${P.lock_from_bid}`],
+    ["Both sides at once", P.arb_enabled?"on":"off — a half-filled hedge is a naked bet"],
+    ["Trades to fill quiet windows", P.forced_at_sec?`yes, at ${P.forced_at_sec}s`:"off — no trade is a position"],
+    ["Floor", (HARD.floor_usd??1)<=1?"none; it can trade to zero":usd(HARD.floor_usd)],
+    ["Mode", `${state.mode||"—"}${state.live_mode?" · real money":" · paper"}`]
+  ].map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join("");
+
+  // journal
+  const jb=$("jr").querySelector("tbody"); jb.innerHTML="";
+  for(const l of jo.split("\n").filter(x=>x.startsWith("- ")&&!x.includes("heartbeat")).slice(-12).reverse()){
+    const m=l.slice(2).match(/^(\S+)\s(.*)$/); if(!m)continue;
+    jb.innerHTML+=`<tr><td class="quiet" style="white-space:nowrap">${ago(m[1])} ago</td><td style="text-align:left;white-space:normal">${m[2]}</td></tr>`;
+  }
+
+  // pulse
+  const hb=jo.split("\n").filter(Boolean).pop()?.match(/^- (\S+)/)?.[1];
+  const stale=hb&&(Date.now()-new Date(hb))>20*60e3;
+  $("pulse").textContent=(state.live_mode?"live":"paper")+(hb?` · beat ${ago(hb)} ago`:"");
+  if(stale) beat("warn");
+}
+
+load(); setInterval(load,60000);
+tick(); setInterval(tick,1500);
 </script>
 </body>
 </html>
