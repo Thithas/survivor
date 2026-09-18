@@ -2751,3 +2751,5 @@
 - 2026-09-18T10:39:45+00:00 LIVE FORCED sol-updown-5m-1789727700 $4.55 edge -0.0057
 - 2026-09-18T10:39:46+00:00 heartbeat: 1587 scans, 2 open, mode NORMAL, bankroll 55.07, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789728000, opens 60
 - 2026-09-18T10:40:58+00:00 heartbeat: 1601 scans, 2 open, mode NORMAL, bankroll 50.49, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789728000, opens 60
+- 2026-09-18T10:41:02+00:00 closed MOMENTUM doge-updown-5m-1789727400 pnl +2.90 | today +8.65 | bankroll 50.49
+- 2026-09-18T10:41:05+00:00 heartbeat: 1602 scans, 1 open, mode NORMAL, bankroll 50.49, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.99 on eth-updown-5m-1789728000, opens 60
