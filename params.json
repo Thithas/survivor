@@ -7,7 +7,7 @@
   "min_liquidity_usd": 20,
   "fees": 0.0,
   "slippage": 0.01,
-  "momentum_min_move_bps": 6,
+  "momentum_min_move_bps": 4,
   "momentum_max_ask": 0.85,
   "min_order_usd": 1.0,
   "take_profit_bid": 1.0,
@@ -18,5 +18,7 @@
   "lock_from_bid": 0.85,
   "lock_giveback": 0.25,
   "arb_enabled": 0,
-  "forced_at_sec": 0
+  "forced_at_sec": 0,
+  "max_edge": 0.2,
+  "lessons_enabled": 1
 }
