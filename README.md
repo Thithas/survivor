@@ -1,7 +1,7 @@
 # SURVIVOR
 
 Rules-only Polymarket BTC 5-min agent. Runs on GitHub Actions. Controlled from a phone.
-Hard limits (edit only in `survivor.py`): floor $30, daily loss cap $5, max 10% per trade, max 2 open.
+Hard limits (edit only in `survivor.py`): floor $30, daily loss cap $12, max 10% per trade, max 2 open. (2026-09-18: reconciled to match the enforced code; $5 was the doc value, $12 is what's live.)
 
 ## Setup (all from phone browser, github.com)
 
