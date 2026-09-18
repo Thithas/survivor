@@ -1,0 +1,1 @@
+{"ts": "2026-09-18T18:34:46+00:00", "action": "SKIP", "market": "sol-updown-5m-1789756200", "type": "MOMENTUM", "ask": 0.89, "move_bps": 0, "peers": "forced", "confidence": 0.89, "edge": -0.0069, "time_left_sec": 17, "mode": "NORMAL", "bankroll": 42.48, "reason": "forced trade blocked: over 10% cap"}
