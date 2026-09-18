@@ -3153,3 +3153,5 @@
 - 2026-09-18T21:35:03+00:00 sell failed (take profit) xrp-updown-5m-1789767000: size too small (0.0)
 - 2026-09-18T21:35:03+00:00 heartbeat: 1064 scans, 1 open, mode NORMAL, bankroll 35.41, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789767300, opens 60
 - 2026-09-18T21:38:20+00:00 heartbeat: 1117 scans, 1 open, mode NORMAL, bankroll 38.99, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789767300, opens 60
+- 2026-09-18T21:39:25+00:00 LIVE MOMENTUM xrp-updown-5m-1789767300 $2.85 edge 0.0228 move -6.4 bps peers 1/1
+- 2026-09-18T21:39:25+00:00 heartbeat: 1137 scans, 2 open, mode NORMAL, bankroll 38.99, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on sol-updown-5m-1789767300, opens 60
