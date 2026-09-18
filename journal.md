@@ -2804,3 +2804,5 @@
 - 2026-09-18T11:24:11+00:00 sold MOMENTUM sol-updown-5m-1789730400 pnl -2.91 (stop loss @ 0.24 with 49s left) | today +6.19 | bankroll 55.54
 - 2026-09-18T11:24:12+00:00 order failed MOMENTUM xrp-updown-5m-1789730400: order couldn't be fully filled. FOK orders are fully filled or killed.
 - 2026-09-18T11:24:12+00:00 heartbeat: 2174 scans, 1 open, mode NORMAL, bankroll 55.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1789730400, opens 60
+- 2026-09-18T11:24:16+00:00 mode NORMAL -> CAUTIOUS
+- 2026-09-18T11:24:22+00:00 heartbeat: 2176 scans, 1 open, mode CAUTIOUS, bankroll 51.33, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1789730400, opens 60
