@@ -1,6 +1,0 @@
-{
-  "name": "survivor relay",
-  "postCreateCommand": "bash .devcontainer/start.sh >> /tmp/relay.log 2>&1 &",
-  "postStartCommand": "bash .devcontainer/start.sh >> /tmp/relay.log 2>&1 &",
-  "postAttachCommand": "pgrep -f phone/relay.py >/dev/null || (bash .devcontainer/start.sh >> /tmp/relay.log 2>&1 &)"
-}
