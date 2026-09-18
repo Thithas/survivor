@@ -439,7 +439,10 @@ def decide(state, P, sigs):
     orders = []
     # Today, solo cycles went 7 for 7 (+$10.20) and multi-coin cycles went 0 for 5 (-$11.16). Coins in one window
     # are the same bet, so take the single best and skip a cycle a stop already declared wrong.
-    open_cycles = {p["slug"].rsplit("-", 1)[-1] for p in state["open_positions"]}
+    # A cycle is blocked only for the direction already taken. Every multi-coin loss in the record was several
+    # coins moving the SAME way — one bet placed twice. Opposite directions in one window are independent bets,
+    # and the 2-position cap still bounds them.
+    open_cycles = {(p["slug"].rsplit("-", 1)[-1], p.get("legs", [{}])[0].get("outcome")) for p in state["open_positions"]}
     dead = state.get("bad_cycle")
     def rank(x):
         a = x.get("ask") or 0
@@ -450,7 +453,7 @@ def decide(state, P, sigs):
         cyc = s["slug"].rsplit("-", 1)[-1]
         if s["type"] != "ARB":
             if cyc == dead: continue                # a sibling already stopped out on this tick
-            if cyc in open_cycles: continue         # one position per cycle
+            if (cyc, s.get("outcome")) in open_cycles: continue   # already holding this side of this window
 
         if s["type"] == "ARB" and (arb_room <= 0 or not P.get("arb_enabled", 1)): continue
         if s["type"] != "ARB" and room <= 0: continue
@@ -478,7 +481,7 @@ def decide(state, P, sigs):
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
         orders.append((s, round(stake, 2), round(net, 4))); taken.add(s["slug"])
         if s["type"] == "ARB": arb_room -= 1
-        else: room -= 1; open_cycles.add(s["slug"].rsplit("-", 1)[-1])
+        else: room -= 1; open_cycles.add((s["slug"].rsplit("-", 1)[-1], s.get("outcome")))
     return orders
 
 def execute(state, s, stake, net, P):
