@@ -8,9 +8,9 @@
   "fees": 0.0,
   "slippage": 0.01,
   "momentum_min_move_bps": 4,
-  "momentum_max_ask": 0.85,
+  "momentum_max_ask": 0.9,
   "min_order_usd": 1.0,
-  "take_profit_bid": 1.0,
+  "take_profit_bid": 0.97,
   "stop_loss_bid": 0.35,
   "stop_loss_min_left_sec": 8,
   "fee_rate": 0.07,
@@ -19,7 +19,7 @@
   "lock_giveback": 0.25,
   "stop_frac_of_entry": 0.6,
   "max_edge": 0.35,
-  "lessons_enabled": 1,
+  "lessons_enabled": 0,
   "arb_enabled": 1,
   "forced_at_sec": 0
 }
