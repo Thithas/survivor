@@ -140,3 +140,4 @@
 {"ts": "2026-09-18T09:18:23+00:00", "slug": "doge-updown-5m-1789722900", "type": "MOMENTUM", "stake": 3.2, "pnl": 1.8, "predicted_edge": 0.0539, "winner": 0, "live": true, "note": ""}
 {"ts": "2026-09-18T09:28:30+00:00", "slug": "doge-updown-5m-1789723500", "type": "MOMENTUM", "stake": 3.25, "pnl": 1.75, "predicted_edge": 0.0741, "winner": 1, "live": true, "note": ""}
 {"ts": "2026-09-18T09:44:02+00:00", "slug": "sol-updown-5m-1789724400", "type": "MOMENTUM", "stake": 3.95, "pnl": 1.05, "predicted_edge": 0.0384, "winner": 0, "live": true, "note": ""}
+{"ts": "2026-09-18T09:49:49+00:00", "slug": "eth-updown-5m-1789724700", "type": "MOMENTUM", "stake": 3.85, "pnl": 1.15, "predicted_edge": -0.0124, "winner": 1, "live": true, "note": ""}
