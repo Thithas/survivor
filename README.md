@@ -1,7 +1,7 @@
 # SURVIVOR
 
 Rules-only Polymarket BTC 5-min agent. Runs on GitHub Actions. Controlled from a phone.
-Hard limits (edit only in `survivor.py`): floor $30, daily loss cap $12, max 10% per trade, max 2 open. (2026-09-18: reconciled to match the enforced code; $5 was the doc value, $12 is what's live.)
+Hard limits, enforced in `survivor.py` and verified by an offline harness: **floor $30** (agent stops permanently below it), **daily loss cap $12** (hibernates until the next UTC day), **max 10% of bankroll per trade**, **max 2 open positions**. The brief that requested these said $5 in one place and $12 in two; $12 is live — change `HARD` in `survivor.py` if $5 was meant.
 
 ## Setup (all from phone browser, github.com)
 
@@ -49,3 +49,13 @@ One-time: https://github.com/settings/codespaces → **Region: West Europe** · 
 Every day: repo → **Code → Codespaces → Open** (or *Create codespace on main* the first time). Leave the tab open.
 The relay starts itself, publishes its URL to `RELAY`, and Telegram says "relay … | balance via relay …" then "LIVE resumed".
 When the Codespace stops, Telegram says "Relay offline: open the Codespace" and the bot trades paper until you do.
+
+## Decisions and lessons
+
+- `decisions.jsonl` — one line per decision: ENTER, SKIP or EXIT, with the reason in plain words,
+  plus ask, move, peers, confidence, edge, time left, stake and P&L.
+- `lessons.json` — outcome counts by bucket (what we paid, how many coins agreed, how late we entered).
+
+The loop is deliberately one-directional: a bucket with 25+ trades, a win rate under 45% and a negative
+net gets **vetoed** — the agent stops taking that kind of trade. It can never loosen a rule, raise a size,
+or change its own code. Set `lessons_enabled` to 0 in `params.json` to switch it off.
