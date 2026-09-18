@@ -40,6 +40,11 @@ and every one of them is a rule about what *not* to do.
 
 ## The standing bet
 
-Frozen 2026-09-18 at $51.56, 147 lifetime trades, −$21.02.
-The next 30 trades run untouched on these rules. If they are net positive, the agent continues.
-If they are not, the strategy is wrong — and the honest response is to stop, not to tune.
+Frozen 2026-09-18 13:09 UTC — the moment the one-bet-per-window rule went live.
+Balance $45.31. Lifetime at freeze: 151 trades, −$26.66.
+
+**Trades 152–181 decide it.** They run untouched on these rules. Net positive, the agent continues.
+Net negative, the strategy is wrong — and the honest response is to stop, not to tune.
+
+(The freeze point lives here, in this file. `state.json` is rewritten by the agent every few
+minutes, so nothing recorded there survives.)
