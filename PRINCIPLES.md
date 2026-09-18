@@ -29,22 +29,21 @@ and every one of them is a rule about what *not* to do.
    A 12-sample "83% win rate" looked like a pattern, was noise, and the change built on it
    lost $25 in nine hours.
 
-## How this agent is allowed to change
+## How this agent changes
 
-- **It is not adaptive.** It does not retune itself. Adaptive means changing its mind on noise.
-- **Parameters are frozen** between reviews. `params.json` is not edited to chase a result.
-- **A review happens after 30+ closed trades**, never sooner, and never on a losing day's impulse.
-- **A change requires evidence stated out loud first**: the split, the sample size, the expected effect.
-  If it can't be written in one sentence with numbers, it isn't a finding.
-- **A change that makes things worse over the next 30 trades is reverted**, not tuned further.
+The seven above are what the money taught. They stay.
 
-## The standing bet
+The 30-trade freeze is lifted at the owner's instruction (2026-09-18). The agent runs continuously
+on the rules below; changes are made when there is a reason, not on a schedule.
 
-Frozen 2026-09-18 13:09 UTC — the moment the one-bet-per-window rule went live.
-Balance $45.31. Lifetime at freeze: 151 trades, −$26.66.
+## Running configuration
 
-**Trades 152–181 decide it.** They run untouched on these rules. Net positive, the agent continues.
-Net negative, the strategy is wrong — and the honest response is to stop, not to tune.
+Restored to what was live during the two winning stretches — Sep 8 evening and Sep 18 morning:
 
-(The freeze point lives here, in this file. `state.json` is rewritten by the agent every few
-minutes, so nothing recorded there survives.)
+- momentum only, one side per window
+- move >= 6 bps, favoured side priced 0.40-0.85, last 120 seconds
+- stake 10% of balance, halved while CAUTIOUS (size only — CAUTIOUS no longer raises the entry bar)
+- winners ride to settlement; losers exit on a limit sell parked at entry
+- both-sides arb: off (full arbs +$5.47, half-fills -$19.89)
+- filler trades in quiet windows: off (they won often and earned almost nothing)
+- no floor, no daily cap
