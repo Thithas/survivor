@@ -3150,3 +3150,5 @@
 - 2026-09-18T21:34:24+00:00 heartbeat: 1057 scans, 1 open, mode NORMAL, bankroll 35.41, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on doge-updown-5m-1789767000, opens 60
 - 2026-09-18T21:34:40+00:00 sell failed (take profit) xrp-updown-5m-1789767000: size too small (0.0)
 - 2026-09-18T21:34:56+00:00 heartbeat: 1063 scans, 1 open, mode NORMAL, bankroll 35.41, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789767300, opens 60
+- 2026-09-18T21:35:03+00:00 sell failed (take profit) xrp-updown-5m-1789767000: size too small (0.0)
+- 2026-09-18T21:35:03+00:00 heartbeat: 1064 scans, 1 open, mode NORMAL, bankroll 35.41, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789767300, opens 60
