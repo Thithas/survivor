@@ -346,7 +346,9 @@ def scan(state, P):
             peers = [v for a2, v in moves.items() if a2 != m["asset"]]
             agree = sum(1 for v in peers if (v > 0) == up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
             against = sum(1 for v in peers if (v > 0) != up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
-            conf = max(0.0, min(0.90, conf + min(0.05, 0.02 * agree) - 0.05 * against))
+            # Live evidence: every "peers 4/0" entry lost (4 of 4). When the whole group moves together it is a
+            # macro tick already in the price, and we buy the top of the spike. Broad agreement now costs confidence.
+            conf = max(0.0, min(0.90, conf - 0.04 * max(0, agree - 1) - 0.05 * against))
             if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
@@ -365,8 +367,21 @@ def decide(state, P, sigs):
     arb_room = 3 - sum(1 for p in state["open_positions"] if p["type"] == "ARB")
     taken = {p["slug"] for p in state["open_positions"]} | set(state.get("traded", []))
     orders = []
-    n_mom = max(1, sum(1 for s in sigs if s["type"] == "MOMENTUM" and s["confidence"] >= P["momentum_min_confidence"]))
-    for s in sorted(sigs, key=lambda s: (s["type"] != "ARB", -s["gross_edge"])):
+    # Today, solo cycles went 7 for 7 (+$10.20) and multi-coin cycles went 0 for 5 (-$11.16). Coins in one window
+    # are the same bet, so take the single best and skip a cycle a stop already declared wrong.
+    open_cycles = {p["slug"].rsplit("-", 1)[-1] for p in state["open_positions"]}
+    dead = state.get("bad_cycle")
+    def rank(x):
+        a = x.get("ask") or 0
+        band = 0 if 0.55 <= a <= 0.85 else 1        # the band that wins most often, not the biggest edge
+        return (x["type"] != "ARB", band, int(str(x.get("peers", "0/0")).split("/")[0]), -x["gross_edge"])
+    n_mom = 1
+    for s in sorted(sigs, key=rank):
+        cyc = s["slug"].rsplit("-", 1)[-1]
+        if s["type"] != "ARB":
+            if cyc == dead: continue                # a sibling already stopped out on this tick
+            if cyc in open_cycles: continue         # one position per cycle
+
         if s["type"] == "ARB" and (arb_room <= 0 or not P.get("arb_enabled", 1)): continue
         if s["type"] != "ARB" and room <= 0: continue
         if s["slug"] in taken: continue
@@ -388,7 +403,7 @@ def decide(state, P, sigs):
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
         orders.append((s, round(stake, 2), round(net, 4))); taken.add(s["slug"])
         if s["type"] == "ARB": arb_room -= 1
-        else: room -= 1
+        else: room -= 1; open_cycles.add(s["slug"].rsplit("-", 1)[-1])
     return orders
 
 def forced_trade(state, P):
