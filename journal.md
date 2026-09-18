@@ -2799,3 +2799,5 @@
 - 2026-09-18T11:23:29+00:00 sell failed (stop loss) eth-updown-5m-1789730400: not enough balance / allowance: the balance is not enough -> balance: 7627907, order amount: 7630000
 - 2026-09-18T11:23:50+00:00 sell failed (stop loss) eth-updown-5m-1789730400: not enough balance / allowance: the balance is not enough -> balance: 7627907, order amount: 7630000
 - 2026-09-18T11:23:50+00:00 heartbeat: 2170 scans, 1 open, mode NORMAL, bankroll 55.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789730400, opens 60
+- 2026-09-18T11:24:04+00:00 LIVE MOMENTUM sol-updown-5m-1789730400 $4.05 edge 0.0492 move -6.6 bps peers 4/0
+- 2026-09-18T11:24:04+00:00 heartbeat: 2173 scans, 2 open, mode NORMAL, bankroll 55.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1789730400, opens 60
