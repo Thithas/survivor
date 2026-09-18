@@ -1,6 +1,6 @@
 {
   "min_edge": 0.02,
-  "max_trade_pct": 0.25,
+  "max_trade_pct": 0.1,
   "momentum_min_confidence": 0.55,
   "momentum_window_sec": 120,
   "max_open_positions": 5,
