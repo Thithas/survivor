@@ -3,7 +3,7 @@
   "max_trade_pct": 0.1,
   "momentum_min_confidence": 0.55,
   "momentum_window_sec": 120,
-  "max_open_positions": 5,
+  "max_open_positions": 2,
   "min_liquidity_usd": 20,
   "fees": 0.0,
   "slippage": 0.01,
