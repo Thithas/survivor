@@ -124,11 +124,19 @@
 <div class="now" id="now">Waiting for the first tick.</div>
 
 <div class="trial">
-  <h2>The thirty</h2>
-  <p class="note">Trades 152–181 run on frozen rules. Net positive, the agent continues. Net negative, the strategy is wrong.</p>
-  <div class="ticks" id="ticks"></div>
-  <div class="verdict" id="verdict">—</div>
+  <h2>What it has learned</h2>
+  <p class="note">Every closed trade is counted into these buckets. A bucket with 25+ trades, under 45% wins and a
+     negative net is <b>vetoed</b> — the agent stops taking that kind of trade. It can only ever stop itself, never loosen a rule.</p>
+  <table id="les"><tbody></tbody></table>
+  <p class="empty" id="les-empty">No outcomes recorded yet.</p>
 </div>
+
+<section>
+  <h2>Why it acted</h2>
+  <p class="note">Every entry, skip and exit, in its own words.</p>
+  <table id="dec"><tbody></tbody></table>
+  <p class="empty" id="dec-empty">Nothing yet — the log starts with the next decision.</p>
+</section>
 
 <section>
   <h2>Recent trades</h2>
@@ -324,19 +332,20 @@ async function get(p){const r=await fetch(RAW+p+"?t="+Date.now(),{cache:"no-stor
 const rows=t=>t.split("\n").filter(Boolean).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
 
 async function load(){
-  const [st,tr,pa,jo]=await Promise.all(["state.json","trades.jsonl","params.json","journal.md"].map(get));
+  const [st,tr,pa,jo,le,de]=await Promise.all(
+    ["state.json","trades.jsonl","params.json","journal.md","lessons.json","decisions.jsonl"].map(get));
   try{state=JSON.parse(st)}catch{}
   try{P={...P,...JSON.parse(pa)}}catch{}
   HARD=state.hard_limits||{};
   trades=rows(tr).filter(x=>x.live);
 
-  const bank=state.bankroll_usd??0, today=state.today_pnl_usd??0;
+  const bank=state.bankroll_usd??0, today=state.today_pnl_usd??0;   // closed_trades resets on restart; trades.jsonl is the record
   $("amt").textContent=usd(bank);
   $("delta").textContent=`${sgn(today)} today`;
   $("delta").className="delta "+(today>0?"gain":today<0?"loss":"quiet");
 
   const w=trades.filter(x=>x.pnl>0).length;
-  $("n").textContent=trades.length;
+  $("n").textContent=trades.length;   // from trades.jsonl, the durable record
   $("wr").textContent=trades.length?Math.round(100*w/trades.length)+"%":"—";
   const life=trades.reduce((a,x)=>a+x.pnl,0);
   $("life").textContent=sgn(life); $("life").className=life>0?"gain":"loss";
@@ -348,15 +357,34 @@ async function load(){
   for(let i=trades.length-1;i>=Math.max(0,trades.length-60);i--){ v-=trades[i].pnl; pts.push({v,pnl:trades[i].pnl}) }
   wave=pts.reverse(); drawTide();
 
-  // the thirty
-  const trial=trades.slice(FREEZE);
-  const bars=[]; for(let i=0;i<30;i++){ const x=trial[i];
-    bars.push(`<i class="${!x?"":x.pnl>0?"w":"l"}" style="height:${x?Math.min(34,8+Math.abs(x.pnl)*7):4}px"></i>`) }
-  $("ticks").innerHTML=bars.join("");
-  const net=trial.reduce((a,x)=>a+x.pnl,0);
-  $("verdict").innerHTML=trial.length
-    ? `<b class="${net>0?"gain":"loss"}">${sgn(net)}</b> over ${trial.length} of 30 · ${trial.filter(x=>x.pnl>0).length} won`
-    : `<span class="quiet">Trial starts with the next trade.</span>`;
+  // what it has learned
+  let L={}; try{L=JSON.parse(le)}catch{}
+  const NAMES={"alone":"acting alone","some-agree":"2–3 coins agreed","all-agree":"all coins agreed",
+               "price<0.55":"paid under 0.55","price0.55-0.70":"paid 0.55–0.70","price0.70+":"paid over 0.70",
+               "early":"entered early","late":"entered late"};
+  const lb=$("les").querySelector("tbody"); lb.innerHTML=""; let any=false;
+  for(const [k,v] of Object.entries(L)){
+    if(k.startsWith("_")||!v||typeof v!=="object"||v.n==null) continue;
+    any=true;
+    const wr=v.wins/v.n, veto=v.n>=25&&wr<0.45&&v.net<0;
+    lb.innerHTML+=`<tr><td style="text-align:left">${NAMES[k]||k}${veto?' <b class="loss">vetoed</b>':""}</td>
+      <td class="quiet">${v.n}</td><td class="${wr>=0.5?"gain":"loss"}">${Math.round(wr*100)}%</td>
+      <td class="${v.net>0?"gain":"loss"}">${sgn(v.net)}</td></tr>`;
+  }
+  $("les-empty").style.display=any?"none":"block"; $("les").style.display=any?"table":"none";
+
+  // why it acted
+  const dec=rows(de).slice(-14).reverse();
+  const db=$("dec").querySelector("tbody"); db.innerHTML="";
+  for(const d of dec){
+    const coin=COINS[(d.market||"").split("-")[0]]||"";
+    const tone=d.action==="ENTER"?"":d.action==="EXIT"?(d.pnl>0?"gain":"loss"):"quiet";
+    const tail=d.action==="EXIT"?`${sgn(d.pnl)} · ${d.lesson||d.exit_reason||""}`:(d.reason||"");
+    db.innerHTML+=`<tr><td class="quiet" style="white-space:nowrap">${ago(d.ts)} ago</td>
+      <td style="white-space:nowrap"><b class="${tone}">${d.action}</b> ${coin}</td>
+      <td style="text-align:left;white-space:normal">${tail}</td></tr>`;
+  }
+  $("dec-empty").style.display=dec.length?"none":"block"; $("dec").style.display=dec.length?"table":"none";
 
   // recent
   const tb=$("tr").querySelector("tbody"); tb.innerHTML="";
