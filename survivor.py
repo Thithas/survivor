@@ -184,6 +184,24 @@ def buy(token_id, usd):
     try: return _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FAK"))
     except Exception as e: return False, str(e)[:160]
 
+def park_stop(token_id, shares, price):
+    """Park a limit sell at the stop price the moment we enter. Market sells react after the bid has already
+    collapsed — measured fills averaged 20 cents below the trigger. An order already resting in the book
+    fills at our price instead of chasing one that has gone."""
+    if not is_live(): return None
+    try:
+        r = pm().place_limit_order(token_id=token_id, price=str(round(price, 2)),
+                                   size=str(math.floor(shares * 100) / 100), side="SELL")
+        oid = getattr(r, "order_id", None) or (r.get("orderID") if isinstance(r, dict) else None)
+        log("stop parked at", round(price, 2), oid); return oid
+    except Exception as e:
+        log("park_stop failed", str(e)[:120]); return None
+
+def drop_stop(oid):
+    if not oid or not is_live(): return
+    try: pm().cancel_order(order_id=oid)
+    except Exception as e: log("cancel failed", str(e)[:100])
+
 def held_shares(token_id):
     """Actual on-chain size for a token — fills can be partial, so our own record can overstate it."""
     try:
@@ -448,6 +466,10 @@ def execute(state, s, stake, net):
     pos = {"slug": s["slug"], "type": s["type"], "legs": legs, "stake": cost, "predicted_edge": net,
            "entry_price": s.get("ask"),
            "ts": now().isoformat(timespec="seconds"), "end": s["end"], "live": is_live()}
+    if s["type"] == "MOMENTUM" and pos.get("entry_price") and filled:
+        stop_at = max(P["stop_loss_bid"], P["stop_frac_of_entry"] * pos["entry_price"])
+        pos["stop_at"] = round(stop_at, 2)
+        pos["stop_order"] = park_stop(filled[0]["token"], filled[0]["shares"], stop_at)
     state["open_positions"].append(pos)
     state["traded"] = (state.get("traded", []) + [s["slug"]])[-40:]
     if not is_live(): state["bankroll_usd"] -= cost
@@ -510,11 +532,19 @@ def manage(state, P):
         cyc = p["slug"].rsplit("-", 1)[-1]
         if state.get("bad_cycle") == cyc and bid < 0.6 and left >= P["stop_loss_min_left_sec"]:
             bid = min(bid, P["stop_loss_bid"])        # a sibling on this cycle already stopped: the whole tick was wrong
+        if p.get("stop_order") and is_live():
+            left_now = held_shares(leg["token"])
+            if left_now is not None and left_now < leg["shares"] * 0.5:      # the resting stop filled
+                got = round(leg["shares"] * (p["stop_at"] - fee(p["stop_at"], P)), 4)
+                p["stop_order"] = None
+                record(state, p, round(got - p["stake"], 4), -2, note=f"stop filled at {p['stop_at']:.2f}")
+                changed = True; continue
         p["peak_bid"] = max(p.get("peak_bid", 0.0), bid)          # trailing lock: once it was a near-certain win, don't ride it back down
         reason = "take profit" if bid >= P["take_profit_bid"] else \
                  "profit lock" if (p["peak_bid"] >= P["lock_from_bid"] and bid <= p["peak_bid"] - P["lock_giveback"] and left >= 3) else \
                  "stop loss" if (bid <= max(P["stop_loss_bid"], P["stop_frac_of_entry"] * (p.get("entry_price") or 1)) and left >= P["stop_loss_min_left_sec"]) else None
         if not reason: keep.append(p); continue
+        if p.get("stop_order"): drop_stop(p["stop_order"]); p["stop_order"] = None
         ok, resp = sell(leg["token"], leg["shares"])
         if not ok:
             p["sell_fails"] = p.get("sell_fails", 0) + 1
@@ -530,6 +560,9 @@ def manage(state, P):
 
 def settle(state):
     t, keep = now(), []
+    for p in state["open_positions"]:
+        if p.get("stop_order") and (t - parse(p["end"])).total_seconds() > 0:
+            drop_stop(p["stop_order"]); p["stop_order"] = None
     for p in state["open_positions"]:
         age = (t - parse(p["end"])).total_seconds()
         if age < 45: keep.append(p); continue
