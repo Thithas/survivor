@@ -248,24 +248,6 @@ def buy(token_id, usd):
     try: return _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FAK"))
     except Exception as e: return False, str(e)[:160]
 
-def park_stop(token_id, shares, price):
-    """Park a limit sell at the stop price the moment we enter. Market sells react after the bid has already
-    collapsed — measured fills averaged 20 cents below the trigger. An order already resting in the book
-    fills at our price instead of chasing one that has gone."""
-    if not is_live(): return None
-    try:
-        r = pm().place_limit_order(token_id=token_id, price=str(round(price, 2)),
-                                   size=str(math.floor(shares * 100) / 100), side="SELL")
-        oid = getattr(r, "order_id", None) or (r.get("orderID") if isinstance(r, dict) else None)
-        log("stop parked at", round(price, 2), oid); return oid
-    except Exception as e:
-        log("park_stop failed", str(e)[:120]); return None
-
-def drop_stop(oid):
-    if not oid or not is_live(): return
-    try: pm().cancel_order(order_id=oid)
-    except Exception as e: log("cancel failed", str(e)[:100])
-
 def held_shares(token_id):
     """Actual on-chain size for a token — fills can be partial, so our own record can overstate it."""
     try:
@@ -404,7 +386,7 @@ def scan(state, P):
         if ua is not None and da is not None:
             if diag["best_sum"] is None or ua + da < diag["best_sum"]: diag["best_sum"], diag["slug"] = round(ua + da, 3), m["slug"]
             gross = round(1 - (ua + da) - fee(ua, P) - fee(da, P), 4)
-            if gross > 0:
+            if False:   # arb removed: full arbs +$5.47, half-filled legs -$19.89. One side only.
                 sigs.append({**base, "type": "ARB", "asset": m["asset"], "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
                              "gross_edge": gross, "liquidity_usd": min(ul, dl), "liq_shares": min(usz, dsz), "confidence": 1.0})
         op = state["opens"].get(m["slug"])
@@ -494,29 +476,6 @@ def decide(state, P, sigs):
         else: room -= 1; open_cycles.add(s["slug"].rsplit("-", 1)[-1])
     return orders
 
-def forced_trade(state, P):
-    """Owner's rule: one minimum-size trade per 5-minute cycle even without a signal. Least-bad version:
-    at T-forced_at_sec buy 5 shares of the market's own favourite (highest ask <= forced_max_ask) — the side the market
-    already expects to win, so the expected cost is just the fee. Skipped if a signal already traded this cycle."""
-    if state["mode"] in ("DEAD", "HIBERNATE") or P.get("forced_at_sec", 0) <= 0: return None   # 0 disables forced trades
-    books = state.get("books", {})
-    cyc = {slug: b for slug, b in books.items() if b["left"] <= P["forced_at_sec"] and b["left"] >= P["forced_at_sec"] - 12}
-    if not cyc: return None
-    epoch = list(cyc)[0].rsplit("-", 1)[-1]
-    if state.get("forced_epoch") == epoch: return None
-    if any(t.rsplit("-", 1)[-1] == epoch for t in state.get("traded", [])): state["forced_epoch"] = epoch; return None
-    best = None
-    for slug, b in cyc.items():
-        for side, idx in (("up", 0), ("down", 1)):
-            ask = b[side][0]
-            if ask is None or ask > P["forced_max_ask"] or ask < 0.55: continue
-            if best is None or ask > best[2]: best = (slug, side, ask, b[side + "_tok"], idx, b["end"])
-    state["forced_epoch"] = epoch
-    if not best: return None
-    slug, side, ask, tok, idx, end = best
-    return {"type": "MOMENTUM", "forced": True, "slug": slug, "end": end, "time_left_sec": cyc[slug]["left"], "token": tok,
-            "outcome": idx, "ask": ask, "gross_edge": round(-fee(ask, P), 4), "liquidity_usd": 0, "confidence": ask, "move_bps": 0, "peers": "forced"}
-
 def execute(state, s, stake, net, P):
     legs = []
     if s["type"] == "ARB":
@@ -539,9 +498,7 @@ def execute(state, s, stake, net, P):
            "buckets": buckets_of(s, s.get("time_left_sec") or 999), "confidence": s.get("confidence"), "move_bps": s.get("move_bps"), "peers": s.get("peers"),
            "ts": now().isoformat(timespec="seconds"), "end": s["end"], "live": is_live()}
     if s["type"] == "MOMENTUM" and pos.get("entry_price") and filled:
-        stop_at = max(P["stop_loss_bid"], P["stop_frac_of_entry"] * pos["entry_price"])
-        pos["stop_at"] = round(stop_at, 2)
-        pos["stop_order"] = park_stop(filled[0]["token"], filled[0]["shares"], stop_at)
+        pos["stop_at"] = round(max(P["stop_loss_bid"], P["stop_frac_of_entry"] * pos["entry_price"]), 2)
     state["open_positions"].append(pos)
     state["traded"] = (state.get("traded", []) + [s["slug"]])[-40:]
     if not is_live(): state["bankroll_usd"] -= cost
@@ -607,7 +564,6 @@ def manage(state, P):
         cyc = p["slug"].rsplit("-", 1)[-1]
         if state.get("bad_cycle") == cyc and bid < 0.6 and left >= P["stop_loss_min_left_sec"]:
             bid = min(bid, P["stop_loss_bid"])        # a sibling on this cycle already stopped: the whole tick was wrong
-        if p.get("stop_order") and is_live():
             left_now = held_shares(leg["token"])
             if left_now is not None and left_now < leg["shares"] * 0.5:      # the resting stop filled
                 got = round(leg["shares"] * (p["stop_at"] - fee(p["stop_at"], P)), 4)
@@ -619,7 +575,6 @@ def manage(state, P):
                  "profit lock" if (p["peak_bid"] >= P["lock_from_bid"] and bid <= p["peak_bid"] - P["lock_giveback"] and left >= 3) else \
                  "stop loss" if (bid <= max(P["stop_loss_bid"], P["stop_frac_of_entry"] * (p.get("entry_price") or 1)) and left >= P["stop_loss_min_left_sec"]) else None
         if not reason: keep.append(p); continue
-        if p.get("stop_order"): drop_stop(p["stop_order"]); p["stop_order"] = None
         ok, resp = sell(leg["token"], leg["shares"])
         if not ok:
             p["sell_fails"] = p.get("sell_fails", 0) + 1
@@ -637,7 +592,6 @@ def manage(state, P):
 def settle(state):
     t, keep = now(), []
     for p in state["open_positions"]:
-        if p.get("stop_order") and (t - parse(p["end"])).total_seconds() > 0:
             drop_stop(p["stop_order"]); p["stop_order"] = None
     for p in state["open_positions"]:
         age = (t - parse(p["end"])).total_seconds()
@@ -812,20 +766,6 @@ def main():
         except Exception as e: log("manage err", e)
         for s, stake, net in decide(state, P, sigs):
             execute(state, s, stake, net, P); dirty = True
-        try:
-            f = forced_trade(state, P)
-            if f and f["slug"] not in {p["slug"] for p in state["open_positions"]}:
-                stake = round(MIN_SHARES * f["ask"], 2)
-                cap = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"])
-                over_cap = stake > cap + 0.01
-                below_floor = state["bankroll_usd"] - stake < HARD["floor_usd"]
-                slots_full = sum(1 for p in state["open_positions"] if p["type"] != "ARB") >= HARD["max_open_positions"]
-                if over_cap or below_floor or slots_full:
-                    decide_log(state, "SKIP", f, reason="forced trade blocked: " +
-                               ("over 10% cap" if over_cap else "would breach floor" if below_floor else "position slots full"))
-                elif stake <= state["bankroll_usd"]:
-                    execute(state, f, stake, f["gross_edge"], P); dirty = True
-        except Exception as e: log("forced err", e)
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = params(); last_pull = time.time()
             if relay_url() != state.get("relay_seen"):
