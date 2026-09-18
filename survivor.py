@@ -10,7 +10,7 @@ Control files in repo root (edit from your phone, picked up within ~2 min):
 Env (GitHub Secrets/Variables): POLY_PRIVATE_KEY, POLY_FUNDER, POLY_SIGNATURE_TYPE,
   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, RUN_SECONDS
 """
-import os, re, json, math, time, subprocess, datetime as dt, socket
+import os, re, json, math, time, threading, subprocess, datetime as dt, socket
 import requests
 socket.setdefaulttimeout(20)
 
@@ -25,10 +25,13 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 1.0, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.25, "max_open_positions": 5}   # owner removed the daily cap and the floor: the bot may trade the account to zero. 25%/trade is the only pacing left.
+HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 12.0, "max_trade_pct": 0.10, "max_open_positions": 2}
+# Reconciled 2026-09-18 per audit: floor $30 (dead below it), daily loss cap $12 (hibernate for the day),
+# 10% of bankroll per trade, 2 directional positions at once. The doc that requested this said $5 in one
+# place and $12 in two; $12 is what's enforced here — flag it if $5 was intended.
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
-BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
+BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min_confidence": (0.55, 0.85),
           "momentum_window_sec": (10, 150), "max_open_positions": (1, 5), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
@@ -412,7 +415,7 @@ def decide(state, P, sigs):
         if s["type"] == "MOMENTUM" and not s.get("forced") and net > P["max_edge"]: continue
         unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
         if s["type"] == "ARB":
-            shares = int(min(state["bankroll_usd"] * HARD["max_trade_pct"] / unit, s["liq_shares"] * 0.5))   # both legs must fill: never more than half the thinner book
+            shares = int(min(state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) / unit, s["liq_shares"] * 0.5))   # both legs must fill: never more than half the thinner book
             if shares < MIN_SHARES: continue
             stake = shares * unit
         else:
@@ -449,7 +452,7 @@ def forced_trade(state, P):
     return {"type": "MOMENTUM", "forced": True, "slug": slug, "end": end, "time_left_sec": cyc[slug]["left"], "token": tok,
             "outcome": idx, "ask": ask, "gross_edge": round(-fee(ask, P), 4), "liquidity_usd": 0, "confidence": ask, "move_bps": 0, "peers": "forced"}
 
-def execute(state, s, stake, net):
+def execute(state, s, stake, net, P):
     legs = []
     if s["type"] == "ARB":
         shares = int(stake / (s["up_ask"] + s["down_ask"]))
@@ -466,7 +469,7 @@ def execute(state, s, stake, net):
         journal(f"order failed {s['type']} {s['slug']}: {legs[0]['resp']}"); return
     cost = round(sum(l["cost"] for l in filled), 2)
     pos = {"slug": s["slug"], "type": s["type"], "legs": legs, "stake": cost, "predicted_edge": net,
-           "entry_price": s.get("ask"),
+           "entry_price": s.get("ask"), "confidence": s.get("confidence"), "move_bps": s.get("move_bps"), "peers": s.get("peers"),
            "ts": now().isoformat(timespec="seconds"), "end": s["end"], "live": is_live()}
     if s["type"] == "MOMENTUM" and pos.get("entry_price") and filled:
         stop_at = max(P["stop_loss_bid"], P["stop_frac_of_entry"] * pos["entry_price"])
@@ -589,7 +592,8 @@ def record(state, p, pnl, winner, note=""):
     state["closed_trades"] += 1
     state["peak_bankroll_usd"] = max(state.get("peak_bankroll_usd", 0), equity(state))
     rec = {"ts": p["ts"], "slug": p["slug"], "type": p["type"], "stake": p["stake"], "pnl": pnl,
-           "predicted_edge": p["predicted_edge"], "winner": winner, "live": p["live"], "note": note}
+           "predicted_edge": p["predicted_edge"], "winner": winner, "live": p["live"], "note": note,
+           "entry_price": p.get("entry_price"), "confidence": p.get("confidence"), "move_bps": p.get("move_bps"), "peers": p.get("peers")}
     with open(TRADES_FILE, "a") as f: f.write(json.dumps(rec) + "\n")
     msg = f"{'sold' if winner == -2 else 'closed'} {p['type']} {p['slug']} pnl {pnl:+.2f}{' (' + note + ')' if note else ''} | today {state['today_pnl_usd']:+.2f} | bankroll {state['bankroll_usd']:.2f}"
     journal(msg); notify(msg)
@@ -612,7 +616,9 @@ def relay_alive():
 
 def sweep_redeem(state):
     """Winnings on Polymarket sit as resolved shares until redeemed; the cash balance (and our sizing) ignores them.
-    Every few minutes, claim everything the Data API marks redeemable."""
+    Every few minutes, claim everything the Data API marks redeemable. h.wait() has no timeout of its own and
+    blocks on-chain confirmation — a stuck transaction hung the whole bot for 3+ hours on 2026-09-18. Bounded
+    with a thread join so a slow confirmation delays this sweep, never the trading loop."""
     if not is_live(): return
     try:
         r = requests.get("https://data-api.polymarket.com/positions", params={"user": os.environ["POLY_FUNDER"], "sizeThreshold": 0, "limit": 100}, timeout=15).json()
@@ -621,7 +627,16 @@ def sweep_redeem(state):
     for pos in r if isinstance(r, list) else []:
         if not pos.get("redeemable") or float(pos.get("size", 0)) <= 0: continue
         try:
-            h = pm().redeem_positions(condition_id=pos["conditionId"]); h.wait()
+            h = pm().redeem_positions(condition_id=pos["conditionId"])
+            done = threading.Event(); outcome = {}
+            def _wait():
+                try: h.wait()
+                except Exception as e: outcome["err"] = e
+                finally: done.set()
+            th = threading.Thread(target=_wait, daemon=True); th.start()
+            if not done.wait(timeout=25):
+                log("redeem timed out (still pending on-chain), moving on", pos.get("title", "")); continue
+            if "err" in outcome: raise outcome["err"]
             claimed += 1; journal(f"claimed {pos.get('title', pos['conditionId'][:10])}: {float(pos['size']):.2f} shares")
         except Exception as e: log("redeem err", pos.get("title", ""), str(e)[:100])
     if claimed: notify(f"claimed winnings on {claimed} market(s)")
@@ -718,12 +733,12 @@ def main():
         try: dirty |= manage(state, P)          # runs even when the scan failed: a held position must never go unwatched
         except Exception as e: log("manage err", e)
         for s, stake, net in decide(state, P, sigs):
-            execute(state, s, stake, net); dirty = True
+            execute(state, s, stake, net, P); dirty = True
         try:
             f = forced_trade(state, P)
             if f and f["slug"] not in {p["slug"] for p in state["open_positions"]}:
                 stake = round(MIN_SHARES * f["ask"], 2)
-                if stake <= state["bankroll_usd"]: execute(state, f, stake, f["gross_edge"]); dirty = True
+                if stake <= state["bankroll_usd"]: execute(state, f, stake, f["gross_edge"], P); dirty = True
         except Exception as e: log("forced err", e)
         if time.time() - last_pull > PULL_EVERY:
             pull(); P = params(); last_pull = time.time()
