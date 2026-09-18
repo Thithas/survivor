@@ -2824,3 +2824,4 @@
 - 2026-09-18T11:33:52+00:00 heartbeat: 2298 scans, 1 open, mode CAUTIOUS, bankroll 52.86, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789731000, opens 60
 - 2026-09-18T11:36:11+00:00 closed MOMENTUM doge-updown-5m-1789730700 pnl +1.10 | today +4.01 | bankroll 52.86
 - 2026-09-18T11:36:15+00:00 heartbeat: 2329 scans, 0 open, mode CAUTIOUS, bankroll 52.86, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.98 on eth-updown-5m-1789731300, opens 60
+- 2026-09-18T11:38:23+00:00 heartbeat: 2357 scans, 0 open, mode CAUTIOUS, bankroll 52.86, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789731300, opens 60
