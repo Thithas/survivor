@@ -1,0 +1,27 @@
+{
+ "hard_limits": {
+  "floor_usd": 30.0,
+  "daily_loss_cap_usd": 12.0,
+  "max_trade_pct": 0.1,
+  "max_open_positions": 2
+ },
+ "bankroll_usd": 42.475631,
+ "start_bankroll_usd": 42.475631,
+ "peak_bankroll_usd": 42.475631,
+ "today": "2026-09-18",
+ "today_pnl_usd": 0.0,
+ "consecutive_losses": 0,
+ "consecutive_wins": 0,
+ "mode": "NORMAL",
+ "open_positions": [],
+ "closed_trades": 0,
+ "opens": {},
+ "stats": {
+  "wins": 0,
+  "losses": 0,
+  "pnl": 0.0,
+  "arb": 0,
+  "momentum": 0
+ },
+ "live_mode": true
+}
