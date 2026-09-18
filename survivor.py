@@ -10,7 +10,7 @@ Control files in repo root (edit from your phone, picked up within ~2 min):
 Env (GitHub Secrets/Variables): POLY_PRIVATE_KEY, POLY_FUNDER, POLY_SIGNATURE_TYPE,
   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, RUN_SECONDS
 """
-import os, json, time, subprocess, datetime as dt, socket
+import os, re, json, math, time, subprocess, datetime as dt, socket
 import requests
 socket.setdefaulttimeout(20)
 
@@ -177,9 +177,9 @@ def _resp(r):
     return ok, (f"{r.order_id} {r.status}" if ok else f"{getattr(r, 'code', '?')}: {getattr(r, 'message', r)}")[:160]
 
 def buy(token_id, usd):
-    """Market FOK buy spending `usd` pUSD. Returns (ok, response)."""
+    """Market buy spending `usd` pUSD. FAK, not FOK: a thin book gives a smaller position instead of no trade."""
     if not is_live(): return True, "paper"
-    try: return _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FOK"))
+    try: return _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FAK"))
     except Exception as e: return False, str(e)[:160]
 
 def held_shares(token_id):
@@ -192,14 +192,25 @@ def held_shares(token_id):
     return None
 
 def sell(token_id, shares):
-    """Market FOK sell. Never asks for more shares than we own."""
+    """Market sell. Rounds DOWN (asking for one cent more than we hold gets the whole order rejected), and if the
+    exchange still reports a smaller balance, retries with exactly what it says we have."""
     if not is_live(): return True, "paper"
     real = held_shares(token_id)
     if real is not None:
         if real < 1: return False, f"nothing to sell (held {real})"
         shares = min(shares, real)
-    try: return _resp(pm().place_market_order(token_id=token_id, side="SELL", shares=str(round(shares, 2)), order_type="FOK"))
-    except Exception as e: return False, str(e)[:160]
+    for attempt in range(3):
+        size = math.floor(shares * 100) / 100                    # never round up
+        if size < 1: return False, f"size too small ({shares})"
+        try: ok, resp = _resp(pm().place_market_order(token_id=token_id, side="SELL", shares=str(size), order_type="FAK"))
+        except Exception as e: ok, resp = False, str(e)[:200]
+        if ok: return True, resp
+        m = re.search(r"balance:\s*(\d+)", str(resp))           # the error tells us the true size, in 1e6 units
+        if m and attempt < 2:
+            shares = float(m.group(1)) / 1e6
+            log("sell retry with exchange-reported size", shares); continue
+        return False, str(resp)[:160]
+    return False, "sell retries exhausted"
 
 def spots():
     """Spot USD for every asset in one call (Coinbase exchange rates are USD->coin, so invert)."""
