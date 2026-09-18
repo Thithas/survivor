@@ -1,0 +1,23 @@
+{
+ "all-agree": {
+  "n": 51,
+  "wins": 20,
+  "net": -34.4403
+ },
+ "alone": {
+  "n": 6,
+  "wins": 4,
+  "net": 5.3353
+ },
+ "some-agree": {
+  "n": 27,
+  "wins": 13,
+  "net": 1.8418
+ },
+ "_why": {
+  "settled at expiry": 83,
+  "stopped out": 38,
+  "gave back a gain": 9
+ },
+ "_note": "Seeded from 151 live trades. Only crowd buckets are seeded: entry price is unrecoverable for losing trades in the old records, so price buckets start empty and fill from live data."
+}
