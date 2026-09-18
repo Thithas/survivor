@@ -86,7 +86,10 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 12.0, "max_trade_pct": 0.10, "max_open_positions": 2}
+HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 12.0, "max_trade_pct": 0.10, "max_open_positions": 2}
+# Floor removed at the owner's explicit instruction (2026-09-18): the agent may trade the account to zero.
+# 0.50 is mechanical only — below that no order can meet the 5-share minimum anyway.
+# What remains: 10% per trade, 2 positions, $12 daily pause, and the lesson veto.
 # Reconciled 2026-09-18 per audit: floor $30 (dead below it), daily loss cap $12 (hibernate for the day),
 # 10% of bankroll per trade, 2 directional positions at once. The doc that requested this said $5 in one
 # place and $12 in two; $12 is what's enforced here — flag it if $5 was intended.
@@ -413,6 +416,7 @@ def scan(state, P):
             # Live evidence: every "peers 4/0" entry lost (4 of 4). When the whole group moves together it is a
             # macro tick already in the price, and we buy the top of the spike. Broad agreement now costs confidence.
             conf = max(0.0, min(0.90, conf - 0.04 * max(0, agree - 1) - 0.05 * against))
+            if agree >= 4: conf = 0.0        # the whole group moving together is a macro tick already in the price
             if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
@@ -469,7 +473,8 @@ def decide(state, P, sigs):
             stake = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) * s["confidence"] * (0.5 if caut else 1.0)
             stake = min(stake / n_mom, s["liquidity_usd"] * 0.8)    # coins firing together are one bet split across them
             stake = max(stake, MIN_SHARES * unit)                   # engine rejects < 5 shares
-            if stake > state["bankroll_usd"] * HARD["max_trade_pct"] + 0.01: continue
+            cap = max(state["bankroll_usd"] * HARD["max_trade_pct"], MIN_SHARES * unit)
+            if stake > cap + 0.01 or stake > state["bankroll_usd"]: continue
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
         orders.append((s, round(stake, 2), round(net, 4))); taken.add(s["slug"])
         if s["type"] == "ARB": arb_room -= 1
