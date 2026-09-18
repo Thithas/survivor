@@ -3300,3 +3300,5 @@
 - 2026-09-18T23:56:18+00:00 heartbeat: 60 scans, 0 open, mode CAUTIOUS, bankroll 35.88, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789775700, opens 60
 - 2026-09-18T23:57:49+00:00 heartbeat: 81 scans, 0 open, mode CAUTIOUS, bankroll 35.88, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789775700, opens 60
 - 2026-09-18T23:58:07+00:00 heartbeat: 86 scans, 0 open, mode CAUTIOUS, bankroll 35.88, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789775700, opens 60
+- 2026-09-18T23:58:24+00:00 order failed MOMENTUM sol-updown-5m-1789775700: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
+- 2026-09-18T23:58:24+00:00 heartbeat: 91 scans, 0 open, mode CAUTIOUS, bankroll 35.88, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 0.95 on sol-updown-5m-1789775700, opens 60
