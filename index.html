@@ -112,7 +112,7 @@
 
 <script>
 const OWNER="Thithas", REPO="survivor", BRANCH="main", FEE=0.07, ASSETS={btc:"BTC",eth:"ETH",sol:"SOL",xrp:"XRP",doge:"DOGE"};
-const HARD={floor:10,daily:5,cap:0.25,slots:2,arbs:3};
+let HARD={floor:1,daily:999,cap:0.10,slots:5,arbs:3};   // replaced each refresh by state.json's hard_limits
 const RAW=`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`, GAMMA="https://gamma-api.polymarket.com", CLOB="https://clob.polymarket.com";
 document.getElementById("repo").href=`https://github.com/${OWNER}/${REPO}`;
 const $=id=>document.getElementById(id), fee=p=>FEE*p*(1-p);
@@ -218,18 +218,21 @@ async function get(path){const r=await fetch(RAW+path+"?t="+Date.now(),{cache:"n
 const lines=t=>t.split("\n").filter(Boolean), parse=t=>lines(t).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
 async function loadRepo(){
   const [st,tr,jo,wi,pa,lv]=await Promise.all(["state.json","trades.jsonl","journal.md","windows.jsonl","params.json","LIVE"].map(get));
-  try{state=JSON.parse(st)}catch{} try{P={...P,...JSON.parse(pa)}}catch{} live=!!lv;
+  try{state=JSON.parse(st)}catch{} try{P={...P,...JSON.parse(pa)}}catch{}
+  const h=state.hard_limits||{};
+  HARD={floor:h.floor_usd??HARD.floor, daily:h.daily_loss_cap_usd??HARD.daily, cap:h.max_trade_pct??HARD.cap, slots:h.max_open_positions??HARD.slots, arbs:3};
+  live=state.live_mode===true;        // the LIVE file is empty, so its contents can't be the test
   const trades=parse(tr), windows=parse(wi), journal=lines(jo).map(l=>l.replace(/^- /,""));
   // rules panel
   const t=state.today_pnl_usd??0, bank=state.bankroll_usd??0, ops=state.open_positions||[], risk=ops.filter(p=>p.type!=="ARB").length, arbs=ops.filter(p=>p.type==="ARB").length;
   $("rules").innerHTML=`
-    <div><span>floor (dead below)</span><b>$${HARD.floor}</b><div class="meter"><div style="width:${Math.min(100,Math.max(0,(bank-HARD.floor)/(Math.max(bank,20)-HARD.floor)*100))}%;background:var(--up)"></div></div></div>
-    <div><span>daily loss cap → hibernate</span><b>${signed(t)} of −$${HARD.daily}</b><div class="meter"><div style="width:${Math.min(100,Math.max(0,-t/HARD.daily*100))}%"></div></div></div>
-    <div><span>per trade</span><b>≤ ${HARD.cap*100}% of bankroll, 5-share min</b></div>
-    <div><span>positions</span><b>${risk}/${HARD.slots} directional · ${arbs}/${HARD.arbs} arb</b></div>
-    <div><span>open when</span><b>move ≥ ${P.momentum_min_move_bps} bps, conf ≥ ${P.momentum_min_confidence}, ask ≤ ${P.momentum_max_ask}, last ${P.momentum_window_sec}s</b></div>
-    <div><span>arb when</span><b>Up+Down − fees ≥ ${P.min_edge}</b></div>
-    <div><span>close</span><b>take profit bid ≥ ${P.take_profit_bid} · stop bid ≤ ${P.stop_loss_bid} (≥${P.stop_loss_min_left_sec}s left)</b></div>
+    <div><span>floor (dead below)</span><b>${HARD.floor<=1?"none — can trade to zero":"$"+HARD.floor}</b><div class="meter"><div style="width:${Math.min(100,Math.max(0,(bank-HARD.floor)/(Math.max(bank,20)-HARD.floor)*100))}%;background:var(--up)"></div></div></div>
+    <div><span>daily loss cap → hibernate</span><b>${HARD.daily>=999?"off":signed(t)+" of −$"+HARD.daily}</b>${HARD.daily>=999?"":`<div class="meter"><div style="width:${Math.min(100,Math.max(0,-t/HARD.daily*100))}%"></div></div>`}</div>
+    <div><span>per trade</span><b>≤ ${Math.round((P.max_trade_pct??HARD.cap)*100)}% of bankroll${state.mode==="CAUTIOUS"?" (halved: CAUTIOUS)":""}, 5-share min</b></div>
+    <div><span>positions</span><b>${risk}/${Math.min(HARD.slots, P.max_open_positions??HARD.slots)} directional${P.arb_enabled?` · ${arbs}/${HARD.arbs} arb`:""}</b></div>
+    <div><span>open when</span><b>move ≥ ${P.momentum_min_move_bps} bps, ask ${P.momentum_min_ask}–${P.momentum_max_ask}, edge ≥ ${P.min_edge}, last ${P.momentum_window_sec}s${P.forced_at_sec?"":" · no forced trades"}</b></div>
+    <div><span>arb</span><b>${P.arb_enabled?`on — Up+Down − fees ≥ ${P.min_edge}`:"off"}</b></div>
+    <div><span>close</span><b>${P.take_profit_bid>=1?"winners ride to full $1.00":"take profit bid ≥ "+P.take_profit_bid} · stop bid ≤ ${P.stop_loss_bid} or ${Math.round((P.stop_frac_of_entry??0.6)*100)}% of entry · reversal from ${P.lock_from_bid} giving back ${P.lock_giveback}</b></div>
     <div><span>mode</span><b class="mode ${state.mode||""}">${state.mode||"—"}${live?" · LIVE":" · paper"}</b></div>`;
   // combined analytics
   const res=windows.filter(w=>w.winner===0||w.winner===1); $("an-n").textContent=res.length;
