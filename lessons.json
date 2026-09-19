@@ -1,9 +1,4 @@
 {
- "all-agree": {
-  "n": 51,
-  "wins": 20,
-  "net": -34.4403
- },
  "alone": {
   "n": 9,
   "wins": 4,
@@ -44,5 +39,13 @@
   "n": 1,
   "wins": 1,
   "net": 2.1
+ },
+ "_retired": {
+  "all-agree": {
+   "n": 51,
+   "wins": 20,
+   "net": -34.4403,
+   "why": "Confounded: these were mostly forced trades at 0.85+ with negative edge and stops that filled 20c below trigger. All three causes are now removed. Backtest over 2209 clean windows shows crowd moves of 4-10 bps win 75% at +0.049/share. Relearning from live data."
+  }
  }
 }
