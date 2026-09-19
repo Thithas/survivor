@@ -427,7 +427,9 @@ def scan(state, P):
             # Live evidence: every "peers 4/0" entry lost (4 of 4). When the whole group moves together it is a
             # macro tick already in the price, and we buy the top of the spike. Broad agreement now costs confidence.
             conf = max(0.0, min(0.90, conf - 0.04 * max(0, agree - 1) - 0.05 * against))
-            if agree >= 4: conf = 0.0        # the whole group moving together is a macro tick already in the price
+            # Earlier this refused every crowd move outright, on 51 live trades that were mostly forced entries
+            # at 0.85+ with broken stops. Across 2,209 clean windows a crowd move of 4-10 bps is the single best
+            # setup we have: 256 cases, 75% wins, +0.049/share. The mild penalty above is enough.
             # record the reason this market did not qualify — the heartbeat reports the tally
             if left < 20: block("too late in the window")     # every sub-20s entry in the record lost
             elif ask is None: block("no ask")
