@@ -96,7 +96,7 @@ HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 12.0, "max_trade_pct": 0.10, "ma
 # Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
 # Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min_confidence": (0.55, 0.85),
-          "momentum_window_sec": (10, 150), "max_open_positions": (1, 5), "min_liquidity_usd": (20, 200),
+          "momentum_window_sec": (10, 240), "max_open_positions": (1, 5), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.6, 0.9), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
@@ -248,8 +248,14 @@ def _resp(r):
 def buy(token_id, usd):
     """Market buy spending `usd` pUSD. FAK, not FOK: a thin book gives a smaller position instead of no trade."""
     if not is_live(): return True, "paper"
-    try: return _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FAK"))
-    except Exception as e: return False, str(e)[:160]
+    for attempt in range(2):
+        try:
+            ok, resp = _resp(pm().place_market_order(token_id=token_id, side="BUY", amount=str(round(usd, 2)), order_type="FAK"))
+        except Exception as e:
+            ok, resp = False, str(e)[:160]
+        if ok or "no orders found" not in str(resp): return ok, resp
+        time.sleep(0.7)          # the book refills within a second; one retry, then give up
+    return False, resp
 
 def held_shares(token_id):
     """Actual on-chain size for a token — fills can be partial, so our own record can overstate it."""
@@ -423,7 +429,8 @@ def scan(state, P):
             conf = max(0.0, min(0.90, conf - 0.04 * max(0, agree - 1) - 0.05 * against))
             if agree >= 4: conf = 0.0        # the whole group moving together is a macro tick already in the price
             # record the reason this market did not qualify — the heartbeat reports the tally
-            if ask is None: block("no ask")
+            if left < 20: block("too late in the window")     # every sub-20s entry in the record lost
+            elif ask is None: block("no ask")
             elif agree >= 4: block("whole group moving together")
             elif abs(mv) < P["momentum_min_move_bps"]: block(f"move under {P['momentum_min_move_bps']} bps")
             elif ask < P["momentum_min_ask"]: block("side too cheap (market disagrees)")
@@ -433,7 +440,7 @@ def scan(state, P):
             else:
                 nm = round(conf - ask - fee(ask, P) - P["slippage"], 4)
                 if diag["closest"] is None or nm > diag["closest"][1]: diag["closest"] = (m["asset"], nm)
-            if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
+            if left >= 20 and ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1), "peers": f"{agree}/{against}"})
