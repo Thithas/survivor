@@ -1,8 +1,8 @@
 {
  "alone": {
-  "n": 9,
+  "n": 10,
   "wins": 4,
-  "net": -3.0045
+  "net": -4.1584
  },
  "some-agree": {
   "n": 29,
@@ -14,7 +14,7 @@
   "stopped out": 38,
   "gave back a gain": 9,
   "entered too late in the window": 1,
-  "stop filled far below trigger (book emptied)": 1,
+  "stop filled far below trigger (book emptied)": 2,
   "won at expiry": 1,
   "momentum reversed, stop did its job": 1,
   "gave back a gain after reaching the lock level": 1
@@ -36,9 +36,9 @@
   "net": -3.8518
  },
  "early": {
-  "n": 1,
+  "n": 2,
   "wins": 1,
-  "net": 2.1
+  "net": 0.9461
  },
  "_retired": {
   "all-agree": {
@@ -47,5 +47,10 @@
    "net": -34.4403,
    "why": "Confounded: these were mostly forced trades at 0.85+ with negative edge and stops that filled 20c below trigger. All three causes are now removed. Backtest over 2209 clean windows shows crowd moves of 4-10 bps win 75% at +0.049/share. Relearning from live data."
   }
+ },
+ "price<0.55": {
+  "n": 1,
+  "wins": 0,
+  "net": -1.1539
  }
 }
