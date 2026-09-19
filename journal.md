@@ -4239,3 +4239,4 @@
 - 2026-09-19T17:19:39+00:00 order failed MOMENTUM btc-updown-5m-1789838100: trading is disabled
 - 2026-09-19T17:19:39+00:00 heartbeat: 6816 scans, 0 open, mode CAUTIOUS, bankroll 39.47, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789838400, opens 60, blocked by {'no opening price captured': 5, 'move under 4 bps': 3}, closest ('btc', 0.0325)
 - 2026-09-19T17:20:21+00:00 heartbeat: 6868 scans, 0 open, mode CAUTIOUS, bankroll 39.47, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on btc-updown-5m-1789838400, opens 60, blocked by {'outside the last 180s': 5}, closest None
+- 2026-09-19T17:21:12+00:00 heartbeat: 6906 scans, 0 open, mode CAUTIOUS, bankroll 39.47, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on btc-updown-5m-1789838400, opens 60, blocked by {'outside the last 180s': 5}, closest None
