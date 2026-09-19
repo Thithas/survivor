@@ -4850,3 +4850,4 @@
 - 2026-09-19T23:06:41+00:00 heartbeat: 4151 scans, 1 open, mode CAUTIOUS, bankroll 38.50, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789859100, opens 60, blocked by {'outside the last 180s': 5}, closest None
 - 2026-09-19T23:07:01+00:00 LIVE MOMENTUM sol-updown-5m-1789859100 $3.1 edge 0.0235 move 6.3 bps peers 2/0
 - 2026-09-19T23:07:02+00:00 heartbeat: 4163 scans, 2 open, mode CAUTIOUS, bankroll 38.50, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789859100, opens 60, blocked by {'move under 4 bps': 2, 'edge too thin': 1}, closest ('doge', 0.0569)
+- 2026-09-19T23:07:30+00:00 heartbeat: 4182 scans, 2 open, mode CAUTIOUS, bankroll 38.50, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789859100, opens 60, blocked by {'move under 4 bps': 2, 'edge too thin': 3}, closest None
