@@ -365,7 +365,10 @@ def scan(state, P):
     sigs, sp, t = [], spots(), now()
     ms = markets()
     live_ms = [m for m in ms if 0 < (m["end"] - t).total_seconds() <= 330 and m["asset"] in sp]
-    diag = {"markets": len(ms), "in_window": len(live_ms), "assets": sorted({m["asset"] for m in ms}), "best_sum": None, "slug": "", "hot": False, "spot": sp.get("btc")}
+    diag = {"markets": len(ms), "in_window": len(live_ms), "assets": sorted({m["asset"] for m in ms}),
+            "best_sum": None, "slug": "", "hot": False, "spot": sp.get("btc"),
+            "blocked": {}, "closest": None}
+    def block(why): diag["blocked"][why] = diag["blocked"].get(why, 0) + 1
     # first pass: every asset's move this window, so each market can see whether its peers agree
     moves = {}
     for m in live_ms:
@@ -393,6 +396,8 @@ def scan(state, P):
                 sigs.append({**base, "type": "ARB", "asset": m["asset"], "up": m["up"], "down": m["down"], "up_ask": ua, "down_ask": da,
                              "gross_edge": gross, "liquidity_usd": min(ul, dl), "liq_shares": min(usz, dsz), "confidence": 1.0})
         op = state["opens"].get(m["slug"])
+        if not op: block("no opening price captured")
+        elif left > P["momentum_window_sec"]: block(f"outside the last {P['momentum_window_sec']}s")
         if op and left <= P["momentum_window_sec"]:
             mv = (px - op) / op * 1e4
             up_side = mv > 0
@@ -417,6 +422,17 @@ def scan(state, P):
             # macro tick already in the price, and we buy the top of the spike. Broad agreement now costs confidence.
             conf = max(0.0, min(0.90, conf - 0.04 * max(0, agree - 1) - 0.05 * against))
             if agree >= 4: conf = 0.0        # the whole group moving together is a macro tick already in the price
+            # record the reason this market did not qualify — the heartbeat reports the tally
+            if ask is None: block("no ask")
+            elif agree >= 4: block("whole group moving together")
+            elif abs(mv) < P["momentum_min_move_bps"]: block(f"move under {P['momentum_min_move_bps']} bps")
+            elif ask < P["momentum_min_ask"]: block("side too cheap (market disagrees)")
+            elif ask > P["momentum_max_ask"]: block("side too dear")
+            elif conf < P["momentum_min_confidence"]: block("confidence too low")
+            elif conf - ask - fee(ask, P) - P["slippage"] < P["min_edge"]: block("edge too thin")
+            else:
+                nm = round(conf - ask - fee(ask, P) - P["slippage"], 4)
+                if diag["closest"] is None or nm > diag["closest"][1]: diag["closest"] = (m["asset"], nm)
             if ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
@@ -784,7 +800,8 @@ def main():
             d = state.get("diag", {})
             journal(f"heartbeat{'' if is_live() else ' [paper/explore]'}: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
                     f"bankroll {state['bankroll_usd']:.2f}, markets {d.get('markets')}/{d.get('in_window')} in window across {d.get('assets')}, "
-                    f"best up+down {d.get('best_sum')} on {d.get('slug')}, opens {len(state['opens'])}"
+                    f"best up+down {d.get('best_sum')} on {d.get('slug')}, opens {len(state['opens'])}, "
+                    f"blocked by {d.get('blocked')}, closest {d.get('closest')}"
                     + (f", last error {last_err}" if scan_errs else ""))
             commit(state); last_commit = time.time(); dirty = False
         if RESTART:
