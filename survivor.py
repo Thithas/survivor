@@ -11,6 +11,7 @@ Env (GitHub Secrets/Variables): POLY_PRIVATE_KEY, POLY_FUNDER, POLY_SIGNATURE_TY
   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, RUN_SECONDS
 """
 import os, re, json, math, time, threading, subprocess, datetime as dt, socket
+from concurrent.futures import ThreadPoolExecutor
 import requests
 socket.setdefaulttimeout(20)
 
@@ -330,9 +331,20 @@ def markets():
         out += _mcache[a][1]
     return out
 
+_pool = ThreadPoolExecutor(max_workers=12)
+_session = requests.Session()
+
+def _safe_top(token):
+    try: return top(token)
+    except Exception: return (None, 0.0, None, 0.0)
+
+def tops(tokens):
+    """Fetch every order book at once. One-at-a-time fetches cost ~2s per scan, nearly all of it waiting."""
+    return dict(zip(tokens, _pool.map(_safe_top, tokens)))
+
 def top(token):
     """(best ask, $ at ask, best bid) for a token."""
-    b = requests.get(f"{CLOB}/book", params={"token_id": token}, timeout=5).json()
+    b = _session.get(f"{CLOB}/book", params={"token_id": token}, timeout=5).json()
     asks = [(float(a["price"]), float(a["size"])) for a in b.get("asks", [])]
     bids = [float(a["price"]) for a in b.get("bids", [])]
     ask, liq, sz = (min(asks)[0], round(min(asks)[0] * min(asks)[1], 2), min(asks)[1]) if asks else (None, 0.0, 0.0)
@@ -371,6 +383,7 @@ def scan(state, P):
     sigs, sp, t = [], spots(), now()
     ms = markets()
     live_ms = [m for m in ms if 0 < (m["end"] - t).total_seconds() <= 330 and m["asset"] in sp]
+    books_now = tops([tok for m in live_ms for tok in (m["up"], m["down"])])   # one parallel round trip
     diag = {"markets": len(ms), "in_window": len(live_ms), "assets": sorted({m["asset"] for m in ms}),
             "best_sum": None, "slug": "", "hot": False, "spot": sp.get("btc"),
             "blocked": {}, "closest": None}
@@ -384,8 +397,8 @@ def scan(state, P):
     for m in live_ms:
         left = (m["end"] - t).total_seconds(); px = sp[m["asset"]]
         if left <= P["momentum_window_sec"] + 15 or left >= 290: diag["hot"] = True
-        try: ua, ul, ub, usz = top(m["up"]); da, dl, db, dsz = top(m["down"])
-        except Exception as e: log("book err", m["slug"], e); continue
+        ua, ul, ub, usz = books_now.get(m["up"], (None, 0.0, None, 0.0))
+        da, dl, db, dsz = books_now.get(m["down"], (None, 0.0, None, 0.0))
         state.setdefault("books", {})[m["slug"]] = {"up": [ua, ub], "down": [da, db], "left": round(left), "up_tok": m["up"], "down_tok": m["down"], "end": m["end"].isoformat()}
         # Near the close one side's asks often vanish (the winner gets hoarded). Keep recording; only skip what needs both sides.
         if left <= 300:  # window dataset: every ~10s, tightening to ~5s in the final 75s
@@ -829,7 +842,7 @@ def main():
           if RESTART:
               journal("code updated on main, restarting on next run"); notify("code updated, restarting")
               commit(state, "survivor: restart for new code"); redispatch(); return
-          time.sleep(1 if state.get("diag", {}).get("hot") else 2)
+          time.sleep(0.3 if state.get("diag", {}).get("hot") else 1)
 
       except Exception as e:
           consecutive_faults += 1
