@@ -328,7 +328,12 @@ function paintNow(ms){
 function beat(c){ $("beat").className="beat "+c }
 
 /* ---------- repo data ---------- */
-async function get(p){const r=await fetch(RAW+p+"?t="+Date.now(),{cache:"no-store"});return r.ok?r.text():""}
+async function get(p){
+  const bust="?t="+Date.now();
+  try{ const r=await fetch("./"+p+bust,{cache:"no-store"}); if(r.ok) return await r.text() }catch{}
+  try{ const r=await fetch(RAW+p+bust,{cache:"no-store"}); if(r.ok) return await r.text() }catch{}
+  return "";
+}
 const rows=t=>t.split("\n").filter(Boolean).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
 
 async function load(){
@@ -419,11 +424,13 @@ async function load(){
   // pulse
   const hb=jo.split("\n").filter(Boolean).pop()?.match(/^- (\S+)/)?.[1];
   const stale=hb&&(Date.now()-new Date(hb))>20*60e3;
-  $("pulse").textContent=(state.live_mode?"live":"paper")+(hb?` · beat ${ago(hb)} ago`:"");
+  const age=hb?(Date.now()-new Date(hb))/1000:null;
+  $("pulse").textContent=(state.live_mode?"live":"paper")+(hb?` · data ${ago(hb)} old`:" · no data");
+  if(age!=null&&age>600) beat("warn");
   if(stale) beat("warn");
 }
 
-load(); setInterval(load,60000);
+load(); setInterval(load,15000);
 tick(); setInterval(tick,1500);
 </script>
 </body>
