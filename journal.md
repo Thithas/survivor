@@ -3898,3 +3898,6 @@
 - 2026-09-19T13:52:08+00:00 heartbeat: 8094 scans, 1 open, mode NORMAL, bankroll 38.64, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789825800, opens 60, blocked by {'whole group moving together': 5}, closest None
 - 2026-09-19T13:52:51+00:00 heartbeat: 8143 scans, 1 open, mode NORMAL, bankroll 38.64, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789825800, opens 60, blocked by {'whole group moving together': 5}, closest None
 - 2026-09-19T13:53:26+00:00 heartbeat: 8186 scans, 1 open, mode NORMAL, bankroll 38.64, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789825800, opens 60, blocked by {'move under 4 bps': 2, 'confidence too low': 1, 'side too dear': 2}, closest None
+- 2026-09-19T13:53:29+00:00 closed MOMENTUM doge-updown-5m-1789825500 pnl +2.20 | today +3.12 | bankroll 38.64
+- 2026-09-19T13:53:30+00:00 mode NORMAL -> CAUTIOUS
+- 2026-09-19T13:53:31+00:00 heartbeat: 8189 scans, 0 open, mode CAUTIOUS, bankroll 38.64, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789825800, opens 60, blocked by {'move under 4 bps': 2, 'confidence too low': 1, 'side too dear': 2}, closest None
