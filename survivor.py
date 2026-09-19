@@ -638,13 +638,16 @@ def manage(state, P):
 def settle(state):
     t, keep = now(), []
     for p in state["open_positions"]:
-            drop_stop(p["stop_order"]); p["stop_order"] = None
-    for p in state["open_positions"]:
         age = (t - parse(p["end"])).total_seconds()
         if age < 45: keep.append(p); continue
         winner = None
         try: winner = resolve(p["slug"])
-        except Exception as e: log("settle err", e)
+        except Exception as e:
+            state["settle_fails"] = state.get("settle_fails", 0) + 1
+            if state["settle_fails"] in (5, 50):
+                journal(f"settle failing ({state['settle_fails']}x): {type(e).__name__}: {str(e)[:90]} — positions cannot close")
+                notify(f"settle is failing: {type(e).__name__}. Positions stay open and block new trades.")
+            log("settle err", e)
         if winner is None:
             if age < 7200: keep.append(p); continue
             pnl, winner = 0.0, -1   # gave up; flag it
