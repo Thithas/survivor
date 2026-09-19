@@ -439,14 +439,16 @@ def scan(state, P):
             against = sum(1 for v in peers if (v > 0) != up_side and abs(v) >= P["momentum_min_move_bps"] / 2)
             # Live evidence: every "peers 4/0" entry lost (4 of 4). When the whole group moves together it is a
             # macro tick already in the price, and we buy the top of the spike. Broad agreement now costs confidence.
-            conf = max(0.0, min(0.90, conf - 0.04 * max(0, agree - 1) - 0.05 * against))
+            # The penalty for peers agreeing is gone: across 2,209 windows a crowd move of 4-10 bps wins 75%
+            # at +0.049/share, the best bucket in the data. Only peers moving the OTHER way count against us.
+            conf = max(0.0, min(0.90, conf - 0.05 * against))
             # Earlier this refused every crowd move outright, on 51 live trades that were mostly forced entries
             # at 0.85+ with broken stops. Across 2,209 clean windows a crowd move of 4-10 bps is the single best
             # setup we have: 256 cases, 75% wins, +0.049/share. The mild penalty above is enough.
             # record the reason this market did not qualify — the heartbeat reports the tally
             if left < 20: block("too late in the window")     # every sub-20s entry in the record lost
             elif ask is None: block("no ask")
-            elif agree >= 4: block("whole group moving together")
+
             elif abs(mv) < P["momentum_min_move_bps"]: block(f"move under {P['momentum_min_move_bps']} bps")
             elif ask < P["momentum_min_ask"]: block("side too cheap (market disagrees)")
             elif ask > P["momentum_max_ask"]: block("side too dear")
