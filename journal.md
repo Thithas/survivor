@@ -3493,3 +3493,4 @@
 - 2026-09-19T06:19:24+00:00 sell failed (profit lock) doge-updown-5m-1789798500: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
 - 2026-09-19T06:19:30+00:00 sold MOMENTUM doge-updown-5m-1789798500 pnl -1.66 (profit lock @ 0.23 with 30s left) | today -1.66 | bankroll 37.21
 - 2026-09-19T06:19:30+00:00 heartbeat: 321 scans, 1 open, mode CAUTIOUS, bankroll 37.21, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789798500, opens 60, blocked by {'move under 4 bps': 2, 'edge too thin': 1, 'no ask': 1, 'side too dear': 1}, closest None
+- 2026-09-19T06:20:17+00:00 heartbeat: 335 scans, 1 open, mode CAUTIOUS, bankroll 35.22, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789798800, opens 60, blocked by {'outside the last 180s': 5}, closest None
