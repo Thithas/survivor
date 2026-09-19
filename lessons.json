@@ -5,9 +5,9 @@
   "net": -0.9959
  },
  "some-agree": {
-  "n": 40,
-  "wins": 21,
-  "net": 8.0539
+  "n": 41,
+  "wins": 22,
+  "net": 10.6539
  },
  "_why": {
   "settled at expiry": 83,
@@ -15,7 +15,7 @@
   "gave back a gain": 9,
   "entered too late in the window": 1,
   "stop filled far below trigger (book emptied)": 5,
-  "won at expiry": 18,
+  "won at expiry": 19,
   "momentum reversed, stop did its job": 10,
   "gave back a gain after reaching the lock level": 1
  },
@@ -36,9 +36,9 @@
   "net": 3.3097
  },
  "early": {
-  "n": 31,
-  "wins": 18,
-  "net": 13.8964
+  "n": 32,
+  "wins": 19,
+  "net": 16.4964
  },
  "_retired": {
   "all-agree": {
@@ -49,9 +49,9 @@
   }
  },
  "price<0.55": {
-  "n": 9,
-  "wins": 3,
-  "net": 0.6866
+  "n": 10,
+  "wins": 4,
+  "net": 3.2866
  },
  "all-agree": {
   "n": 8,
