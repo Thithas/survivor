@@ -762,59 +762,81 @@ def main():
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); last_sweep = 0; scans = 0; dirty = False
     scan_errs, last_err = 0, ""
     notify(f"run start {'LIVE' if is_live() else 'PAPER'} bankroll {state['bankroll_usd']:.2f} mode {state['mode']}")
+    consecutive_faults = 0
     while time.time() - t0 < RUN_SECONDS:
-        if os.path.exists("HALT"):
-            journal("HALT found, exiting"); notify("HALT — stopped"); break
-        day_roll(state)
-        if is_live() and time.time() - last_sweep > 300:
-            sweep_redeem(state); last_sweep = time.time()
-        if os.path.exists("LIVE") and time.time() - last_bal > 60:
-            try:
-                if not relay_alive(): raise RuntimeError("relay offline")
-                b = live_balance()
-                if LIVE_BLOCKED and relay_url() and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
-                    LIVE_BLOCKED = False; commit(state, "survivor: funds landed"); state = fresh_state(); P = params(); dirty = True
-                elif is_live(): state["bankroll_usd"] = b
-            except Exception as e: log("balance err", e)
-            last_bal = time.time()
-        pass
-        before = state["closed_trades"]; settle(state); dirty |= state["closed_trades"] != before
-        try: dirty |= settle_windows(state)
-        except Exception as e: log("settle_windows err", e)
-        set_mode(state)
-        if state["mode"] == "DEAD":
-            journal(f"DEAD at bankroll {state['bankroll_usd']:.2f}. Post-mortem: stats {state['stats']}")
-            notify("DEAD. Floor breached. Trading stopped permanently."); commit(state, "survivor: DEAD"); return
-        try:
-            sigs = scan(state, P); scans += 1; scan_errs = 0
-        except Exception as e:
-            sigs, scan_errs, last_err = [], scan_errs + 1, f"{type(e).__name__}: {str(e)[:120]}"
-            log("scan err", last_err)
-            if scan_errs in (5, 100, 1000):
-                journal(f"scan failing ({scan_errs} in a row): {last_err}"); notify(f"scan failing: {last_err}")
-            time.sleep(5)
-        try: dirty |= manage(state, P)          # runs even when the scan failed: a held position must never go unwatched
-        except Exception as e: log("manage err", e)
-        for s, stake, net in decide(state, P, sigs):
-            execute(state, s, stake, net, P); dirty = True
-        if time.time() - last_pull > PULL_EVERY:
-            pull(); P = params(); last_pull = time.time()
-            if relay_url() != state.get("relay_seen"):
-                state["relay_seen"] = relay_url(); check_relay(state)
-            if bool(state.get("live_mode")) != is_live() and not state["open_positions"]:
-                commit(state, "survivor: mode switch"); state = fresh_state(); P = params(); dirty = True
-        if dirty or time.time() - last_commit > COMMIT_EVERY:
-            d = state.get("diag", {})
-            journal(f"heartbeat{'' if is_live() else ' [paper/explore]'}: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
-                    f"bankroll {state['bankroll_usd']:.2f}, markets {d.get('markets')}/{d.get('in_window')} in window across {d.get('assets')}, "
-                    f"best up+down {d.get('best_sum')} on {d.get('slug')}, opens {len(state['opens'])}, "
-                    f"blocked by {d.get('blocked')}, closest {d.get('closest')}"
-                    + (f", last error {last_err}" if scan_errs else ""))
-            commit(state); last_commit = time.time(); dirty = False
-        if RESTART:
-            journal("code updated on main, restarting on next run"); notify("code updated, restarting")
-            commit(state, "survivor: restart for new code"); redispatch(); return
-        time.sleep(1 if state.get("diag", {}).get("hot") else 2)
+      try:
+          if os.path.exists("HALT"):
+              journal("HALT found, exiting"); notify("HALT — stopped"); break
+          day_roll(state)
+          if is_live() and time.time() - last_sweep > 300:
+              try: sweep_redeem(state)
+              except Exception as e: log("sweep err", e)
+              last_sweep = time.time()
+          if os.path.exists("LIVE") and time.time() - last_bal > 60:
+              try:
+                  if not relay_alive(): raise RuntimeError("relay offline")
+                  b = live_balance()
+                  if LIVE_BLOCKED and relay_url() and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
+                      LIVE_BLOCKED = False; commit(state, "survivor: funds landed"); state = fresh_state(); P = params(); dirty = True
+                  elif is_live(): state["bankroll_usd"] = b
+              except Exception as e: log("balance err", e)
+              last_bal = time.time()
+          pass
+          before = state["closed_trades"]
+          try: settle(state)
+          except Exception as e: log("settle err", e)
+          dirty |= state["closed_trades"] != before
+          try: dirty |= settle_windows(state)
+          except Exception as e: log("settle_windows err", e)
+          set_mode(state)
+          if state["mode"] == "DEAD":
+              journal(f"DEAD at bankroll {state['bankroll_usd']:.2f}. Post-mortem: stats {state['stats']}")
+              notify("DEAD. Floor breached. Trading stopped permanently."); commit(state, "survivor: DEAD"); return
+          try:
+              sigs = scan(state, P); scans += 1; scan_errs = 0
+          except Exception as e:
+              sigs, scan_errs, last_err = [], scan_errs + 1, f"{type(e).__name__}: {str(e)[:120]}"
+              log("scan err", last_err)
+              if scan_errs in (5, 100, 1000):
+                  journal(f"scan failing ({scan_errs} in a row): {last_err}"); notify(f"scan failing: {last_err}")
+              time.sleep(5)
+          try: dirty |= manage(state, P)          # runs even when the scan failed: a held position must never go unwatched
+          except Exception as e: log("manage err", e)
+          for s, stake, net in decide(state, P, sigs):
+              execute(state, s, stake, net, P); dirty = True
+          if time.time() - last_pull > PULL_EVERY:
+              try: pull(); P = params()
+              except Exception as e: log("pull err", e)
+              last_pull = time.time()
+              if relay_url() != state.get("relay_seen"):
+                  state["relay_seen"] = relay_url()
+                  try: check_relay(state)
+                  except Exception as e: log("relay check err", e)
+              if bool(state.get("live_mode")) != is_live() and not state["open_positions"]:
+                  commit(state, "survivor: mode switch"); state = fresh_state(); P = params(); dirty = True
+          if dirty or time.time() - last_commit > COMMIT_EVERY:
+              d = state.get("diag", {})
+              journal(f"heartbeat{'' if is_live() else ' [paper/explore]'}: {scans} scans, {len(state['open_positions'])} open, mode {state['mode']}, "
+                      f"bankroll {state['bankroll_usd']:.2f}, markets {d.get('markets')}/{d.get('in_window')} in window across {d.get('assets')}, "
+                      f"best up+down {d.get('best_sum')} on {d.get('slug')}, opens {len(state['opens'])}, "
+                      f"blocked by {d.get('blocked')}, closest {d.get('closest')}"
+                      + (f", last error {last_err}" if scan_errs else ""))
+              try: commit(state)
+              except Exception as e: log("commit err", e)
+              last_commit = time.time(); dirty = False
+          if RESTART:
+              journal("code updated on main, restarting on next run"); notify("code updated, restarting")
+              commit(state, "survivor: restart for new code"); redispatch(); return
+          time.sleep(1 if state.get("diag", {}).get("hot") else 2)
+
+      except Exception as e:
+          consecutive_faults += 1
+          log("loop fault", type(e).__name__, str(e)[:120])
+          if consecutive_faults in (10, 100):
+              journal(f"loop fault x{consecutive_faults}: {type(e).__name__}: {str(e)[:100]}")
+              notify(f"agent hitting repeated errors: {type(e).__name__}. Still running.")
+          time.sleep(2); continue
+      consecutive_faults = 0
     journal(f"run end: {scans} scans, mode {state['mode']}, bankroll {state['bankroll_usd']:.2f}, "
             f"today {state['today_pnl_usd']:+.2f}, open {len(state['open_positions'])}, stats {state['stats']}")
     commit(state, "survivor: run end")
