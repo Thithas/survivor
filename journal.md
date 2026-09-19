@@ -4164,3 +4164,5 @@
 - 2026-09-19T17:18:19+00:00 heartbeat: 6778 scans, 0 open, mode CAUTIOUS, bankroll 39.47, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on btc-updown-5m-1789838100, opens 60, blocked by {'move under 4 bps': 3}, closest ('btc', 0.0325)
 - 2026-09-19T17:18:22+00:00 order failed MOMENTUM btc-updown-5m-1789838100: trading is disabled
 - 2026-09-19T17:18:22+00:00 heartbeat: 6779 scans, 0 open, mode CAUTIOUS, bankroll 39.47, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on btc-updown-5m-1789838100, opens 60, blocked by {'move under 4 bps': 3}, closest ('btc', 0.0325)
+- 2026-09-19T17:18:24+00:00 order failed MOMENTUM btc-updown-5m-1789838100: trading is disabled
+- 2026-09-19T17:18:24+00:00 heartbeat: 6780 scans, 0 open, mode CAUTIOUS, bankroll 39.47, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on btc-updown-5m-1789838100, opens 60, blocked by {'move under 4 bps': 3}, closest ('btc', 0.0325)
