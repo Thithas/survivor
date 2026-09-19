@@ -15,7 +15,7 @@
   "stop_loss_min_left_sec": 8,
   "fee_rate": 0.07,
   "momentum_min_ask": 0.4,
-  "lock_from_bid": 0.85,
-  "lock_giveback": 0.25,
+  "lock_from_bid": 0.75,
+  "lock_giveback": 0.1,
   "lessons_enabled": 1
 }
