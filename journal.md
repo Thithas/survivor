@@ -5953,3 +5953,4 @@
 - 2026-09-20T14:27:37+00:00 heartbeat: 4887 scans, 1 open, mode CAUTIOUS, bankroll 29.70, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789914300, opens 60, blocked by {'move under 6 bps': 3, 'side too dear': 1}, closest ('sol', 0.0525)
 - 2026-09-20T14:29:12+00:00 sell failed (stop loss) sol-updown-5m-1789914300: size too small (0.004167)
 - 2026-09-20T14:31:29+00:00 heartbeat: 5071 scans, 1 open, mode CAUTIOUS, bankroll 29.87, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789914600, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-20T14:31:36+00:00 heartbeat: 5073 scans, 1 open, mode CAUTIOUS, bankroll 29.87, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789914600, opens 60, blocked by {'outside the last 150s': 5}, closest None
