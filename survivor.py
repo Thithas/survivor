@@ -90,7 +90,7 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.10, "max_open_positions": 2}
+HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.14, "max_open_positions": 3}
 # Authoritative limits. Every path — normal, forced, arb, recovery — goes through decide()/execute() and
 # is bounded by these. If the 5-share minimum would exceed the 10% cap, the trade is skipped (MIN_ORDER_BLOCK).
 # Floor removed at the owner's explicit instruction (2026-09-18): the agent may trade the account to zero.
