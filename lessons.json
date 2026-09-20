@@ -15,15 +15,15 @@
   "gave back a gain": 9,
   "entered too late in the window": 1,
   "stop filled far below trigger (book emptied)": 7,
-  "won at expiry": 29,
+  "won at expiry": 30,
   "momentum reversed, stop did its job": 18,
   "gave back a gain after reaching the lock level": 1
  },
  "_note": "Seeded from 151 live trades. Only crowd buckets are seeded: entry price is unrecoverable for losing trades in the old records, so price buckets start empty and fill from live data.",
  "price0.70+": {
-  "n": 16,
-  "wins": 12,
-  "net": 2.1494
+  "n": 17,
+  "wins": 13,
+  "net": 3.3994
  },
  "late": {
   "n": 4,
@@ -36,9 +36,9 @@
   "net": -0.7331
  },
  "early": {
-  "n": 52,
-  "wins": 29,
-  "net": 13.7227
+  "n": 53,
+  "wins": 30,
+  "net": 14.9727
  },
  "_retired": {
   "all-agree": {
@@ -54,8 +54,8 @@
   "net": 2.3046
  },
  "all-agree": {
-  "n": 23,
-  "wins": 12,
-  "net": 1.6836
+  "n": 24,
+  "wins": 13,
+  "net": 2.9336
  }
 }
