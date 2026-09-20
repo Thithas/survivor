@@ -90,7 +90,11 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.14, "max_open_positions": 3}
+HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.14,
+        "max_open_positions": 3, "max_exposure_pct": 0.35}
+# max_exposure_pct is the aggregate limit: everything open at once, not per trade. Three max-size positions
+# would have been 42% of the account riding on one five-minute stretch. Three minimum-size tickets still fit
+# under 30%, so the agent keeps its three shots — it just cannot have all three at full size together.
 # Authoritative limits. Every path — normal, forced, arb, recovery — goes through decide()/execute() and
 # is bounded by these. If the 5-share minimum would exceed the 10% cap, the trade is skipped (MIN_ORDER_BLOCK).
 # Floor removed at the owner's explicit instruction (2026-09-18): the agent may trade the account to zero.
@@ -522,6 +526,13 @@ def decide(state, P, sigs):
             stake = min(stake / n_mom, s["liquidity_usd"] * 0.8)    # coins firing together are one bet split across them
             stake = max(stake, MIN_SHARES * unit)                   # engine rejects < 5 shares
             cap = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"])
+            open_now = sum(p["stake"] for p in state["open_positions"])
+            room_left = state["bankroll_usd"] * HARD["max_exposure_pct"] - open_now
+            if room_left < MIN_SHARES * unit:
+                decide_log(state, "SKIP", s, reason=f"EXPOSURE_CAP: {open_now:.2f} already at risk, "
+                                                   f"only {max(0,room_left):.2f} of the {HARD['max_exposure_pct']:.0%} budget left")
+                continue
+            cap = min(cap, room_left)
             if MIN_SHARES * unit > cap + 0.01:
                 decide_log(state, "SKIP", s, reason=f"MIN_ORDER_BLOCK: 5 shares costs {MIN_SHARES*unit:.2f}, over the {cap:.2f} cap")
                 continue
