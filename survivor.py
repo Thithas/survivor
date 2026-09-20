@@ -28,7 +28,10 @@ DECISIONS_FILE, LESSONS_FILE = "decisions.jsonl", "lessons.json"
 # Every closed trade is classified into three coarse buckets. When a bucket has enough history and is
 # clearly losing, entries in that bucket are vetoed. Bounded on purpose: it can only ever stop the agent
 # trading something, never loosen a rule, size up, or edit code. Turn off with lessons_enabled = 0.
-VETO_MIN_N, VETO_MAX_WIN, VETO_MAX_NET = 25, 0.45, 0.0
+# A veto must rest on evidence, not noise. The old bar (25 trades, 45% wins, any loss) fired on a bucket
+# that was down $2.37 over 29 trades at 44.8% — a coin flip — and blocked all trading. Require a real sample,
+# a clearly sub-par win rate, and a loss big enough to matter.
+VETO_MIN_N, VETO_MAX_WIN, VETO_MAX_NET = 40, 0.40, -10.0
 
 def buckets_of(sig, left):
     """The three dimensions we have enough data to judge: what we paid, who agreed, how late we were."""
@@ -87,7 +90,9 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 20.0, "max_trade_pct": 0.10, "max_open_positions": 2}
+HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 12.0, "max_trade_pct": 0.10, "max_open_positions": 2}
+# Authoritative limits. Every path — normal, forced, arb, recovery — goes through decide()/execute() and
+# is bounded by these. If the 5-share minimum would exceed the 10% cap, the trade is skipped (MIN_ORDER_BLOCK).
 # Floor removed at the owner's explicit instruction (2026-09-18): the agent may trade the account to zero.
 # 0.50 is mechanical only — below that no order can meet the 5-share minimum anyway.
 # What remains: 10% per trade, 2 positions, $12 daily pause, and the lesson veto.
@@ -109,7 +114,7 @@ DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confide
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 60, "forced_max_ask": 0.92, "lessons_enabled": 1, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "max_edge": 0.20, "arb_enabled": 0}
+                  "forced_at_sec": 0, "forced_max_ask": 0.92, "lessons_enabled": 1, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "max_edge": 0.20, "arb_enabled": 0}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -516,7 +521,10 @@ def decide(state, P, sigs):
             stake = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) * s["confidence"] * (0.5 if caut else 1.0)
             stake = min(stake / n_mom, s["liquidity_usd"] * 0.8)    # coins firing together are one bet split across them
             stake = max(stake, MIN_SHARES * unit)                   # engine rejects < 5 shares
-            cap = max(state["bankroll_usd"] * HARD["max_trade_pct"], MIN_SHARES * unit)
+            cap = state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"])
+            if MIN_SHARES * unit > cap + 0.01:
+                decide_log(state, "SKIP", s, reason=f"MIN_ORDER_BLOCK: 5 shares costs {MIN_SHARES*unit:.2f}, over the {cap:.2f} cap")
+                continue
             if stake > cap + 0.01 or stake > state["bankroll_usd"]: continue
         if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
         orders.append((s, round(stake, 2), round(net, 4))); taken.add(s["slug"])
