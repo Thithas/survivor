@@ -18,5 +18,6 @@
   "lock_from_bid": 0.95,
   "lock_giveback": 0.5,
   "lessons_enabled": 1,
-  "stop_frac_of_entry": 0.5
+  "stop_frac_of_entry": 0.5,
+  "min_sell_bid": 0.15
 }
