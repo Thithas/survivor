@@ -111,14 +111,14 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min
           "momentum_max_ask": (0.45, 0.95), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
           "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95),
-          "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9), "stop_grace_sec": (0, 120), "stop_confirm_ticks": (1, 5),
+          "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9), "stop_grace_sec": (0, 120), "stop_confirm_ticks": (1, 5), "min_sell_bid": (0.0, 0.40),
           "max_edge": (0.10, 1.0), "arb_enabled": (0, 1), "lessons_enabled": (0, 1)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 0, "forced_max_ask": 0.92, "lessons_enabled": 1, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "stop_grace_sec": 45, "stop_confirm_ticks": 3, "max_edge": 0.20, "arb_enabled": 0}
+                  "forced_at_sec": 0, "forced_max_ask": 0.92, "lessons_enabled": 1, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "stop_grace_sec": 45, "stop_confirm_ticks": 3, "min_sell_bid": 0.15, "max_edge": 0.20, "arb_enabled": 0}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -653,6 +653,13 @@ def manage(state, P):
                  "profit lock" if (p["peak_bid"] >= P["lock_from_bid"] and bid <= p["peak_bid"] - P["lock_giveback"] and left >= 3) else \
                  "stop loss" if (confirmed and left >= P["stop_loss_min_left_sec"]) else None
         if not reason: keep.append(p); continue
+        # Live stops were filling at 0.02 against a 0.25 trigger — that is selling into an empty book for
+        # nothing, and 26% of these positions recover. Below this price, hold to resolution instead.
+        if reason == "stop loss" and bid < P["min_sell_bid"]:
+            if not p.get("held_cheap"):
+                journal(f"{p['slug']}: bid {bid:.2f} under {P['min_sell_bid']:.2f}, not dumping into an empty book — holding to resolution")
+                p["held_cheap"] = True
+            keep.append(p); continue
         ok, resp = sell(leg["token"], leg["shares"])
         if not ok:
             p["sell_fails"] = p.get("sell_fails", 0) + 1
