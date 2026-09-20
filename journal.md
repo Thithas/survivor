@@ -6199,3 +6199,5 @@
 - 2026-09-20T17:59:11+00:00 heartbeat: 4610 scans, 0 open, mode CAUTIOUS, bankroll 10.18, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789926900, opens 60, blocked by {'side too dear': 4, 'no ask': 1}, closest None
 - 2026-09-20T17:59:15+00:00 heartbeat: 4613 scans, 0 open, mode CAUTIOUS, bankroll 10.18, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789926900, opens 60, blocked by {'side too dear': 3, 'no ask': 2}, closest None
 - 2026-09-20T17:59:28+00:00 heartbeat: 4630 scans, 0 open, mode CAUTIOUS, bankroll 10.18, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on doge-updown-5m-1789926900, opens 60, blocked by {'no ask': 4, 'side too dear': 1}, closest None
+- 2026-09-20T18:02:08+00:00 mode CAUTIOUS -> DEAD
+- 2026-09-20T18:02:09+00:00 DEAD at bankroll 0.00. Post-mortem: stats {'wins': 47, 'losses': 53, 'pnl': -5.5397, 'arb': 0, 'momentum': 100}
