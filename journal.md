@@ -5439,3 +5439,6 @@
 - 2026-09-20T06:19:02+00:00 heartbeat: 12689 scans, 0 open, mode HIBERNATE, bankroll 36.14, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789884900, opens 60, blocked by {'move under 4 bps': 1, 'no ask': 1, 'confidence too low': 1, 'edge too thin': 1, 'side too dear': 1}, closest None
 - 2026-09-20T06:20:43+00:00 heartbeat: 12837 scans, 0 open, mode HIBERNATE, bankroll 36.14, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789885200, opens 60, blocked by {'outside the last 90s': 5}, closest None
 - 2026-09-20T06:21:30+00:00 code updated on main, restarting on next run
+- 2026-09-20T06:22:10+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 36.14
+- 2026-09-20T06:22:12+00:00 mode HIBERNATE -> CAUTIOUS
+- 2026-09-20T06:24:04+00:00 heartbeat: 86 scans, 0 open, mode CAUTIOUS, bankroll 36.14, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789885200, opens 60, blocked by {'move under 10 bps': 4, 'no ask': 1}, closest None
