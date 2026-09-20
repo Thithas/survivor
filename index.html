@@ -173,7 +173,7 @@ const ago=t=>{const s=(Date.now()-new Date(t))/1000;
 let P={momentum_min_move_bps:6,momentum_min_ask:0.40,momentum_max_ask:0.85,momentum_window_sec:120,
        min_edge:0.02,stop_loss_bid:0.35,take_profit_bid:1,lock_from_bid:0.85,lock_giveback:0.25,
        max_trade_pct:0.10,max_open_positions:5,arb_enabled:0,forced_at_sec:0,stop_frac_of_entry:0.6};
-let HARD={}, state={}, trades=[], focus="btc", books={}, opens={}, wave=[];
+let HARD={floor:30,daily:12,cap:0.10,slots:2,arbs:0}, state={}, trades=[], focus="btc", books={}, opens={}, wave=[];
 
 /* ---------- live market feed ---------- */
 let mcache={}, mstamp={};
