@@ -6039,3 +6039,4 @@
 - 2026-09-20T15:44:33+00:00 sell failed (stop loss) eth-updown-5m-1789918800: No resting liquidity.
 - 2026-09-20T15:44:39+00:00 sell failed (stop loss) eth-updown-5m-1789918800: No resting liquidity.
 - 2026-09-20T15:46:00+00:00 heartbeat: 8743 scans, 1 open, mode CAUTIOUS, bankroll 24.36, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789919100, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-20T15:46:04+00:00 heartbeat: 8744 scans, 1 open, mode CAUTIOUS, bankroll 24.36, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789919100, opens 60, blocked by {'outside the last 150s': 5}, closest None
