@@ -6207,3 +6207,5 @@
 - 2026-09-20T19:53:07+00:00 relay back — live resumed
 - 2026-09-20T19:53:07+00:00 mode NORMAL -> DEAD
 - 2026-09-20T19:53:08+00:00 DEAD at bankroll 0.00. Post-mortem: stats {'wins': 0, 'losses': 0, 'pnl': 0.0, 'arb': 0, 'momentum': 0}
+- 2026-09-20T22:04:08+00:00 funds check: wallet_type=DEPOSIT_WALLET wallet=0x0D90…77d2 signer=0x4F54…f51B | clob pUSD balance=0.00 allowances=4 | approvals=TradingApprovalsState(missing=MissingTradingApprovals(erc20=(Erc20TradingApproval(token_address='0xC011a7E12a1 | onchain pUSD=0.00 | onchain USDC.e=0.00
+- 2026-09-20T22:04:08+00:00 LIVE requested but Polymarket balance is 0.00 (need > 2) — paper until funds land
