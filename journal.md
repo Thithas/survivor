@@ -5909,3 +5909,5 @@
 - 2026-09-20T13:47:21+00:00 heartbeat: 2823 scans, 0 open, mode CAUTIOUS, bankroll 31.61, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789911900, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-20T13:47:33+00:00 LIVE MOMENTUM sol-updown-5m-1789911900 $2.0 edge 0.1432 move 8.3 bps peers 4/0
 - 2026-09-20T13:47:33+00:00 heartbeat: 2833 scans, 1 open, mode CAUTIOUS, bankroll 31.61, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789911900, opens 60, blocked by {'side too dear': 1, 'side too cheap (market disagrees)': 2}, closest ('sol', 0.1432)
+- 2026-09-20T13:48:21+00:00 sold MOMENTUM sol-updown-5m-1789911900 pnl -1.81 (stop loss @ 0.04 with 99s left) | today -12.52 | bankroll 29.51
+- 2026-09-20T13:48:22+00:00 heartbeat: 2883 scans, 0 open, mode CAUTIOUS, bankroll 29.51, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789911900, opens 60, blocked by {'side too dear': 1, 'side too cheap (market disagrees)': 4}, closest None
