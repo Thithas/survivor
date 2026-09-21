@@ -6524,3 +6524,4 @@
 - 2026-09-21T11:04:06+00:00 eth-updown-5m-1789988400: bid 0.00 is far under the 0.25 stop — book emptied, holding to resolution
 - 2026-09-21T11:04:21+00:00 heartbeat: 6923 scans, 1 open, mode CAUTIOUS, bankroll 29.38, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'no ask': 5}, closest None
 - 2026-09-21T11:06:19+00:00 heartbeat: 7039 scans, 1 open, mode CAUTIOUS, bankroll 29.38, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789988700, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T11:06:44+00:00 heartbeat: 7053 scans, 1 open, mode CAUTIOUS, bankroll 29.38, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789988700, opens 60, blocked by {'outside the last 150s': 5}, closest None
