@@ -7381,3 +7381,4 @@
 - 2026-09-21T21:39:31+00:00 lesson move<10: now experimental, action reduce_confidence (5/15 won, -5.34)
 - 2026-09-21T21:39:31+00:00 sold MOMENTUM btc-updown-5m-1790026500 pnl +2.07 (take profit @ 0.92 with 29s left) | today +3.08 | bankroll 36.27
 - 2026-09-21T21:39:32+00:00 heartbeat: 2324 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790026500, opens 60, blocked by {'move under 6 bps': 1, 'no opening price captured': 5, 'no ask': 4}, closest None
+- 2026-09-21T21:39:49+00:00 heartbeat: 2341 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790026800, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
