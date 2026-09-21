@@ -725,10 +725,18 @@ def sweep_redeem(state):
     if not is_live(): return
     try:
         r = requests.get("https://data-api.polymarket.com/positions", params={"user": os.environ["POLY_FUNDER"], "sizeThreshold": 0, "limit": 100}, timeout=15).json()
-    except Exception as e: log("positions err", e); return
-    claimed = 0
-    for pos in r if isinstance(r, list) else []:
-        if not pos.get("redeemable") or float(pos.get("size", 0)) <= 0: continue
+    except Exception as e:
+        state["redeem_fail"] = state.get("redeem_fail", 0) + 1
+        if state["redeem_fail"] in (1, 12): journal(f"redeem sweep: positions API failed ({type(e).__name__}: {str(e)[:80]})")
+        return
+    claimed = 0; failures = []
+    todo = [p for p in (r if isinstance(r, list) else []) if p.get("redeemable") and float(p.get("size", 0)) > 0]
+    # dust from rounding (< 0.05 shares) is not worth a transaction
+    todo = [p for p in todo if float(p.get("size", 0)) * float(p.get("curPrice") or 1) >= 0.05]
+    if todo and state.get("redeem_seen") != len(todo):
+        journal(f"redeem sweep: {len(todo)} position(s) waiting to be claimed, worth ~{sum(float(p.get('currentValue') or 0) for p in todo):.2f}")
+        state["redeem_seen"] = len(todo)
+    for pos in todo:
         try:
             h = pm().redeem_positions(condition_id=pos["conditionId"])
             done = threading.Event(); outcome = {}
@@ -738,11 +746,19 @@ def sweep_redeem(state):
                 finally: done.set()
             th = threading.Thread(target=_wait, daemon=True); th.start()
             if not done.wait(timeout=25):
-                log("redeem timed out (still pending on-chain), moving on", pos.get("title", "")); continue
+                failures.append("timed out on-chain"); continue
             if "err" in outcome: raise outcome["err"]
             claimed += 1; journal(f"claimed {pos.get('title', pos['conditionId'][:10])}: {float(pos['size']):.2f} shares")
-        except Exception as e: log("redeem err", pos.get("title", ""), str(e)[:100])
+        except Exception as e:
+            failures.append(f"{type(e).__name__}: {str(e)[:90]}")
     if claimed: notify(f"claimed winnings on {claimed} market(s)")
+    if failures:
+        state["redeem_errs"] = state.get("redeem_errs", 0) + 1
+        if state["redeem_errs"] in (1, 6, 36):     # the reason must reach the journal, not just stdout nobody can read
+            journal(f"redeem FAILED on {len(failures)} position(s): {failures[0]}")
+            notify(f"Could not auto-claim winnings: {failures[0][:120]}. Redeem manually in Polymarket until fixed.")
+    else:
+        state["redeem_errs"] = 0
 
 def check_relay(state):
     """Prove the relay path end to end: /health (which region answers) and a balance read through it."""
