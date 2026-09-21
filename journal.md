@@ -7506,3 +7506,6 @@
 - 2026-09-21T23:10:53+00:00 heartbeat: 7204 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790032200, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-21T23:12:35+00:00 LIVE MOMENTUM doge-updown-5m-1790032200 $1.8 edge 0.0639 move -13.8 bps peers 4/0
 - 2026-09-21T23:12:36+00:00 heartbeat: 7265 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790032200, opens 60, blocked by {'side too cheap (market disagrees)': 1, 'side too dear': 3}, closest ('doge', 0.0639)
+- 2026-09-21T23:12:44+00:00 redeem FAILED on 2 position(s): UserInputError: Gasless transactions require a Builder API Key or Relayer API Key. Pass api_key= when cons
+- 2026-09-21T23:13:22+00:00 doge-updown-5m-1790032200: bid 0.01 is far under the 0.25 stop — book emptied, holding to resolution
+- 2026-09-21T23:15:43+00:00 heartbeat: 7414 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790032500, opens 60, blocked by {'outside the last 150s': 5}, closest None
