@@ -7570,3 +7570,5 @@
 - 2026-09-21T23:53:19+00:00 doge-updown-5m-1790034600: bid 0.10 is far under the 0.25 stop — book emptied, holding to resolution
 - 2026-09-21T23:53:31+00:00 sold MOMENTUM doge-updown-5m-1790034600 pnl -1.20 (stop loss @ 0.17 with 90s left) | today -6.84 | bankroll 36.27
 - 2026-09-21T23:53:31+00:00 heartbeat: 9494 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790034600, opens 60, blocked by {'side too dear': 1, 'move under 6 bps': 3, 'side too cheap (market disagrees)': 1}, closest None
+- 2026-09-21T23:54:52+00:00 closed MOMENTUM sol-updown-5m-1790034300 pnl -2.20 | today -9.04 | bankroll 36.27
+- 2026-09-21T23:54:53+00:00 heartbeat: 9568 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790034900, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
