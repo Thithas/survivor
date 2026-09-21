@@ -6850,3 +6850,6 @@
 - 2026-09-21T15:38:45+00:00 heartbeat: 2108 scans, 1 open, mode CAUTIOUS, bankroll 27.58, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790004900, opens 60, blocked by {'move under 6 bps': 1, 'side too dear': 4}, closest None
 - 2026-09-21T15:39:46+00:00 heartbeat: 2200 scans, 1 open, mode CAUTIOUS, bankroll 27.58, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790005200, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
 - 2026-09-21T15:40:42+00:00 heartbeat: 2258 scans, 1 open, mode CAUTIOUS, bankroll 27.58, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790005200, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T15:43:24+00:00 balance read 23.81 ignored (30x) — kept 27.58
+- 2026-09-21T15:43:27+00:00 LIVE MOMENTUM xrp-updown-5m-1790005200 $2.25 edge 0.0427 move 11.4 bps peers 3/1
+- 2026-09-21T15:43:27+00:00 heartbeat: 2387 scans, 2 open, mode CAUTIOUS, bankroll 27.58, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on btc-updown-5m-1790005200, opens 60, blocked by {'move under 6 bps': 3, 'no ask': 1}, closest ('xrp', 0.0427)
