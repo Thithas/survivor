@@ -6899,3 +6899,4 @@
 - 2026-09-21T16:09:02+00:00 sell failed (take profit) xrp-updown-5m-1790006700: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
 - 2026-09-21T16:09:03+00:00 sold MOMENTUM xrp-updown-5m-1790006700 pnl +1.72 (take profit @ 0.90 with 57s left) | today -2.50 | bankroll 31.19
 - 2026-09-21T16:09:04+00:00 heartbeat: 3936 scans, 0 open, mode CAUTIOUS, bankroll 31.19, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on sol-updown-5m-1790006700, opens 60, blocked by {'no ask': 2, 'side too dear': 3}, closest None
+- 2026-09-21T16:09:45+00:00 heartbeat: 3984 scans, 0 open, mode CAUTIOUS, bankroll 31.19, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790007000, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
