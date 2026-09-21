@@ -6806,3 +6806,6 @@
 - 2026-09-21T14:44:41+00:00 DEAD at bankroll 23.06. Post-mortem: stats {'wins': 15, 'losses': 22, 'pnl': -10.247, 'arb': 0, 'momentum': 37}
 - 2026-09-21T14:45:59+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 27.58
 - 2026-09-21T14:46:01+00:00 DEAD at bankroll 23.06. Post-mortem: stats {'wins': 15, 'losses': 22, 'pnl': -10.247, 'arb': 0, 'momentum': 37}
+- 2026-09-21T15:06:16+00:00 resuming from DEAD: the limit that stopped it no longer applies
+- 2026-09-21T15:06:18+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 27.58
+- 2026-09-21T15:06:22+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 23.06, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790003100, opens 60, blocked by {'no opening price captured': 5}, closest None
