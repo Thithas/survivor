@@ -380,7 +380,8 @@ def equity(state):
 def set_mode(state):
     if state["mode"] == "DEAD": return
     old = state["mode"]; eq = equity(state)
-    if eq <= HARD["floor_usd"]: state["mode"] = "DEAD"
+    if eq <= HARD["floor_usd"] and state.get("bad_reads", 0) == 0 and state.get("closed_trades", 0) > 0:
+        state["mode"] = "DEAD"
     elif state["today_pnl_usd"] <= -HARD["daily_loss_cap_usd"]: state["mode"] = "HIBERNATE"
     elif state["consecutive_losses"] >= 2 or 1 - eq / state["peak_bankroll_usd"] > 0.10: state["mode"] = "CAUTIOUS"
     elif state["consecutive_wins"] >= 3 or old == "NORMAL": state["mode"] = "NORMAL"
@@ -835,7 +836,19 @@ def main():
                   b = live_balance()
                   if LIVE_BLOCKED and relay_url() and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
                       LIVE_BLOCKED = False; commit(state, "survivor: funds landed"); state = fresh_state(); P = params(); dirty = True
-                  elif is_live(): state["bankroll_usd"] = b
+                  elif is_live():
+                      prev = state.get("bankroll_usd", 0) or 0
+                      held = sum(p["stake"] for p in state["open_positions"])
+                      # The agent killed itself four times on reads of 0.00 while holding $39. A real loss can't
+                      # exceed what is actually at risk, so a drop bigger than open stakes + $1 is a bad read.
+                      if b <= 0 or (prev > 0 and prev - b > held + 1.0):
+                          state["bad_reads"] = state.get("bad_reads", 0) + 1
+                          log("ignoring implausible balance read", b, "prev", prev, "at risk", held)
+                          if state["bad_reads"] in (3, 30):
+                              journal(f"balance read {b:.2f} ignored ({state['bad_reads']}x) — kept {prev:.2f}")
+                      else:
+                          state["bad_reads"] = 0
+                          state["bankroll_usd"] = b
               except Exception as e: log("balance err", e)
               last_bal = time.time()
           pass
