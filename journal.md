@@ -6248,3 +6248,5 @@
 - 2026-09-21T05:26:50+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 35.77
 - 2026-09-21T05:27:21+00:00 heartbeat: 24 scans, 1 open, mode NORMAL, bankroll 35.77, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789968300, opens 20, blocked by {'no opening price captured': 5}, closest None
 - 2026-09-21T05:27:42+00:00 heartbeat: 49 scans, 1 open, mode NORMAL, bankroll 35.77, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789968300, opens 20, blocked by {'no opening price captured': 5}, closest None
+- 2026-09-21T05:30:13+00:00 closed MOMENTUM xrp-updown-5m-1789968000 pnl -3.11 | today -3.11 | bankroll 35.77
+- 2026-09-21T05:30:13+00:00 heartbeat: 247 scans, 0 open, mode NORMAL, bankroll 35.77, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789968600, opens 25, blocked by {'outside the last 150s': 5}, closest None
