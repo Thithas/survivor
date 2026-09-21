@@ -6749,3 +6749,5 @@
 - 2026-09-21T14:03:46+00:00 sold MOMENTUM btc-updown-5m-1789999200 pnl +1.72 (take profit @ 0.90 with 74s left) | today -8.45 | bankroll 23.56
 - 2026-09-21T14:03:47+00:00 heartbeat: 18367 scans, 0 open, mode CAUTIOUS, bankroll 23.56, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1789999200, opens 60, blocked by {'side too dear': 4, 'move under 6 bps': 1}, closest None
 - 2026-09-21T14:05:39+00:00 heartbeat: 18523 scans, 0 open, mode CAUTIOUS, bankroll 28.29, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789999500, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T14:08:11+00:00 redeem FAILED on 1 position(s): UserInputError: Gasless transactions require a Builder API Key or Relayer API Key. Pass api_key= when cons
+- 2026-09-21T14:08:29+00:00 heartbeat: 18682 scans, 0 open, mode CAUTIOUS, bankroll 28.29, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789999500, opens 60, blocked by {'side too dear': 2, 'no ask': 3}, closest None
