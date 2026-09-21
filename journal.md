@@ -6220,3 +6220,5 @@
 - 2026-09-21T00:14:17+00:00 mode NORMAL -> DEAD
 - 2026-09-21T00:14:17+00:00 DEAD at bankroll 0.00. Post-mortem: stats {'wins': 0, 'losses': 0, 'pnl': 0.0, 'arb': 0, 'momentum': 0}
 - 2026-09-21T05:02:41+00:00 LIVE mode on. Polymarket balance 39.01
+- 2026-09-21T05:02:45+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 39.01
+- 2026-09-21T05:08:20+00:00 heartbeat: 370 scans, 0 open, mode NORMAL, bankroll 39.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789967100, opens 5, blocked by {'move under 6 bps': 2, 'side too dear': 3}, closest None
