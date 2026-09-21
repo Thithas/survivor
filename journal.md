@@ -7352,3 +7352,6 @@
 - 2026-09-21T21:22:23+00:00 redeem sweep: 2 position(s) waiting to be claimed, worth ~0.24
 - 2026-09-21T21:22:49+00:00 LIVE MOMENTUM eth-updown-5m-1790025600 $2.2 edge 0.0528 move 9.0 bps peers 2/1
 - 2026-09-21T21:22:50+00:00 heartbeat: 1444 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790025600, opens 60, blocked by {'move under 6 bps': 2, 'side too dear': 2}, closest ('eth', 0.0528)
+- 2026-09-21T21:23:35+00:00 eth-updown-5m-1790025600: bid 0.14 is far under the 0.25 stop — book emptied, holding to resolution
+- 2026-09-21T21:23:41+00:00 sold MOMENTUM eth-updown-5m-1790025600 pnl -1.26 (stop loss @ 0.20 with 79s left) | today +3.16 | bankroll 36.27
+- 2026-09-21T21:23:42+00:00 heartbeat: 1501 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790025600, opens 60, blocked by {'move under 6 bps': 2, 'side too cheap (market disagrees)': 1, 'side too dear': 2}, closest None
