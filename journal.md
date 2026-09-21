@@ -6714,3 +6714,4 @@
 - 2026-09-21T13:34:22+00:00 sol-updown-5m-1789997400: bid 0.05 is far under the 0.28 stop — book emptied, holding to resolution
 - 2026-09-21T13:34:26+00:00 sell failed (stop loss) sol-updown-5m-1789997400: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
 - 2026-09-21T13:35:18+00:00 heartbeat: 16602 scans, 1 open, mode CAUTIOUS, bankroll 26.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1789997700, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T13:35:25+00:00 heartbeat: 16605 scans, 1 open, mode CAUTIOUS, bankroll 26.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789997700, opens 60, blocked by {'outside the last 150s': 5}, closest None
