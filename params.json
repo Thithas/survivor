@@ -1,9 +1,9 @@
 {
   "min_edge": 0.02,
-  "max_trade_pct": 0.14,
+  "max_trade_pct": 0.1,
   "momentum_min_confidence": 0.4,
   "momentum_window_sec": 150,
-  "max_open_positions": 3,
+  "max_open_positions": 2,
   "min_liquidity_usd": 20,
   "fees": 0.0,
   "slippage": 0.01,
