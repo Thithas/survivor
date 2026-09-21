@@ -1,8 +1,8 @@
 {
  "alone": {
-  "n": 24,
-  "wins": 10,
-  "net": -5.6861
+  "n": 25,
+  "wins": 11,
+  "net": -3.9676
  },
  "some-agree": {
   "n": 70,
@@ -15,7 +15,7 @@
   "gave back a gain": 9,
   "entered too late in the window": 1,
   "stop filled far below trigger (book emptied)": 14,
-  "won at expiry": 53,
+  "won at expiry": 54,
   "momentum reversed, stop did its job": 37,
   "gave back a gain after reaching the lock level": 3,
   "held to expiry and the prediction was wrong": 8
@@ -27,14 +27,14 @@
   "net": -8.1035
  },
  "late": {
-  "n": 6,
-  "wins": 0,
-  "net": -14.5518
+  "n": 7,
+  "wins": 1,
+  "net": -12.8333
  },
  "price0.55-0.70": {
-  "n": 35,
-  "wins": 17,
-  "net": 0.9704
+  "n": 36,
+  "wins": 18,
+  "net": 2.6889
  },
  "early": {
   "n": 110,
