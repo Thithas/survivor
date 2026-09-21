@@ -1,8 +1,15 @@
 {
  "alone": {
-  "n": 28,
-  "wins": 12,
-  "net": -4.1314
+  "condition": "alone",
+  "sample_size": 1,
+  "wins": 1,
+  "losses": 0,
+  "pnl": 2.2685,
+  "created_at": "2026-09-21T15:53:50+00:00",
+  "last_updated": "2026-09-21T15:53:50+00:00",
+  "expectancy": 2.2685,
+  "status": "collecting",
+  "action": "none"
  },
  "some-agree": {
   "condition": "some-agree",
@@ -22,7 +29,7 @@
   "gave back a gain": 9,
   "entered too late in the window": 1,
   "stop filled far below trigger (book emptied)": 14,
-  "won at expiry": 63,
+  "won at expiry": 64,
   "momentum reversed, stop did its job": 45,
   "gave back a gain after reaching the lock level": 3,
   "held to expiry and the prediction was wrong": 15
@@ -75,13 +82,13 @@
  },
  "price<0.45": {
   "condition": "price<0.45",
-  "sample_size": 3,
-  "wins": 0,
+  "sample_size": 4,
+  "wins": 1,
   "losses": 3,
-  "pnl": -3.9066,
+  "pnl": -1.6381,
   "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-21T15:45:02+00:00",
-  "expectancy": -1.3022,
+  "last_updated": "2026-09-21T15:53:50+00:00",
+  "expectancy": -0.4095,
   "status": "collecting",
   "action": "none"
  },
@@ -99,13 +106,13 @@
  },
  "left120+": {
   "condition": "left120+",
-  "sample_size": 3,
-  "wins": 0,
+  "sample_size": 4,
+  "wins": 1,
   "losses": 3,
-  "pnl": -3.9066,
+  "pnl": -1.6381,
   "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-21T15:45:02+00:00",
-  "expectancy": -1.3022,
+  "last_updated": "2026-09-21T15:53:50+00:00",
+  "expectancy": -0.4095,
   "status": "collecting",
   "action": "none"
  },
@@ -130,6 +137,18 @@
   "created_at": "2026-09-21T15:48:44+00:00",
   "last_updated": "2026-09-21T15:48:44+00:00",
   "expectancy": 2.75,
+  "status": "collecting",
+  "action": "none"
+ },
+ "move<10": {
+  "condition": "move<10",
+  "sample_size": 1,
+  "wins": 1,
+  "losses": 0,
+  "pnl": 2.2685,
+  "created_at": "2026-09-21T15:53:50+00:00",
+  "last_updated": "2026-09-21T15:53:50+00:00",
+  "expectancy": 2.2685,
   "status": "collecting",
   "action": "none"
  }
