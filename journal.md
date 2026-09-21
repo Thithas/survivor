@@ -6804,3 +6804,5 @@
 - 2026-09-21T14:44:39+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 27.58
 - 2026-09-21T14:44:41+00:00 mode CAUTIOUS -> DEAD
 - 2026-09-21T14:44:41+00:00 DEAD at bankroll 23.06. Post-mortem: stats {'wins': 15, 'losses': 22, 'pnl': -10.247, 'arb': 0, 'momentum': 37}
+- 2026-09-21T14:45:59+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 27.58
+- 2026-09-21T14:46:01+00:00 DEAD at bankroll 23.06. Post-mortem: stats {'wins': 15, 'losses': 22, 'pnl': -10.247, 'arb': 0, 'momentum': 37}
