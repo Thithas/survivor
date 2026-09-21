@@ -13,15 +13,15 @@
  },
  "some-agree": {
   "condition": "some-agree",
-  "sample_size": 20,
+  "sample_size": 21,
   "wins": 8,
-  "losses": 12,
-  "pnl": -0.5608,
+  "losses": 13,
+  "pnl": -2.6108,
   "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-21T22:46:42+00:00",
-  "expectancy": -0.028,
+  "last_updated": "2026-09-21T22:47:44+00:00",
+  "expectancy": -0.1243,
   "status": "experimental",
-  "action": "none"
+  "action": "reduce_confidence"
  },
  "_why": {
   "settled at expiry": 83,
@@ -32,7 +32,7 @@
   "won at expiry": 83,
   "momentum reversed, stop did its job": 58,
   "gave back a gain after reaching the lock level": 3,
-  "held to expiry and the prediction was wrong": 23
+  "held to expiry and the prediction was wrong": 24
  },
  "_note": "Seeded from 151 live trades. Only crowd buckets are seeded: entry price is unrecoverable for losing trades in the old records, so price buckets start empty and fill from live data.",
  "price0.70+": {
@@ -89,25 +89,25 @@
  },
  "price<0.45": {
   "condition": "price<0.45",
-  "sample_size": 21,
+  "sample_size": 22,
   "wins": 9,
-  "losses": 12,
-  "pnl": 4.1465,
+  "losses": 13,
+  "pnl": 2.0965,
   "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-21T22:46:42+00:00",
-  "expectancy": 0.1975,
+  "last_updated": "2026-09-21T22:47:44+00:00",
+  "expectancy": 0.0953,
   "status": "experimental",
   "action": "none"
  },
  "move10-20": {
   "condition": "move10-20",
-  "sample_size": 16,
+  "sample_size": 17,
   "wins": 8,
-  "losses": 8,
-  "pnl": 7.7772,
+  "losses": 9,
+  "pnl": 5.7272,
   "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-21T22:46:42+00:00",
-  "expectancy": 0.4861,
+  "last_updated": "2026-09-21T22:47:44+00:00",
+  "expectancy": 0.3369,
   "status": "experimental",
   "action": "none"
  },
@@ -137,13 +137,13 @@
  },
  "left60-120": {
   "condition": "left60-120",
-  "sample_size": 13,
+  "sample_size": 14,
   "wins": 6,
-  "losses": 7,
-  "pnl": 2.0298,
+  "losses": 8,
+  "pnl": -0.0202,
   "created_at": "2026-09-21T15:48:44+00:00",
-  "last_updated": "2026-09-21T22:39:14+00:00",
-  "expectancy": 0.1561,
+  "last_updated": "2026-09-21T22:47:44+00:00",
+  "expectancy": -0.0014,
   "status": "collecting",
   "action": "none"
  },
