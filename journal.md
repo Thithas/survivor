@@ -6313,3 +6313,6 @@
 - 2026-09-21T09:02:41+00:00 LIVE MOMENTUM sol-updown-5m-1789981200 $2.75 edge 0.0927 move -28.6 bps peers 4/0
 - 2026-09-21T09:02:41+00:00 heartbeat: 217 scans, 1 open, mode CAUTIOUS, bankroll 36.30, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789981200, opens 60, blocked by {'side too cheap (market disagrees)': 2, 'side too dear': 2}, closest ('sol', 0.0927)
 - 2026-09-21T09:03:18+00:00 code updated on main, restarting on next run
+- 2026-09-21T09:04:04+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 33.45
+- 2026-09-21T09:04:07+00:00 sold MOMENTUM sol-updown-5m-1789981200 pnl +2.14 (take profit @ 0.98 with 54s left) | today -0.67 | bankroll 36.30
+- 2026-09-21T09:04:07+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 36.30, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789981200, opens 60, blocked by {'side too dear': 1, 'confidence too low': 1, 'move under 6 bps': 1, 'no ask': 2}, closest None
