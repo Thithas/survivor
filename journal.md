@@ -7511,3 +7511,6 @@
 - 2026-09-21T23:15:43+00:00 heartbeat: 7414 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790032500, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-21T23:15:55+00:00 heartbeat: 7419 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790032500, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-21T23:16:36+00:00 heartbeat: 7437 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790032500, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T23:16:51+00:00 lesson left60-120: now experimental, action reduce_confidence (6/15 won, -2.32)
+- 2026-09-21T23:16:51+00:00 closed MOMENTUM eth-updown-5m-1790031900 pnl -2.30 | today -4.05 | bankroll 36.27
+- 2026-09-21T23:16:53+00:00 heartbeat: 7443 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790032500, opens 60, blocked by {'outside the last 150s': 5}, closest None
