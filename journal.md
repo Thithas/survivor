@@ -6219,3 +6219,4 @@
 - 2026-09-21T00:14:16+00:00 relay back — live resumed
 - 2026-09-21T00:14:17+00:00 mode NORMAL -> DEAD
 - 2026-09-21T00:14:17+00:00 DEAD at bankroll 0.00. Post-mortem: stats {'wins': 0, 'losses': 0, 'pnl': 0.0, 'arb': 0, 'momentum': 0}
+- 2026-09-21T05:02:41+00:00 LIVE mode on. Polymarket balance 39.01
