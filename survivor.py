@@ -116,12 +116,12 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 12.0, "max_trade_pct": 0.10,
+HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.12,
         "max_open_positions": 2, "max_exposure_pct": 0.35}
-# Authoritative limits per the owner's 2026-09-21 brief. Every entry goes through decide(), which enforces
-# all of them; there is no forced, arb or recovery path. If the 5-share minimum would exceed 10% of the
-# bankroll the trade is skipped and logged MIN_ORDER_BLOCK — the allocation is never raised to fit it.
-BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min_confidence": (0.40, 0.85),
+# Owner decision 2026-09-21: no floor and no daily cap — the agent keeps running and gathering experience.
+# What bounds risk: 12% per trade (the least that lets a 5-share ticket cover the entry band at a small balance), 2 positions, 35% exposed at once, and validated lessons that veto entries.
+# 0.50 is mechanical only: below it no 5-share order can be placed.
+BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.15), "momentum_min_confidence": (0.40, 0.85),
           "momentum_window_sec": (10, 240), "max_open_positions": (1, 2), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.45, 0.95), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
@@ -885,6 +885,9 @@ def main():
                 LIVE_BLOCKED = True
                 journal(f"LIVE requested but Polymarket auth/balance failed: {str(e)[:120]} — staying on paper"); notify(f"LIVE blocked: {str(e)[:120]}. Running paper until fixed.")
         st = new_state(50.0); st["live_mode"] = False; return st
+    if state and state.get("mode") in ("DEAD", "HIBERNATE") and state.get("bankroll_usd", 0) > HARD["floor_usd"] \
+            and state.get("today_pnl_usd", 0) > -HARD["daily_loss_cap_usd"]:
+        journal(f"resuming from {state['mode']}: the limit that stopped it no longer applies"); state["mode"] = "CAUTIOUS"
     if state is None or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0) or bool(state.get("live_mode")) != os.path.exists("LIVE"):
         state = fresh_state(); commit(state, "survivor: startup")
     if os.path.exists("LIVE"): state["relay_seen"] = relay_url(); check_relay(state)
