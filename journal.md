@@ -6880,3 +6880,4 @@
 - 2026-09-21T15:55:04+00:00 sell failed (take profit) doge-updown-5m-1790005800: size too small (0.006471)
 - 2026-09-21T15:55:08+00:00 sell failed (take profit) doge-updown-5m-1790005800: size too small (0.006471)
 - 2026-09-21T15:55:17+00:00 heartbeat: 3094 scans, 1 open, mode CAUTIOUS, bankroll 25.24, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790006100, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T15:59:00+00:00 heartbeat: 3299 scans, 1 open, mode CAUTIOUS, bankroll 29.25, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790006100, opens 60, blocked by {'move under 6 bps': 3, 'no ask': 1, 'side too dear': 1}, closest None
