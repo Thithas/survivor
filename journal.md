@@ -6905,3 +6905,4 @@
 - 2026-09-21T16:11:33+00:00 redeem sweep: 1 position(s) waiting to be claimed, worth ~0.10
 - 2026-09-21T16:11:33+00:00 redeem FAILED on 1 position(s): UserInputError: Gasless transactions require a Builder API Key or Relayer API Key. Pass api_key= when cons
 - 2026-09-21T16:12:07+00:00 heartbeat: 4088 scans, 0 open, mode CAUTIOUS, bankroll 32.15, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790007000, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T16:12:13+00:00 heartbeat: 4091 scans, 0 open, mode CAUTIOUS, bankroll 32.15, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790007000, opens 60, blocked by {'outside the last 150s': 5}, closest None
