@@ -31,38 +31,63 @@ DECISIONS_FILE, LESSONS_FILE = "decisions.jsonl", "lessons.json"
 # A veto must rest on evidence, not noise. The old bar (25 trades, 45% wins, any loss) fired on a bucket
 # that was down $2.37 over 29 trades at 44.8% — a coin flip — and blocked all trading. Require a real sample,
 # a clearly sub-par win rate, and a loss big enough to matter.
-VETO_MIN_N, VETO_MAX_WIN, VETO_MAX_NET = 40, 0.40, -10.0
+# A lesson is VALIDATED at 40+ trades and EXPERIMENTAL at 15+. Only a validated losing lesson may veto a
+# trade; an experimental one can only raise the bar (lower confidence). Lessons never loosen a rule, raise a
+# size, or touch risk limits. Set lessons_enabled = 0 in params.json to switch the whole loop off.
+VALIDATED_N, EXPERIMENTAL_N = 40, 15
+VETO_MAX_WIN, VETO_MAX_PNL = 0.40, -10.0
 
 def buckets_of(sig, left):
-    """The three dimensions we have enough data to judge: what we paid, who agreed, how late we were."""
+    """The pre-entry conditions the record shows actually separate outcomes (audit 2026-09-21, 134 trades)."""
     a = sig.get("ask") or 0
-    price = "price<0.55" if a < 0.55 else "price0.55-0.70" if a < 0.70 else "price0.70+"
+    mv = abs(sig.get("move_bps") or 0)
     try: agree = int(str(sig.get("peers", "0/0")).split("/")[0])
     except Exception: agree = 0
-    crowd = "alone" if agree <= 1 else "some-agree" if agree <= 3 else "all-agree"
-    when = "early" if left > 60 else "late"
-    return [price, crowd, when]
+    return ["price<0.45" if a < 0.45 else "price0.45-0.55" if a < 0.55 else "price0.55-0.70" if a < 0.70 else "price0.70+",
+            "move<10" if mv < 10 else "move10-20" if mv < 20 else "move20+",
+            "left120+" if left >= 120 else "left60-120" if left >= 60 else "left<60",
+            "alone" if agree <= 1 else "some-agree" if agree <= 3 else "all-agree"]
 
 def lessons(): return load_json(LESSONS_FILE, {})
 
+def judge(e):
+    """Recompute a lesson's status and action from its own evidence."""
+    n = e["sample_size"]; wr = e["wins"] / n if n else 0
+    e["expectancy"] = round(e["pnl"] / n, 4) if n else 0.0
+    e["status"] = "validated" if n >= VALIDATED_N else "experimental" if n >= EXPERIMENTAL_N else "collecting"
+    if e["status"] == "validated" and wr < VETO_MAX_WIN and e["pnl"] < VETO_MAX_PNL: e["action"] = "veto"
+    elif e["status"] in ("validated", "experimental") and e["expectancy"] < -0.10: e["action"] = "reduce_confidence"
+    else: e["action"] = "none"
+    return e
+
 def learn(state, p, pnl, why):
-    """Fold one outcome into the bucket stats. Pure counting — no thresholds are moved here."""
-    L = lessons()
+    """Fold one outcome into every lesson this trade belonged to, then re-judge them."""
+    L = lessons(); ts = now().isoformat(timespec="seconds")
     for b in p.get("buckets", []):
-        e = L.setdefault(b, {"n": 0, "wins": 0, "net": 0.0})
-        e["n"] += 1; e["wins"] += int(pnl > 0); e["net"] = round(e["net"] + pnl, 4)
+        e = L.get(b) if isinstance(L.get(b), dict) and "sample_size" in L.get(b, {}) else \
+            {"condition": b, "sample_size": 0, "wins": 0, "losses": 0, "pnl": 0.0, "created_at": ts}
+        e["sample_size"] += 1; e["wins"] += int(pnl > 0); e["losses"] += int(pnl <= 0)
+        e["pnl"] = round(e["pnl"] + pnl, 4); e["last_updated"] = ts
+        before = e.get("action"); L[b] = judge(e)
+        if L[b]["action"] != before and L[b]["action"] != "none":
+            journal(f"lesson {b}: now {L[b]['status']}, action {L[b]['action']} ({L[b]['wins']}/{L[b]['sample_size']} won, {L[b]['pnl']:+.2f})")
     r = L.setdefault("_why", {}); r[why] = r.get(why, 0) + 1
     save_json(LESSONS_FILE, L)
 
-def vetoed(sig, left, P):
-    """A bucket is vetoed only with a real sample behind it, and only to stop a trade."""
-    if not P.get("lessons_enabled", 1): return None
-    L = lessons()
+def lesson_check(sig, left, P):
+    """Before every entry: returns (veto_reason or None, confidence_penalty)."""
+    if not P.get("lessons_enabled", 1): return None, 0.0
+    L = lessons(); penalty = 0.0
     for b in buckets_of(sig, left):
         e = L.get(b)
-        if e and e["n"] >= VETO_MIN_N and e["wins"] / e["n"] < VETO_MAX_WIN and e["net"] < VETO_MAX_NET:
-            return f"{b} has lost {e['net']:+.2f} over {e['n']} trades at {e['wins']/e['n']:.0%} wins"
-    return None
+        if not isinstance(e, dict) or "action" not in e: continue
+        if e["action"] == "veto":
+            return (f"{b} lost {e['pnl']:+.2f} over {e['sample_size']} trades ({e['wins']}/{e['sample_size']} won) — validated", 0.0)
+        if e["action"] == "reduce_confidence": penalty += 0.05
+    return None, penalty
+
+def vetoed(sig, left, P):
+    return lesson_check(sig, left, P)[0]
 
 def classify(p, pnl, note):
     """Why did this trade end the way it did? Read from what we already recorded, nothing invented."""
@@ -82,6 +107,7 @@ def decide_log(state, action, sig, **kw):
            "ask": (sig or {}).get("ask"), "move_bps": (sig or {}).get("move_bps"),
            "peers": (sig or {}).get("peers"), "confidence": (sig or {}).get("confidence"),
            "edge": (sig or {}).get("gross_edge"), "time_left_sec": (sig or {}).get("time_left_sec"),
+           "liquidity_usd": (sig or {}).get("liquidity_usd"),
            "mode": state.get("mode"), "bankroll": round(state.get("bankroll_usd", 0), 2), **kw}
     try:
         with open(DECISIONS_FILE, "a") as f: f.write(json.dumps(row) + "\n")
@@ -90,13 +116,13 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.14,
-        "max_open_positions": 3, "max_exposure_pct": 0.35}
-# Owner decisions (2026-09-20): no floor, no daily cap. What bounds risk: 14% of bankroll per trade,
-# 3 positions, 35% of bankroll exposed at once. 0.50 floor is mechanical — below it no 5-share order fits.
-# If the 5-share minimum exceeds the per-trade cap the trade is skipped and logged MIN_ORDER_BLOCK.
-BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.40, 0.85),
-          "momentum_window_sec": (10, 240), "max_open_positions": (1, 5), "min_liquidity_usd": (20, 200),
+HARD = {"floor_usd": 30.0, "daily_loss_cap_usd": 12.0, "max_trade_pct": 0.10,
+        "max_open_positions": 2, "max_exposure_pct": 0.35}
+# Authoritative limits per the owner's 2026-09-21 brief. Every entry goes through decide(), which enforces
+# all of them; there is no forced, arb or recovery path. If the 5-share minimum would exceed 10% of the
+# bankroll the trade is skipped and logged MIN_ORDER_BLOCK — the allocation is never raised to fit it.
+BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.10), "momentum_min_confidence": (0.40, 0.85),
+          "momentum_window_sec": (10, 240), "max_open_positions": (1, 2), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.45, 0.95), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
@@ -397,7 +423,8 @@ def set_mode(state):
     if eq <= HARD["floor_usd"] and state.get("bad_reads", 0) == 0 and state.get("closed_trades", 0) > 0:
         state["mode"] = "DEAD"
     elif state["today_pnl_usd"] <= -HARD["daily_loss_cap_usd"]: state["mode"] = "HIBERNATE"
-    elif state["consecutive_losses"] >= 2 or 1 - eq / state["peak_bankroll_usd"] > 0.10: state["mode"] = "CAUTIOUS"
+    elif state["consecutive_losses"] >= 2 or (state.get("peak_bankroll_usd", 0) > 0 and 1 - eq / state["peak_bankroll_usd"] > 0.10):
+        state["mode"] = "CAUTIOUS"      # a zero peak (startup read of 0.00) used to throw here and freeze the mode
     elif state["consecutive_wins"] >= 3 or old == "NORMAL": state["mode"] = "NORMAL"
     else: state["mode"] = "CAUTIOUS"
     if state["mode"] != old:
@@ -527,8 +554,10 @@ def decide(state, P, sigs):
         if s["type"] == "MOMENTUM" and not s.get("forced") and net > P["max_edge"]:
             decide_log(state, "SKIP", s, reason=f"edge {net:.2f} implausibly large — the market disagrees too hard"); continue
         if s["type"] == "MOMENTUM":
-            v = vetoed(s, s.get("time_left_sec", 999), P)
-            if v: decide_log(state, "SKIP", s, reason="lesson veto: " + v); continue
+            v, penalty = lesson_check(s, s.get("time_left_sec", 999), P)
+            if v: decide_log(state, "SKIP", s, reason="LESSON_VETO: " + v); continue
+            if penalty and s["confidence"] - penalty < P["momentum_min_confidence"]:
+                decide_log(state, "SKIP", s, reason=f"LESSON_CAUTION: experimental losing pattern lowers confidence by {penalty:.2f}"); continue
         unit = (s["up_ask"] + s["down_ask"]) if s["type"] == "ARB" else s["ask"]
         if s["type"] == "ARB":
             shares = int(min(state["bankroll_usd"] * min(HARD["max_trade_pct"], P["max_trade_pct"]) / unit, s["liq_shares"] * 0.5))   # both legs must fill: never more than half the thinner book
@@ -550,7 +579,13 @@ def decide(state, P, sigs):
                 decide_log(state, "SKIP", s, reason=f"MIN_ORDER_BLOCK: 5 shares costs {MIN_SHARES*unit:.2f}, over the {cap:.2f} cap")
                 continue
             if stake > cap + 0.01 or stake > state["bankroll_usd"]: continue
-        if state["bankroll_usd"] - stake < HARD["floor_usd"]: continue
+        if state["bankroll_usd"] - stake < HARD["floor_usd"]:
+            if not state.get("floor_logged"):
+                decide_log(state, "SKIP", s, reason=f"BANKROLL_FLOOR: {state['bankroll_usd']:.2f} minus a {stake:.2f} ticket would go under the ${HARD['floor_usd']:.0f} floor")
+                journal(f"BANKROLL_FLOOR: {state['bankroll_usd']:.2f} is too close to the ${HARD['floor_usd']:.0f} floor to open any position — scanning only")
+                state["floor_logged"] = True
+            continue
+        state["floor_logged"] = False
         orders.append((s, round(stake, 2), round(net, 4))); taken.add(s["slug"])
         if s["type"] == "ARB": arb_room -= 1
         else: room -= 1; open_cycles.add((s["slug"].rsplit("-", 1)[-1], s.get("outcome")))
