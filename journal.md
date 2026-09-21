@@ -7182,3 +7182,4 @@
 - 2026-09-21T19:23:34+00:00 sell failed (stop loss) btc-updown-5m-1790018400: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
 - 2026-09-21T19:23:39+00:00 sold MOMENTUM btc-updown-5m-1790018400 pnl -1.71 (stop loss @ 0.22 with 81s left) | today -1.25 | bankroll 29.90
 - 2026-09-21T19:23:39+00:00 heartbeat: 15449 scans, 0 open, mode CAUTIOUS, bankroll 29.90, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790018400, opens 60, blocked by {'side too cheap (market disagrees)': 3, 'no ask': 2}, closest None
+- 2026-09-21T19:23:49+00:00 heartbeat: 15463 scans, 0 open, mode CAUTIOUS, bankroll 29.90, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790018400, opens 60, blocked by {'side too cheap (market disagrees)': 3, 'no ask': 2}, closest None
