@@ -151,27 +151,50 @@ def journal(line):
     with open(JOURNAL_FILE, "a") as f: f.write(f"- {now().isoformat(timespec='seconds')} {line}\n")
 def git(*a): return subprocess.run(["git", *a], capture_output=True, text=True)
 RESTART = False
+BOT_FILES = (STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE, DECISIONS_FILE, LESSONS_FILE)
+_push_fails = 0
+
 def pull():
-    """Fetch phone-side edits. If the code itself changed, flag a restart so the next cron run picks it up."""
+    """Take everything pushed from outside (code, params, LIVE/HALT/RELAY) while keeping the agent's own records.
+    The old `git pull --rebase` could hit a conflict on state.json at a handover, leave the repo mid-rebase, and
+    silently fail every save for the rest of the run: on 2026-09-21 a run traded for 50 minutes and none of it
+    reached the repo. The agent is the only writer of BOT_FILES, so its local copies always win for those."""
     global RESTART
     if not IN_ACTIONS: return
-    before = git("rev-parse", "HEAD").stdout.strip()
-    git("pull", "--rebase", "--autostash", "-q")
-    after = git("rev-parse", "HEAD").stdout.strip()
-    if before and after and before != after:
-        changed = git("diff", "--name-only", before, after).stdout
-        if "survivor.py" in changed or "survivor.yml" in changed: RESTART = True
+    git("rebase", "--abort"); git("merge", "--abort")                     # clear anything left stuck
+    if git("fetch", "-q", "origin", "main").returncode: return
+    code_before = git("rev-parse", "HEAD:survivor.py").stdout.strip()
+    wf_before = git("rev-parse", "HEAD:.github/workflows/survivor.yml").stdout.strip()
+    keep = {}
+    for f in BOT_FILES:
+        try: keep[f] = open(f, "rb").read()
+        except FileNotFoundError: pass
+    git("reset", "-q", "--hard", "origin/main")
+    for f, data in keep.items():
+        with open(f, "wb") as fh: fh.write(data)
+    code_after = git("rev-parse", "HEAD:survivor.py").stdout.strip()
+    wf_after = git("rev-parse", "HEAD:.github/workflows/survivor.yml").stdout.strip()
+    if (code_before and code_after and code_before != code_after) or (wf_before and wf_after and wf_before != wf_after):
+        RESTART = True
+
 def commit(state, msg="survivor: state"):
+    global _push_fails
     save_json(STATE_FILE, state)
-    for f in (TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE, DECISIONS_FILE, LESSONS_FILE):
+    for f in BOT_FILES:
         if not os.path.exists(f): open(f, "a").close()   # git add fails outright on a missing path
     if not IN_ACTIONS: return
-    a = git("add", "--", STATE_FILE, TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE, DECISIONS_FILE, LESSONS_FILE)
+    pull()                                                   # sit on top of the latest remote before committing
+    a = git("add", "--", *BOT_FILES)
     if a.returncode: log("git add failed", a.stderr[-200:]); return
-    c = git("commit", "-q", "-m", msg)
-    if c.returncode: log("nothing to commit"); return
-    pull(); r = git("push", "-q")
-    if r.returncode: log("push failed", r.stderr[-300:])
+    if git("commit", "-q", "-m", msg).returncode: return    # nothing changed
+    r = git("push", "-q", "origin", "HEAD:main")     # explicit target: never depends on upstream tracking
+    if r.returncode:
+        _push_fails += 1
+        log("push failed", r.stderr[-300:])
+        if _push_fails in (3, 30):     # the journal can't carry this message — it is the thing not arriving
+            notify(f"Agent is trading but can't save its records to GitHub ({_push_fails} failed pushes): {r.stderr.strip()[-150:]}")
+    else:
+        _push_fails = 0
 
 # ---------- polymarket (unified SDK: Deposit Wallet / pUSD, V2 CLOB) ----------
 _pm, _pm_relay = None, None
