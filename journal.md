@@ -6335,3 +6335,4 @@
 - 2026-09-21T09:13:42+00:00 sell failed (take profit) eth-updown-5m-1789981800: size too small (0.000953)
 - 2026-09-21T09:13:45+00:00 sell failed (take profit) eth-updown-5m-1789981800: size too small (0.000953)
 - 2026-09-21T09:13:51+00:00 heartbeat: 664 scans, 1 open, mode CAUTIOUS, bankroll 36.87, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789981800, opens 60, blocked by {'move under 6 bps': 3, 'side too dear': 2}, closest None
+- 2026-09-21T09:16:09+00:00 code updated on main, restarting on next run
