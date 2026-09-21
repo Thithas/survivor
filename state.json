@@ -6,14 +6,14 @@
   "max_open_positions": 3,
   "max_exposure_pct": 0.35
  },
- "bankroll_usd": 50.0,
+ "bankroll_usd": 0.0,
  "start_bankroll_usd": 50.0,
  "peak_bankroll_usd": 50.0,
  "today": "2026-09-21",
  "today_pnl_usd": 0.0,
  "consecutive_losses": 0,
  "consecutive_wins": 0,
- "mode": "NORMAL",
+ "mode": "DEAD",
  "open_positions": [],
  "closed_trades": 0,
  "opens": {},
@@ -24,5 +24,404 @@
   "arb": 0,
   "momentum": 0
  },
- "live_mode": false
+ "live_mode": false,
+ "relay_seen": "https://survivor-mhthithas.vercel.app/r/s7v-relay-2026",
+ "books": {
+  "btc-updown-5m-1789949400": {
+   "up": [
+    null,
+    0.99
+   ],
+   "down": [
+    0.01,
+    null
+   ],
+   "left": 44,
+   "up_tok": "100194306442730961546963089810968504142970211447847320239351160533179574693535",
+   "down_tok": "5671891215720287049744940271167832390916436514458319589387506230276928969234",
+   "end": "2026-09-21T00:15:00+00:00"
+  },
+  "eth-updown-5m-1789949400": {
+   "up": [
+    null,
+    0.99
+   ],
+   "down": [
+    0.01,
+    null
+   ],
+   "left": 44,
+   "up_tok": "6092202041466192572633134027536722433663680516835818125880294606565771430797",
+   "down_tok": "46365136160062011570261361683248138948615319055940551874689915894111056728072",
+   "end": "2026-09-21T00:15:00+00:00"
+  },
+  "sol-updown-5m-1789949400": {
+   "up": [
+    null,
+    0.99
+   ],
+   "down": [
+    0.01,
+    null
+   ],
+   "left": 44,
+   "up_tok": "4980905258916423017175682482897693957890951261940946416541700376766370664214",
+   "down_tok": "104257531548025447732346197206917193352408161981811381099349188919482908114308",
+   "end": "2026-09-21T00:15:00+00:00"
+  },
+  "xrp-updown-5m-1789949400": {
+   "up": [
+    null,
+    0.99
+   ],
+   "down": [
+    0.01,
+    null
+   ],
+   "left": 44,
+   "up_tok": "14014171322031682263653795163846985418611631502076502267978861351666695612419",
+   "down_tok": "114739937082737052894987699644149263562652349896608423856120767294591375019431",
+   "end": "2026-09-21T00:15:00+00:00"
+  },
+  "doge-updown-5m-1789949400": {
+   "up": [
+    null,
+    0.99
+   ],
+   "down": [
+    0.01,
+    null
+   ],
+   "left": 44,
+   "up_tok": "27699786728597778406026096218863960280536173570151067922605971163813626443231",
+   "down_tok": "39883757604846851406457642387597087984867480177308048891502107431596987282922",
+   "end": "2026-09-21T00:15:00+00:00"
+  }
+ },
+ "snaps": {
+  "btc-updown-5m-1789949400": {
+   "asset": "btc",
+   "end": "2026-09-21T00:15:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 104,
+     "up": 0.91,
+     "down": 0.1,
+     "mv": null
+    },
+    {
+     "t": 94,
+     "up": 0.98,
+     "down": 0.03,
+     "mv": null
+    },
+    {
+     "t": 84,
+     "up": 0.98,
+     "down": 0.03,
+     "mv": null
+    },
+    {
+     "t": 75,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 70,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 64,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 59,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 53,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 48,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    }
+   ]
+  },
+  "eth-updown-5m-1789949400": {
+   "asset": "eth",
+   "end": "2026-09-21T00:15:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 104,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 94,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 84,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 75,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 70,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 64,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 59,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 53,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 48,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    }
+   ]
+  },
+  "sol-updown-5m-1789949400": {
+   "asset": "sol",
+   "end": "2026-09-21T00:15:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 104,
+     "up": 0.93,
+     "down": 0.08,
+     "mv": null
+    },
+    {
+     "t": 94,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 84,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 75,
+     "up": 0.98,
+     "down": 0.03,
+     "mv": null
+    },
+    {
+     "t": 70,
+     "up": 0.98,
+     "down": 0.04,
+     "mv": null
+    },
+    {
+     "t": 64,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 59,
+     "up": 0.97,
+     "down": 0.15,
+     "mv": null
+    },
+    {
+     "t": 53,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 48,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    }
+   ]
+  },
+  "xrp-updown-5m-1789949400": {
+   "asset": "xrp",
+   "end": "2026-09-21T00:15:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 104,
+     "up": 0.98,
+     "down": 0.04,
+     "mv": null
+    },
+    {
+     "t": 94,
+     "up": 0.99,
+     "down": 0.02,
+     "mv": null
+    },
+    {
+     "t": 84,
+     "up": null,
+     "down": 0.02,
+     "mv": null
+    },
+    {
+     "t": 75,
+     "up": 0.97,
+     "down": 0.04,
+     "mv": null
+    },
+    {
+     "t": 70,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 64,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 59,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 53,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 48,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    }
+   ]
+  },
+  "doge-updown-5m-1789949400": {
+   "asset": "doge",
+   "end": "2026-09-21T00:15:00+00:00",
+   "open": null,
+   "s": [
+    {
+     "t": 104,
+     "up": 0.94,
+     "down": 0.07,
+     "mv": null
+    },
+    {
+     "t": 94,
+     "up": 0.99,
+     "down": 0.02,
+     "mv": null
+    },
+    {
+     "t": 84,
+     "up": null,
+     "down": 0.02,
+     "mv": null
+    },
+    {
+     "t": 75,
+     "up": null,
+     "down": 0.03,
+     "mv": null
+    },
+    {
+     "t": 70,
+     "up": null,
+     "down": 0.05,
+     "mv": null
+    },
+    {
+     "t": 64,
+     "up": null,
+     "down": 0.06,
+     "mv": null
+    },
+    {
+     "t": 59,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 53,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    },
+    {
+     "t": 48,
+     "up": null,
+     "down": 0.01,
+     "mv": null
+    }
+   ]
+  }
+ },
+ "diag": {
+  "markets": 100,
+  "in_window": 5,
+  "assets": [
+   "btc",
+   "doge",
+   "eth",
+   "sol",
+   "xrp"
+  ],
+  "best_sum": null,
+  "slug": "",
+  "hot": true,
+  "spot": 81472.93000031012,
+  "blocked": {
+   "no opening price captured": 5
+  },
+  "closest": null
+ }
 }
