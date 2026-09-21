@@ -638,9 +638,13 @@ def manage(state, P):
         if not reason: keep.append(p); continue
         # Live stops were filling at 0.02 against a 0.25 trigger — that is selling into an empty book for
         # nothing, and 26% of these positions recover. Below this price, hold to resolution instead.
-        if reason == "stop loss" and bid < P["min_sell_bid"]:
+        # Half of all recent losses were stops that filled far below their trigger — the book had emptied, and
+        # they all fired at ~48s, the instant the grace period ended. Selling into an empty book recovers almost
+        # nothing; holding keeps the chance the prediction was right. So a stop only sells at a real price:
+        # within 0.10 of its trigger (the same line classify() uses for "book emptied").
+        if reason == "stop loss" and (bid < P["min_sell_bid"] or bid < stop_level - 0.10):
             if not p.get("held_cheap"):
-                journal(f"{p['slug']}: bid {bid:.2f} under {P['min_sell_bid']:.2f}, not dumping into an empty book — holding to resolution")
+                journal(f"{p['slug']}: bid {bid:.2f} is far under the {stop_level:.2f} stop — book emptied, holding to resolution")
                 p["held_cheap"] = True
             keep.append(p); continue
         ok, resp = sell(leg["token"], leg["shares"])
@@ -717,6 +721,16 @@ def relay_alive():
         LIVE_BLOCKED = False; journal("relay back — live resumed"); notify("Relay back. LIVE resumed.")
     return ok
 
+def redeem_ctf(pos):
+    """Redeem a resolved binary CTF position on-chain without the SDK's market lookup.
+    SDK path: redeem_positions(condition_id) -> list_markets(condition_ids=..) -> the 5-min series isn't
+    listed -> UserInputError "No market found". The call it would then build is reproduced here."""
+    from polymarket._internal.actions.relayer.calls import ctf_redeem_positions_call
+    c = pm(); cfg = c._ctx.environment_config
+    adapter = cfg.neg_risk_collateral_adapter if pos.get("negativeRisk") else cfg.collateral_adapter
+    call = ctf_redeem_positions_call(ctf=adapter, collateral=cfg.collateral_token, condition_id=pos["conditionId"])
+    return c._dispatch_single_call(call, metadata=f"Redeem {pos['conditionId'][:12]}")
+
 def sweep_redeem(state):
     """Winnings on Polymarket sit as resolved shares until redeemed; the cash balance (and our sizing) ignores them.
     Every few minutes, claim everything the Data API marks redeemable. h.wait() has no timeout of its own and
@@ -738,7 +752,7 @@ def sweep_redeem(state):
         state["redeem_seen"] = len(todo)
     for pos in todo:
         try:
-            h = pm().redeem_positions(condition_id=pos["conditionId"])
+            h = redeem_ctf(pos)
             done = threading.Event(); outcome = {}
             def _wait():
                 try: h.wait()
