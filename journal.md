@@ -6297,3 +6297,4 @@
 - 2026-09-21T06:04:46+00:00 xrp-updown-5m-1789970400: bid 0.00 under 0.15, not dumping into an empty book — holding to resolution
 - 2026-09-21T06:05:03+00:00 heartbeat: 904 scans, 1 open, mode CAUTIOUS, bankroll 37.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789970700, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-21T06:05:18+00:00 heartbeat: 919 scans, 1 open, mode CAUTIOUS, bankroll 37.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789970700, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T06:05:50+00:00 heartbeat: 942 scans, 1 open, mode CAUTIOUS, bankroll 37.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789970700, opens 60, blocked by {'outside the last 150s': 5}, closest None
