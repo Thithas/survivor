@@ -6853,3 +6853,6 @@
 - 2026-09-21T15:43:24+00:00 balance read 23.81 ignored (30x) — kept 27.58
 - 2026-09-21T15:43:27+00:00 LIVE MOMENTUM xrp-updown-5m-1790005200 $2.25 edge 0.0427 move 11.4 bps peers 3/1
 - 2026-09-21T15:43:27+00:00 heartbeat: 2387 scans, 2 open, mode CAUTIOUS, bankroll 27.58, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.0 on btc-updown-5m-1790005200, opens 60, blocked by {'move under 6 bps': 3, 'no ask': 1}, closest ('xrp', 0.0427)
+- 2026-09-21T15:44:10+00:00 sell failed (take profit) xrp-updown-5m-1790005200: size too small (0.0)
+- 2026-09-21T15:44:15+00:00 sell failed (take profit) xrp-updown-5m-1790005200: size too small (0.0)
+- 2026-09-21T15:44:59+00:00 heartbeat: 2476 scans, 2 open, mode CAUTIOUS, bankroll 25.42, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790005500, opens 60, blocked by {'too late in the window': 5, 'outside the last 150s': 5}, closest None
