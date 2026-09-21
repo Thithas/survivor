@@ -6308,3 +6308,5 @@
 - 2026-09-21T08:59:18+00:00 redeem sweep: 2 position(s) waiting to be claimed, worth ~0.00
 - 2026-09-21T08:59:18+00:00 redeem FAILED on 2 position(s): UserInputError: Gasless transactions require a Builder API Key or Relayer API Key. Pass api_key= when cons
 - 2026-09-21T08:59:21+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 37.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789980900, opens 60, blocked by {'no opening price captured': 5}, closest None
+- 2026-09-21T09:02:36+00:00 order failed MOMENTUM doge-updown-5m-1789981200: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
+- 2026-09-21T09:02:36+00:00 heartbeat: 215 scans, 0 open, mode CAUTIOUS, bankroll 36.30, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789981200, opens 60, blocked by {'side too cheap (market disagrees)': 2, 'side too dear': 1}, closest ('doge', 0.0726)
