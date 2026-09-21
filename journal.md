@@ -6304,3 +6304,7 @@
 - 2026-09-21T06:09:50+00:00 heartbeat: 1186 scans, 0 open, mode CAUTIOUS, bankroll 37.01, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1789971000, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
 - 2026-09-21T06:10:07+00:00 heartbeat: 1212 scans, 0 open, mode CAUTIOUS, bankroll 37.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789971000, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-21T06:10:08+00:00 code updated on main, restarting on next run
+- 2026-09-21T08:59:16+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 36.30
+- 2026-09-21T08:59:18+00:00 redeem sweep: 2 position(s) waiting to be claimed, worth ~0.00
+- 2026-09-21T08:59:18+00:00 redeem FAILED on 2 position(s): UserInputError: Gasless transactions require a Builder API Key or Relayer API Key. Pass api_key= when cons
+- 2026-09-21T08:59:21+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 37.01, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1789980900, opens 60, blocked by {'no opening price captured': 5}, closest None
