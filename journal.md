@@ -7461,3 +7461,4 @@
 - 2026-09-21T22:43:23+00:00 heartbeat: 5685 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790030400, opens 60, blocked by {'side too dear': 3, 'move under 6 bps': 1}, closest ('doge', 0.0831)
 - 2026-09-21T22:44:32+00:00 doge-updown-5m-1790030400: bid 0.02 is far under the 0.25 stop — book emptied, holding to resolution
 - 2026-09-21T22:45:45+00:00 heartbeat: 5809 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790030700, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-21T22:46:30+00:00 heartbeat: 5830 scans, 2 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790030700, opens 60, blocked by {'outside the last 150s': 5}, closest None
