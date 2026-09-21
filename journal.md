@@ -6980,3 +6980,5 @@
 - 2026-09-21T16:59:50+00:00 heartbeat: 6875 scans, 0 open, mode CAUTIOUS, bankroll 27.54, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790010000, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
 - 2026-09-21T17:02:34+00:00 order failed MOMENTUM btc-updown-5m-1790010000: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
 - 2026-09-21T17:02:34+00:00 heartbeat: 7008 scans, 0 open, mode CAUTIOUS, bankroll 27.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790010000, opens 60, blocked by {'side too dear': 4}, closest ('btc', 0.0726)
+- 2026-09-21T17:02:53+00:00 LIVE MOMENTUM btc-updown-5m-1790010000 $2.5 edge 0.0425 move -10.3 bps peers 4/0
+- 2026-09-21T17:02:54+00:00 heartbeat: 7030 scans, 1 open, mode CAUTIOUS, bankroll 27.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790010000, opens 60, blocked by {'side too dear': 4}, closest ('btc', 0.0425)
