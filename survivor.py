@@ -746,7 +746,7 @@ def sweep_redeem(state):
     claimed = 0; failures = []
     todo = [p for p in (r if isinstance(r, list) else []) if p.get("redeemable") and float(p.get("size", 0)) > 0]
     # dust from rounding (< 0.05 shares) is not worth a transaction
-    todo = [p for p in todo if float(p.get("size", 0)) * float(p.get("curPrice") or 1) >= 0.05]
+    todo = [p for p in todo if float(p.get("currentValue") or 0) >= 0.05]   # resolved losers and rounding dust are worth nothing
     if todo and state.get("redeem_seen") != len(todo):
         journal(f"redeem sweep: {len(todo)} position(s) waiting to be claimed, worth ~{sum(float(p.get('currentValue') or 0) for p in todo):.2f}")
         state["redeem_seen"] = len(todo)
@@ -770,7 +770,8 @@ def sweep_redeem(state):
         state["redeem_errs"] = state.get("redeem_errs", 0) + 1
         if state["redeem_errs"] in (1, 6, 36):     # the reason must reach the journal, not just stdout nobody can read
             journal(f"redeem FAILED on {len(failures)} position(s): {failures[0]}")
-            notify(f"Could not auto-claim winnings: {failures[0][:120]}. Redeem manually in Polymarket until fixed.")
+            worth = sum(float(p.get("currentValue") or 0) for p in todo)
+            notify(f"Winnings of ~${worth:.2f} need claiming in the Polymarket app (Portfolio → Redeem). Auto-claim needs a Builder API key.")
     else:
         state["redeem_errs"] = 0
 
