@@ -92,20 +92,10 @@ PULL_EVERY, COMMIT_EVERY = 120, 600
 
 HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.14,
         "max_open_positions": 3, "max_exposure_pct": 0.35}
-# max_exposure_pct is the aggregate limit: everything open at once, not per trade. Three max-size positions
-# would have been 42% of the account riding on one five-minute stretch. Three minimum-size tickets still fit
-# under 30%, so the agent keeps its three shots — it just cannot have all three at full size together.
-# Authoritative limits. Every path — normal, forced, arb, recovery — goes through decide()/execute() and
-# is bounded by these. If the 5-share minimum would exceed the 10% cap, the trade is skipped (MIN_ORDER_BLOCK).
-# Floor removed at the owner's explicit instruction (2026-09-18): the agent may trade the account to zero.
-# 0.50 is mechanical only — below that no order can meet the 5-share minimum anyway.
-# What remains: 10% per trade, 2 positions, $12 daily pause, and the lesson veto.
-# Reconciled 2026-09-18 per audit: floor $30 (dead below it), daily loss cap $12 (hibernate for the day),
-# 10% of bankroll per trade, 2 directional positions at once. The doc that requested this said $5 in one
-# place and $12 in two; $12 is what's enforced here — flag it if $5 was intended.
-# Sized for a ~$20 bankroll: the engine's 5-share minimum makes one trade ~$3-4.5, i.e. 15-25% of bankroll.
-# Floor $10 = room for roughly three losing trades in total; daily cap $5 = about two in a day, then hibernate.
-BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.55, 0.85),
+# Owner decisions (2026-09-20): no floor, no daily cap. What bounds risk: 14% of bankroll per trade,
+# 3 positions, 35% of bankroll exposed at once. 0.50 floor is mechanical — below it no 5-share order fits.
+# If the 5-share minimum exceeds the per-trade cap the trade is skipped and logged MIN_ORDER_BLOCK.
+BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.25), "momentum_min_confidence": (0.40, 0.85),
           "momentum_window_sec": (10, 240), "max_open_positions": (1, 5), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
           "momentum_max_ask": (0.45, 0.95), "min_order_usd": (1.0, 5.0), "fee_rate": (0.0, 0.10),
@@ -202,13 +192,13 @@ def _bypass_headers():
     key = os.environ.get("VERCEL_BYPASS"); return {"x-vercel-protection-bypass": key} if key else {}
 
 def relay_url():
-    """Public URL of the phone relay (file RELAY, written by phone/relay.py). GitHub runners are US IPs and
-    Polymarket geoblocks order placement from there, so every CLOB call is routed through the phone."""
+    """Public URL of the Vercel relay (file RELAY). GitHub runners are US IPs and Polymarket geoblocks order
+    placement from there, so every CLOB call is routed through the relay in Dublin."""
     try: return open("RELAY").read().strip() or None
     except Exception: return None
 
 def pm():
-    """Authenticated client, CLOB traffic via the phone relay. Rebuilt whenever the relay URL changes."""
+    """Authenticated client, CLOB traffic via the relay. Rebuilt whenever the relay URL changes."""
     global _pm, _pm_relay
     relay = relay_url()
     if _pm is None or relay != _pm_relay:
@@ -281,9 +271,10 @@ def sell(token_id, shares):
     exchange still reports a smaller balance, retries with exactly what it says we have."""
     if not is_live(): return True, "paper"
     real = held_shares(token_id)
-    if real is not None:
-        if real < 1: return False, f"nothing to sell (held {real})"
+    if real is not None and real >= 1:
         shares = min(shares, real)
+    # If the API shows <1 share it is usually still indexing our fill. Sell what we recorded; if we really hold
+    # less, the exchange rejects with the true balance and the retry below uses exactly that.
     for attempt in range(3):
         size = math.floor(shares * 100) / 100                    # never round up
         if size < 1: return False, f"size too small ({shares})"
@@ -495,14 +486,12 @@ def decide(state, P, sigs):
     open_cycles = {(p["slug"].rsplit("-", 1)[-1], p.get("legs", [{}])[0].get("outcome")) for p in state["open_positions"]}
     dead = state.get("bad_cycle")
     def rank(x):
-        a = x.get("ask") or 0
-        band = 0 if 0.55 <= a <= 0.85 else 1        # the band that wins most often, not the biggest edge
-        return (x["type"] != "ARB", band, int(str(x.get("peers", "0/0")).split("/")[0]), -x["gross_edge"])
+        return (x["type"] != "ARB", -x["gross_edge"])     # best expected value first
     n_mom = 1
     for s in sorted(sigs, key=rank):
         cyc = s["slug"].rsplit("-", 1)[-1]
         if s["type"] != "ARB":
-            if cyc == dead: continue                # a sibling already stopped out on this tick
+            if dead and [cyc, s.get("outcome")] == list(dead): continue   # that side of this tick already stopped out
             if (cyc, s.get("outcome")) in open_cycles: continue   # already holding this side of this window
 
         if s["type"] == "ARB" and (arb_room <= 0 or not P.get("arb_enabled", 1)): continue
@@ -563,7 +552,7 @@ def execute(state, s, stake, net, P):
     pos = {"slug": s["slug"], "type": s["type"], "legs": legs, "stake": cost, "predicted_edge": net,
            "entry_price": s.get("ask"), "entry_left": s.get("time_left_sec"),
            "confidence": s.get("confidence"), "move_bps": s.get("move_bps"), "peers": s.get("peers"),
-           "buckets": buckets_of(s, s.get("time_left_sec") or 999), "confidence": s.get("confidence"), "move_bps": s.get("move_bps"), "peers": s.get("peers"),
+           "buckets": buckets_of(s, s.get("time_left_sec") or 999),
            "ts": now().isoformat(timespec="seconds"), "end": s["end"], "live": is_live()}
     if s["type"] == "MOMENTUM" and pos.get("entry_price") and filled:
         pos["stop_at"] = round(max(P["stop_loss_bid"], P["stop_frac_of_entry"] * pos["entry_price"]), 2)
@@ -629,15 +618,8 @@ def manage(state, P):
         if bid is None:      # no bid at all: if the ask is on the floor the market has written this side off
             if ask is not None and ask <= P["stop_loss_bid"] and left >= P["stop_loss_min_left_sec"]: bid = 0.0
             else: keep.append(p); continue
-        cyc = p["slug"].rsplit("-", 1)[-1]
-        if state.get("bad_cycle") == cyc and bid < 0.6 and left >= P["stop_loss_min_left_sec"]:
-            bid = min(bid, P["stop_loss_bid"])        # a sibling on this cycle already stopped: the whole tick was wrong
-            left_now = held_shares(leg["token"])
-            if left_now is not None and left_now < leg["shares"] * 0.5:      # the resting stop filled
-                got = round(leg["shares"] * (p["stop_at"] - fee(p["stop_at"], P)), 4)
-                p["stop_order"] = None
-                record(state, p, round(got - p["stake"], 4), -2, note=f"stop filled at {p['stop_at']:.2f}")
-                changed = True; continue
+        # (A sibling-stop used to live here. With one bet per direction per window, the only possible sibling is
+        # the OPPOSITE side, so forcing it out sold likely winners. Each position now stands on its own price.)
         p["peak_bid"] = max(p.get("peak_bid", 0.0), bid)          # trailing lock: once it was a near-certain win, don't ride it back down
         # Every exit under two minutes in the record lost — 41 of 41. Entries at 0.51 "fell" to 0.22 in five
         # seconds, which is the book emptying after we took the ask, not the market moving. So: leave a position
@@ -670,7 +652,7 @@ def manage(state, P):
         proceeds = round(leg["shares"] * (bid - fee(bid, P)), 4)
         p["exit_bid"] = bid
         record(state, p, round(proceeds - p["stake"], 4), -2, note=f"{reason} @ {bid:.2f} with {left:.0f}s left")
-        if reason == "stop loss": state["bad_cycle"] = p["slug"].rsplit("-", 1)[-1]
+        if reason == "stop loss": state["bad_cycle"] = [p["slug"].rsplit("-", 1)[-1], leg["outcome"]]
         changed = True
     state["open_positions"] = keep
     return changed
@@ -730,7 +712,7 @@ def relay_alive():
         except Exception: ok = False
     _relay_fail = 0 if ok else _relay_fail + 1
     if not ok and _relay_fail == 3 and not LIVE_BLOCKED and os.path.exists("LIVE"):
-        LIVE_BLOCKED = True; journal("relay offline — live blocked"); notify("Relay offline: open the Codespace (github.com/Thithas/survivor → Code → Codespaces). Paper until it's back.")
+        LIVE_BLOCKED = True; journal("relay offline — live blocked"); notify("Relay offline (Vercel). Trading paused until it answers again.")
     if ok and LIVE_BLOCKED and os.path.exists("LIVE"):
         LIVE_BLOCKED = False; journal("relay back — live resumed"); notify("Relay back. LIVE resumed.")
     return ok
@@ -795,8 +777,8 @@ def main():
         global LIVE_BLOCKED
         if os.path.exists("LIVE") and not relay_url():
             LIVE_BLOCKED = True
-            journal("LIVE requested but no phone relay (file RELAY) — orders from GitHub are geoblocked; paper until the phone is up")
-            notify("LIVE waiting: phone relay is offline. Start it in Termux (bash ~/survivor/start.sh). Paper until then.")
+            journal("LIVE requested but RELAY file is empty — orders from GitHub are geoblocked; paper until it is set")
+            notify("LIVE waiting: no relay URL in the RELAY file. Paper until it is set.")
         elif os.path.exists("LIVE"):
             try:
                 b = live_balance()
@@ -808,7 +790,7 @@ def main():
                     notify(f"LIVE waiting: Polymarket balance reads {b:.2f}. Paper until it's above {HARD['floor_usd'] + 1:.0f}. Rechecking every minute.")
                 else:
                     st = new_state(b); st["live_mode"] = True
-                    journal(f"LIVE mode on. Polymarket balance {b:.2f}"); notify(f"LIVE. Real money. Balance {b:.2f}. Floor {HARD['floor_usd']}, daily cap {HARD['daily_loss_cap_usd']}, max {int(HARD['max_trade_pct']*100)}%/trade.")
+                    journal(f"LIVE mode on. Polymarket balance {b:.2f}"); notify(f"LIVE. Real money. Balance {b:.2f}. {int(HARD['max_trade_pct']*100)}% per trade, {HARD['max_open_positions']} positions, {int(HARD['max_exposure_pct']*100)}% total exposure.")
                     return st
             except Exception as e:
                 LIVE_BLOCKED = True
