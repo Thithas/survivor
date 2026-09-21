@@ -6801,3 +6801,6 @@
 - 2026-09-21T14:43:46+00:00 sold MOMENTUM btc-updown-5m-1790001600 pnl +1.72 (take profit @ 0.90 with 75s left) | today -10.25 | bankroll 23.06
 - 2026-09-21T14:43:46+00:00 heartbeat: 20905 scans, 0 open, mode CAUTIOUS, bankroll 23.06, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790001600, opens 60, blocked by {'move under 6 bps': 1, 'side too dear': 3, 'no ask': 1}, closest None
 - 2026-09-21T14:43:48+00:00 code updated on main, restarting on next run
+- 2026-09-21T14:44:39+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 27.58
+- 2026-09-21T14:44:41+00:00 mode CAUTIOUS -> DEAD
+- 2026-09-21T14:44:41+00:00 DEAD at bankroll 23.06. Post-mortem: stats {'wins': 15, 'losses': 22, 'pnl': -10.247, 'arb': 0, 'momentum': 37}
