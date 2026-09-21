@@ -7469,3 +7469,4 @@
 - 2026-09-21T22:47:44+00:00 lesson some-agree: now experimental, action reduce_confidence (8/21 won, -2.61)
 - 2026-09-21T22:47:44+00:00 closed MOMENTUM doge-updown-5m-1790030400 pnl -2.05 | today -2.63 | bankroll 36.27
 - 2026-09-21T22:47:45+00:00 heartbeat: 5874 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790030700, opens 60, blocked by {'side too dear': 4, 'side too cheap (market disagrees)': 1}, closest None
+- 2026-09-21T22:48:13+00:00 heartbeat: 5910 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790030700, opens 60, blocked by {'side too dear': 4, 'no ask': 1}, closest None
