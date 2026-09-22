@@ -7634,3 +7634,4 @@
 - 2026-09-22T00:28:18+00:00 btc-updown-5m-1790036700: bid 0.06 is far under the 0.25 stop — book emptied, holding to resolution
 - 2026-09-22T00:28:51+00:00 closed MOMENTUM sol-updown-5m-1790036400 pnl -1.75 | today +3.57 | bankroll 36.27
 - 2026-09-22T00:28:52+00:00 heartbeat: 11429 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790036700, opens 60, blocked by {'side too cheap (market disagrees)': 4}, closest ('eth', 0.0639)
+- 2026-09-22T00:30:12+00:00 heartbeat: 11540 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790037000, opens 60, blocked by {'outside the last 150s': 5}, closest None
