@@ -7720,3 +7720,4 @@
 - 2026-09-22T01:34:57+00:00 heartbeat: 15268 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790040900, opens 60, blocked by {'too late in the window': 5, 'outside the last 150s': 5}, closest None
 - 2026-09-22T01:38:08+00:00 redeem FAILED on 5 position(s): UserInputError: Gasless transactions require a Builder API Key or Relayer API Key. Pass api_key= when cons
 - 2026-09-22T01:39:03+00:00 heartbeat: 15488 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'no ask': 5}, closest None
+- 2026-09-22T01:39:13+00:00 heartbeat: 15498 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'no ask': 5}, closest None
