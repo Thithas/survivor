@@ -7797,3 +7797,4 @@
 - 2026-09-22T02:23:22+00:00 btc-updown-5m-1790043600: bid 0.13 is far under the 0.25 stop — book emptied, holding to resolution
 - 2026-09-22T02:24:02+00:00 sell failed (stop loss) btc-updown-5m-1790043600: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
 - 2026-09-22T02:24:54+00:00 heartbeat: 17974 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790043900, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
+- 2026-09-22T02:26:24+00:00 heartbeat: 18040 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790043900, opens 60, blocked by {'outside the last 150s': 5}, closest None
