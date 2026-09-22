@@ -7850,3 +7850,5 @@
 - 2026-09-22T03:09:49+00:00 closed MOMENTUM xrp-updown-5m-1790046000 pnl -2.40 | today -21.47 | bankroll 36.27
 - 2026-09-22T03:09:50+00:00 heartbeat: 1514 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790046600, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
 - 2026-09-22T03:11:49+00:00 heartbeat: 1620 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790046600, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-22T03:12:33+00:00 order failed MOMENTUM xrp-updown-5m-1790046600: not enough balance / allowance: the balance is not enough -> balance: 794995, order amount: 2842390
+- 2026-09-22T03:12:33+00:00 heartbeat: 1663 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790046600, opens 60, blocked by {'side too dear': 4}, closest ('xrp', 0.0927)
