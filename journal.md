@@ -7602,3 +7602,4 @@
 - 2026-09-22T00:11:36+00:00 heartbeat: 10458 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790035800, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-22T00:12:52+00:00 redeem sweep: 5 position(s) waiting to be claimed, worth ~1.65
 - 2026-09-22T00:13:01+00:00 heartbeat: 10530 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790035800, opens 60, blocked by {'move under 6 bps': 3, 'side too dear': 2}, closest None
+- 2026-09-22T00:13:21+00:00 heartbeat: 10553 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790035800, opens 60, blocked by {'move under 6 bps': 3, 'side too dear': 2}, closest None
