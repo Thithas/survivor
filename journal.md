@@ -8267,3 +8267,4 @@
 - 2026-09-22T08:17:34+00:00 order failed MOMENTUM btc-updown-5m-1790064900: not enough balance / allowance: the balance is not enough to cover the fee estimate -> balance: 2668659, order amount: 2600000, fee estimate: 87360, required to
 - 2026-09-22T08:17:34+00:00 heartbeat: 23485 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790064900, opens 60, blocked by {'move under 6 bps': 1, 'side too dear': 3}, closest ('btc', 0.0225)
 - 2026-09-22T08:18:01+00:00 heartbeat: 23523 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790064900, opens 60, blocked by {'side too dear': 4, 'move under 6 bps': 1}, closest None
+- 2026-09-22T08:18:20+00:00 code updated on main, restarting on next run
