@@ -948,17 +948,21 @@ def main():
                   if LIVE_BLOCKED and relay_url() and b >= HARD["floor_usd"] + 1 and not state["open_positions"]:
                       LIVE_BLOCKED = False; commit(state, "survivor: funds landed"); state = fresh_state(); P = params(); dirty = True
                   elif is_live():
+                      # The earlier guard rejected any drop bigger than open stakes + $1. But a closed losing trade
+                      # has no open stake, so every real loss looked "impossible" and the agent sized off a phantom
+                      # $36 while the account held $3 (2026-09-22). Now: reject only 0.00, and accept a big move
+                      # once a second read agrees with it — a glitch doesn't repeat, a real balance does.
                       prev = state.get("bankroll_usd", 0) or 0
-                      held = sum(p["stake"] for p in state["open_positions"])
-                      # The agent killed itself four times on reads of 0.00 while holding $39. A real loss can't
-                      # exceed what is actually at risk, so a drop bigger than open stakes + $1 is a bad read.
-                      if b <= 0 or (prev > 0 and prev - b > held + 1.0):
+                      if b <= 0:
                           state["bad_reads"] = state.get("bad_reads", 0) + 1
-                          log("ignoring implausible balance read", b, "prev", prev, "at risk", held)
-                          if state["bad_reads"] in (3, 30):
-                              journal(f"balance read {b:.2f} ignored ({state['bad_reads']}x) — kept {prev:.2f}")
+                          log("ignoring zero balance read, kept", prev)
+                      elif prev > 0 and abs(prev - b) > 1.0 and abs((state.get("pending_read") or -99) - b) > 0.5:
+                          state["pending_read"] = b          # big change: wait for one confirming read
+                          log("balance moved", prev, "->", b, "— confirming on next read")
                       else:
-                          state["bad_reads"] = 0
+                          if prev > 0 and abs(prev - b) > 1.0:
+                              journal(f"balance confirmed {prev:.2f} -> {b:.2f}")
+                          state["bad_reads"] = 0; state["pending_read"] = None
                           state["bankroll_usd"] = b
               except Exception as e: log("balance err", e)
               last_bal = time.time()
