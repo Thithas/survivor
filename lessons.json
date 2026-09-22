@@ -1,28 +1,4 @@
 {
- "alone": {
-  "condition": "alone",
-  "sample_size": 9,
-  "wins": 4,
-  "losses": 5,
-  "pnl": 1.4865,
-  "created_at": "2026-09-21T15:53:50+00:00",
-  "last_updated": "2026-09-22T01:49:18+00:00",
-  "expectancy": 0.1652,
-  "status": "collecting",
-  "action": "none"
- },
- "some-agree": {
-  "condition": "some-agree",
-  "sample_size": 29,
-  "wins": 11,
-  "losses": 18,
-  "pnl": -4.5499,
-  "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-22T02:19:37+00:00",
-  "expectancy": -0.1569,
-  "status": "experimental",
-  "action": "reduce_confidence"
- },
  "_why": {
   "settled at expiry": 83,
   "stopped out": 38,
@@ -35,33 +11,6 @@
   "held to expiry and the prediction was wrong": 35
  },
  "_note": "Seeded from 151 live trades. Only crowd buckets are seeded: entry price is unrecoverable for losing trades in the old records, so price buckets start empty and fill from live data.",
- "price0.70+": {
-  "n": 29,
-  "wins": 17,
-  "net": -8.1035
- },
- "late": {
-  "n": 8,
-  "wins": 1,
-  "net": -14.8333
- },
- "price0.55-0.70": {
-  "condition": "price0.55-0.70",
-  "sample_size": 8,
-  "wins": 3,
-  "losses": 5,
-  "pnl": -4.2758,
-  "created_at": "2026-09-21T16:09:03+00:00",
-  "last_updated": "2026-09-22T01:18:02+00:00",
-  "expectancy": -0.5345,
-  "status": "collecting",
-  "action": "none"
- },
- "early": {
-  "n": 129,
-  "wins": 61,
-  "net": -0.9534
- },
  "_retired": {
   "all-agree": {
    "n": 51,
@@ -70,117 +19,160 @@
    "why": "Confounded: these were mostly forced trades at 0.85+ with negative edge and stops that filled 20c below trigger. All three causes are now removed. Backtest over 2209 clean windows shows crowd moves of 4-10 bps win 75% at +0.049/share. Relearning from live data."
   }
  },
- "price<0.55": {
-  "n": 62,
-  "wins": 21,
-  "net": -11.8257
- },
- "all-agree": {
-  "condition": "all-agree",
-  "sample_size": 34,
-  "wins": 11,
-  "losses": 23,
-  "pnl": -17.1949,
-  "created_at": "2026-09-21T15:28:57+00:00",
-  "last_updated": "2026-09-22T03:09:49+00:00",
-  "expectancy": -0.5057,
-  "status": "experimental",
-  "action": "reduce_confidence"
- },
- "price<0.45": {
-  "condition": "price<0.45",
-  "sample_size": 33,
-  "wins": 11,
-  "losses": 22,
-  "pnl": -7.7132,
-  "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-22T02:17:09+00:00",
-  "expectancy": -0.2337,
-  "status": "experimental",
-  "action": "reduce_confidence"
- },
- "move10-20": {
-  "condition": "move10-20",
-  "sample_size": 30,
-  "wins": 9,
-  "losses": 21,
-  "pnl": -12.9693,
-  "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-22T02:30:37+00:00",
-  "expectancy": -0.4323,
-  "status": "experimental",
-  "action": "reduce_confidence"
- },
- "left120+": {
-  "condition": "left120+",
-  "sample_size": 44,
-  "wins": 18,
+ "price0.55-0.70": {
+  "condition": "price0.55-0.70",
+  "sample_size": 53,
+  "wins": 27,
   "losses": 26,
-  "pnl": -1.2539,
-  "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-22T02:30:37+00:00",
-  "expectancy": -0.0285,
+  "pnl": 1.4463,
+  "created_at": "2026-09-18T21:39:24+00:00",
+  "last_updated": "2026-09-22T01:12:53+00:00",
+  "expectancy": 0.0273,
   "status": "validated",
   "action": "none"
  },
- "price0.45-0.55": {
-  "condition": "price0.45-0.55",
-  "sample_size": 31,
-  "wins": 12,
-  "losses": 19,
-  "pnl": -8.2693,
-  "created_at": "2026-09-21T15:48:44+00:00",
-  "last_updated": "2026-09-22T03:09:49+00:00",
-  "expectancy": -0.2668,
-  "status": "experimental",
-  "action": "reduce_confidence"
- },
- "left60-120": {
-  "condition": "left60-120",
-  "sample_size": 21,
-  "wins": 7,
-  "losses": 14,
-  "pnl": -8.8044,
-  "created_at": "2026-09-21T15:48:44+00:00",
-  "last_updated": "2026-09-22T02:19:37+00:00",
-  "expectancy": -0.4193,
-  "status": "experimental",
-  "action": "reduce_confidence"
- },
  "move<10": {
   "condition": "move<10",
-  "sample_size": 24,
-  "wins": 8,
-  "losses": 16,
-  "pnl": -11.2598,
-  "created_at": "2026-09-21T15:53:50+00:00",
-  "last_updated": "2026-09-22T03:09:49+00:00",
-  "expectancy": -0.4692,
-  "status": "experimental",
-  "action": "reduce_confidence"
+  "sample_size": 90,
+  "wins": 41,
+  "losses": 49,
+  "pnl": -3.1203,
+  "created_at": "2026-09-18T21:39:24+00:00",
+  "last_updated": "2026-09-22T03:04:29+00:00",
+  "expectancy": -0.0347,
+  "status": "validated",
+  "action": "none"
  },
  "left<60": {
   "condition": "left<60",
-  "sample_size": 7,
-  "wins": 1,
-  "losses": 6,
-  "pnl": -10.2,
-  "created_at": "2026-09-21T15:59:29+00:00",
-  "last_updated": "2026-09-22T03:09:49+00:00",
-  "expectancy": -1.4571,
+  "sample_size": 13,
+  "wins": 2,
+  "losses": 11,
+  "pnl": -19.4037,
+  "created_at": "2026-09-18T21:39:24+00:00",
+  "last_updated": "2026-09-22T03:04:29+00:00",
+  "expectancy": -1.4926,
   "status": "collecting",
   "action": "none"
  },
- "move20+": {
-  "condition": "move20+",
-  "sample_size": 18,
-  "wins": 9,
-  "losses": 9,
-  "pnl": 3.9708,
-  "created_at": "2026-09-21T16:08:03+00:00",
-  "last_updated": "2026-09-22T02:33:25+00:00",
-  "expectancy": 0.2206,
+ "alone": {
+  "condition": "alone",
+  "sample_size": 29,
+  "wins": 12,
+  "losses": 17,
+  "pnl": -2.3506,
+  "created_at": "2026-09-18T21:39:24+00:00",
+  "last_updated": "2026-09-22T01:48:19+00:00",
+  "expectancy": -0.0811,
   "status": "experimental",
   "action": "none"
+ },
+ "move10-20": {
+  "condition": "move10-20",
+  "sample_size": 81,
+  "wins": 28,
+  "losses": 53,
+  "pnl": -33.473,
+  "created_at": "2026-09-18T21:33:12+00:00",
+  "last_updated": "2026-09-22T02:22:33+00:00",
+  "expectancy": -0.4132,
+  "status": "validated",
+  "action": "veto"
+ },
+ "left60-120": {
+  "condition": "left60-120",
+  "sample_size": 59,
+  "wins": 21,
+  "losses": 38,
+  "pnl": -20.2498,
+  "created_at": "2026-09-18T21:33:12+00:00",
+  "last_updated": "2026-09-22T02:18:43+00:00",
+  "expectancy": -0.3432,
+  "status": "validated",
+  "action": "veto"
+ },
+ "some-agree": {
+  "condition": "some-agree",
+  "sample_size": 82,
+  "wins": 36,
+  "losses": 46,
+  "pnl": -5.072,
+  "created_at": "2026-09-18T21:33:12+00:00",
+  "last_updated": "2026-09-22T02:18:43+00:00",
+  "expectancy": -0.0619,
+  "status": "validated",
+  "action": "none"
+ },
+ "price<0.45": {
+  "condition": "price<0.45",
+  "sample_size": 62,
+  "wins": 19,
+  "losses": 43,
+  "pnl": -19.5398,
+  "created_at": "2026-09-19T07:03:11+00:00",
+  "last_updated": "2026-09-22T02:13:23+00:00",
+  "expectancy": -0.3152,
+  "status": "validated",
+  "action": "veto"
+ },
+ "left120+": {
+  "condition": "left120+",
+  "sample_size": 135,
+  "wins": 65,
+  "losses": 70,
+  "pnl": 9.2381,
+  "created_at": "2026-09-19T07:27:10+00:00",
+  "last_updated": "2026-09-22T02:22:33+00:00",
+  "expectancy": 0.0684,
+  "status": "validated",
+  "action": "none"
+ },
+ "price0.70+": {
+  "condition": "price0.70+",
+  "sample_size": 28,
+  "wins": 17,
+  "losses": 11,
+  "pnl": -4.0535,
+  "created_at": "2026-09-19T03:02:08+00:00",
+  "last_updated": "2026-09-20T12:23:04+00:00",
+  "expectancy": -0.1448,
+  "status": "experimental",
+  "action": "reduce_confidence"
+ },
+ "price0.45-0.55": {
+  "condition": "price0.45-0.55",
+  "sample_size": 64,
+  "wins": 25,
+  "losses": 39,
+  "pnl": -8.2684,
+  "created_at": "2026-09-19T13:07:08+00:00",
+  "last_updated": "2026-09-22T03:04:29+00:00",
+  "expectancy": -0.1292,
+  "status": "validated",
+  "action": "reduce_confidence"
+ },
+ "move20+": {
+  "condition": "move20+",
+  "sample_size": 36,
+  "wins": 19,
+  "losses": 17,
+  "pnl": 6.1779,
+  "created_at": "2026-09-19T13:07:08+00:00",
+  "last_updated": "2026-09-22T02:29:41+00:00",
+  "expectancy": 0.1716,
+  "status": "experimental",
+  "action": "none"
+ },
+ "all-agree": {
+  "condition": "all-agree",
+  "sample_size": 96,
+  "wins": 40,
+  "losses": 56,
+  "pnl": -22.9928,
+  "created_at": "2026-09-19T19:17:15+00:00",
+  "last_updated": "2026-09-22T03:04:29+00:00",
+  "expectancy": -0.2395,
+  "status": "validated",
+  "action": "reduce_confidence"
  }
 }
