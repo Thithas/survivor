@@ -7695,3 +7695,4 @@
 - 2026-09-22T01:13:03+00:00 redeem FAILED on 5 position(s): UserInputError: Gasless transactions require a Builder API Key or Relayer API Key. Pass api_key= when cons
 - 2026-09-22T01:13:39+00:00 sol-updown-5m-1790039400: bid 0.03 is far under the 0.28 stop — book emptied, holding to resolution
 - 2026-09-22T01:14:05+00:00 heartbeat: 14036 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'move under 6 bps': 2, 'side too cheap (market disagrees)': 3}, closest None
+- 2026-09-22T01:15:03+00:00 heartbeat: 14103 scans, 1 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790039700, opens 60, blocked by {'outside the last 150s': 5}, closest None
