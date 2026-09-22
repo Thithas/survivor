@@ -8278,3 +8278,4 @@
 - 2026-09-22T08:23:23+00:00 lessons rebuilt from 364 trades; vetoes armed: move10-20, left60-120, price<0.45
 - 2026-09-22T08:23:25+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 2.67
 - 2026-09-22T08:23:27+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790065200, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-22T08:24:43+00:00 heartbeat: 132 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790065500, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
