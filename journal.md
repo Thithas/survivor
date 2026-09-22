@@ -7663,3 +7663,4 @@
 - 2026-09-22T00:48:28+00:00 lesson price<0.45: now experimental, action reduce_confidence (11/31 won, -3.41)
 - 2026-09-22T00:48:28+00:00 sold MOMENTUM eth-updown-5m-1790037900 pnl -1.06 (stop loss @ 0.24 with 93s left) | today -1.50 | bankroll 36.27
 - 2026-09-22T00:48:28+00:00 heartbeat: 12531 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790037900, opens 60, blocked by {'side too cheap (market disagrees)': 5}, closest None
+- 2026-09-22T00:48:57+00:00 heartbeat: 12562 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790037900, opens 60, blocked by {'side too cheap (market disagrees)': 2, 'side too dear': 3}, closest None
