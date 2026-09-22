@@ -32,7 +32,7 @@
   "won at expiry": 88,
   "momentum reversed, stop did its job": 63,
   "gave back a gain after reaching the lock level": 3,
-  "held to expiry and the prediction was wrong": 30
+  "held to expiry and the prediction was wrong": 31
  },
  "_note": "Seeded from 151 live trades. Only crowd buckets are seeded: entry price is unrecoverable for losing trades in the old records, so price buckets start empty and fill from live data.",
  "price0.70+": {
@@ -47,13 +47,13 @@
  },
  "price0.55-0.70": {
   "condition": "price0.55-0.70",
-  "sample_size": 7,
+  "sample_size": 8,
   "wins": 3,
-  "losses": 4,
-  "pnl": -1.5258,
+  "losses": 5,
+  "pnl": -4.2758,
   "created_at": "2026-09-21T16:09:03+00:00",
-  "last_updated": "2026-09-21T21:13:56+00:00",
-  "expectancy": -0.218,
+  "last_updated": "2026-09-22T01:18:02+00:00",
+  "expectancy": -0.5345,
   "status": "collecting",
   "action": "none"
  },
@@ -77,15 +77,15 @@
  },
  "all-agree": {
   "condition": "all-agree",
-  "sample_size": 26,
+  "sample_size": 27,
   "wins": 11,
-  "losses": 15,
-  "pnl": 0.0146,
+  "losses": 16,
+  "pnl": -2.7354,
   "created_at": "2026-09-21T15:28:57+00:00",
-  "last_updated": "2026-09-22T00:48:28+00:00",
-  "expectancy": 0.0006,
+  "last_updated": "2026-09-22T01:18:02+00:00",
+  "expectancy": -0.1013,
   "status": "experimental",
-  "action": "none"
+  "action": "reduce_confidence"
  },
  "price<0.45": {
   "condition": "price<0.45",
@@ -113,13 +113,13 @@
  },
  "left120+": {
   "condition": "left120+",
-  "sample_size": 41,
+  "sample_size": 42,
   "wins": 18,
-  "losses": 23,
-  "pnl": 5.0562,
+  "losses": 24,
+  "pnl": 2.3062,
   "created_at": "2026-09-21T15:13:19+00:00",
-  "last_updated": "2026-09-22T00:48:28+00:00",
-  "expectancy": 0.1233,
+  "last_updated": "2026-09-22T01:18:02+00:00",
+  "expectancy": 0.0549,
   "status": "validated",
   "action": "none"
  },
@@ -149,13 +149,13 @@
  },
  "move<10": {
   "condition": "move<10",
-  "sample_size": 22,
+  "sample_size": 23,
   "wins": 8,
-  "losses": 14,
-  "pnl": -6.1098,
+  "losses": 15,
+  "pnl": -8.8598,
   "created_at": "2026-09-21T15:53:50+00:00",
-  "last_updated": "2026-09-22T00:33:48+00:00",
-  "expectancy": -0.2777,
+  "last_updated": "2026-09-22T01:18:02+00:00",
+  "expectancy": -0.3852,
   "status": "experimental",
   "action": "reduce_confidence"
  },
