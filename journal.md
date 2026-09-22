@@ -7576,3 +7576,5 @@
 - 2026-09-21T23:55:55+00:00 heartbeat: 9621 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790034900, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-21T23:58:07+00:00 heartbeat: 9726 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790034900, opens 60, blocked by {'side too dear': 3, 'no ask': 2}, closest None
 - 2026-09-21T23:59:52+00:00 heartbeat: 9846 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on btc-updown-5m-1790035200, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
+- 2026-09-22T00:00:00+00:00 day rolled
+- 2026-09-22T00:00:19+00:00 heartbeat: 9871 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790035200, opens 60, blocked by {'outside the last 150s': 5}, closest None
