@@ -8207,3 +8207,5 @@
 - 2026-09-22T07:42:52+00:00 heartbeat: 21057 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790062800, opens 60, blocked by {'side too dear': 5}, closest None
 - 2026-09-22T07:43:17+00:00 order failed MOMENTUM btc-updown-5m-1790062800: not enough balance / allowance: the balance is not enough -> balance: 794995, order amount: 2838540
 - 2026-09-22T07:43:17+00:00 heartbeat: 21100 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790062800, opens 60, blocked by {'side too dear': 4}, closest ('btc', 0.0927)
+- 2026-09-22T07:43:20+00:00 order failed MOMENTUM btc-updown-5m-1790062800: not enough balance / allowance: the balance is not enough -> balance: 794995, order amount: 2836620
+- 2026-09-22T07:43:20+00:00 heartbeat: 21103 scans, 0 open, mode CAUTIOUS, bankroll 36.27, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790062800, opens 60, blocked by {'side too dear': 4}, closest ('btc', 0.0927)
