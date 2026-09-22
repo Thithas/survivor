@@ -74,6 +74,32 @@ def learn(state, p, pnl, why):
     r = L.setdefault("_why", {}); r[why] = r.get(why, 0) + 1
     save_json(LESSONS_FILE, L)
 
+def rebuild_lessons():
+    """Recompute every lesson from trades.jsonl + decisions.jsonl. lessons.json used to be edited in place and a
+    stale copy overwrote the seeded history (2026-09-21), leaving a validated veto un-armed for 48 trades."""
+    try:
+        trades = [json.loads(l) for l in open(TRADES_FILE) if l.strip()]
+        ents = {}
+        for l in open(DECISIONS_FILE):
+            if l.strip():
+                d = json.loads(l)
+                if d.get("action") == "ENTER": ents[d["market"]] = d
+    except FileNotFoundError: return
+    old = lessons(); L = {k: v for k, v in old.items() if k.startswith("_")}
+    for x in trades:
+        if not x.get("live") or x.get("type") != "MOMENTUM" or (x.get("predicted_edge") or 0) < 0: continue
+        e = ents.get(x["slug"])
+        if not e or e.get("ask") is None: continue
+        for b in buckets_of(e, e.get("time_left_sec") or 999):
+            r = L.setdefault(b, {"condition": b, "sample_size": 0, "wins": 0, "losses": 0, "pnl": 0.0, "created_at": x["ts"]})
+            r["sample_size"] += 1; r["wins"] += int(x["pnl"] > 0); r["losses"] += int(x["pnl"] <= 0)
+            r["pnl"] = round(r["pnl"] + x["pnl"], 4); r["last_updated"] = x["ts"]
+    for k, v in L.items():
+        if not k.startswith("_"): judge(v)
+    save_json(LESSONS_FILE, L)
+    armed = [k for k, v in L.items() if not k.startswith("_") and v.get("action") == "veto"]
+    journal(f"lessons rebuilt from {len(trades)} trades; vetoes armed: {', '.join(armed) or 'none'}")
+
 def lesson_check(sig, left, P):
     """Before every entry: returns (veto_reason or None, confidence_penalty)."""
     if not P.get("lessons_enabled", 1): return None, 0.0
@@ -128,13 +154,13 @@ BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.15), "momentum_min
           "take_profit_bid": (0.90, 1.0), "stop_loss_bid": (0.05, 0.50), "stop_loss_min_left_sec": (3, 60),
           "momentum_min_ask": (0.10, 0.60), "forced_at_sec": (20, 120), "forced_max_ask": (0.60, 0.95),
           "lock_from_bid": (0.60, 0.95), "lock_giveback": (0.10, 0.50), "stop_frac_of_entry": (0.3, 0.9), "stop_grace_sec": (0, 120), "stop_confirm_ticks": (1, 5), "min_sell_bid": (0.0, 0.40),
-          "max_edge": (0.10, 1.0), "arb_enabled": (0, 1), "lessons_enabled": (0, 1)}
+          "max_edge": (0.10, 1.0), "arb_enabled": (0, 1), "lessons_enabled": (0, 1), "min_entry_left_sec": (20, 150)}
 DEFAULT_PARAMS = {"min_edge": 0.03, "max_trade_pct": 0.10, "momentum_min_confidence": 0.70,
                   "momentum_window_sec": 20, "max_open_positions": 2, "min_liquidity_usd": 50,
                   "fees": 0.0, "slippage": 0.01, "momentum_min_move_bps": 8, "momentum_max_ask": 0.85,
                   "min_order_usd": 1.0, "fee_rate": 0.07,
                   "take_profit_bid": 0.97, "stop_loss_bid": 0.25, "stop_loss_min_left_sec": 8, "momentum_min_ask": 0.40,
-                  "forced_at_sec": 0, "forced_max_ask": 0.92, "lessons_enabled": 1, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "stop_grace_sec": 45, "stop_confirm_ticks": 3, "min_sell_bid": 0.15, "max_edge": 0.20, "arb_enabled": 0}
+                  "forced_at_sec": 0, "forced_max_ask": 0.92, "lessons_enabled": 1, "min_entry_left_sec": 120, "lock_from_bid": 0.85, "lock_giveback": 0.25, "stop_frac_of_entry": 0.6, "stop_grace_sec": 45, "stop_confirm_ticks": 3, "min_sell_bid": 0.15, "max_edge": 0.20, "arb_enabled": 0}
 
 # Paper-only exploration: loose thresholds so the log fills fast. Live ignores this entirely.
 EXPLORE = {"momentum_min_move_bps": 3, "momentum_min_confidence": 0.55, "momentum_window_sec": 45,
@@ -497,7 +523,7 @@ def scan(state, P):
             # at 0.85+ with broken stops. Across 2,209 clean windows a crowd move of 4-10 bps is the single best
             # setup we have: 256 cases, 75% wins, +0.049/share. The mild penalty above is enough.
             # record the reason this market did not qualify — the heartbeat reports the tally
-            if left < 20: block("too late in the window")     # every sub-20s entry in the record lost
+            if left < P["min_entry_left_sec"]: block("too late in the window")   # late entries chase a move already priced
             elif ask is None: block("no ask")
 
             elif abs(mv) < P["momentum_min_move_bps"]: block(f"move under {P['momentum_min_move_bps']} bps")
@@ -508,7 +534,7 @@ def scan(state, P):
             else:
                 nm = round(conf - ask - fee(ask, P) - P["slippage"], 4)
                 if diag["closest"] is None or nm > diag["closest"][1]: diag["closest"] = (m["asset"], nm)
-            if left >= 20 and ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
+            if left >= P["min_entry_left_sec"] and ask is not None and abs(mv) >= P["momentum_min_move_bps"] and P["momentum_min_ask"] <= ask <= P["momentum_max_ask"]:
                 sigs.append({**base, "type": "MOMENTUM", "asset": m["asset"], "token": m["up"] if up_side else m["down"],
                              "outcome": 0 if up_side else 1, "ask": ask, "gross_edge": round(conf - ask - fee(ask, P), 4),
                              "liquidity_usd": liq, "confidence": round(conf, 3), "move_bps": round(mv, 1), "peers": f"{agree}/{against}"})
@@ -706,6 +732,15 @@ def manage(state, P):
                 p["held_cheap"] = True
             keep.append(p); continue
         ok, resp = sell(leg["token"], leg["shares"])
+        if ok and is_live():
+            # a fill-and-kill sell takes only what the book absorbs; a stop on 2026-09-21 left one share that rode to a loss
+            for _ in range(3):
+                time.sleep(1.5)
+                rem = held_shares(leg["token"])
+                if rem is None or rem < 1: break
+                ok2, r2 = sell(leg["token"], rem)
+                journal(f"{p['slug']}: {rem:.2f} shares left after the exit — sold again {'OK' if ok2 else 'FAILED ' + str(r2)[:50]}")
+                if not ok2: break
         if not ok:
             p["sell_fails"] = p.get("sell_fails", 0) + 1
             if p["sell_fails"] in (1, 5): journal(f"sell failed ({reason}) {p['slug']}: {resp}")
@@ -890,6 +925,8 @@ def main():
         journal(f"resuming from {state['mode']}: the limit that stopped it no longer applies"); state["mode"] = "CAUTIOUS"
     if state is None or (state.get("mode") == "DEAD" and state.get("bankroll_usd", 0) <= 0) or bool(state.get("live_mode")) != os.path.exists("LIVE"):
         state = fresh_state(); commit(state, "survivor: startup")
+    try: rebuild_lessons()
+    except Exception as e: log("rebuild lessons err", e)
     if os.path.exists("LIVE"): state["relay_seen"] = relay_url(); check_relay(state)
     t0 = time.time(); last_pull = last_commit = last_bal = time.time(); last_sweep = 0; scans = 0; dirty = False
     scan_errs, last_err = 0, ""
