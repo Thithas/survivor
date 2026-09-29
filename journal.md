@@ -16143,3 +16143,4 @@
 - 2026-09-29T12:03:43+00:00 xrp-updown-5m-1790683200: 5.31 shares left after the exit — sold again FAILED size too small (0.006123)
 - 2026-09-29T12:03:43+00:00 sold MOMENTUM xrp-updown-5m-1790683200 pnl +1.98 (take profit @ 0.90 with 80s left) | today -0.26 | bankroll 48.74
 - 2026-09-29T12:03:44+00:00 heartbeat: 2541 scans, 0 open, mode CAUTIOUS, bankroll 48.74, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790683200, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T12:03:47+00:00 heartbeat: 2542 scans, 0 open, mode CAUTIOUS, bankroll 48.74, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790683200, opens 60, blocked by {'too late in the window': 5}, closest None
