@@ -16546,3 +16546,5 @@
 - 2026-09-29T19:18:37+00:00 sol-updown-5m-1790709300: 4.75 shares left after the exit — sold again FAILED size too small (0.005763)
 - 2026-09-29T19:18:37+00:00 sold MOMENTUM sol-updown-5m-1790709300 pnl -1.72 (stop loss @ 0.21 with 85s left) | today +6.06 | bankroll 47.79
 - 2026-09-29T19:18:38+00:00 heartbeat: 8002 scans, 0 open, mode CAUTIOUS, bankroll 47.79, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790709300, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T19:19:58+00:00 balance confirmed 47.79 -> 45.85
+- 2026-09-29T19:20:23+00:00 heartbeat: 8139 scans, 0 open, mode CAUTIOUS, bankroll 45.85, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790709600, opens 60, blocked by {'outside the last 150s': 5}, closest None
