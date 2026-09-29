@@ -16471,3 +16471,4 @@
 - 2026-09-29T15:57:51+00:00 sol-updown-5m-1790697300: filled 107% of the order (5.36 shares) — position resized to 3.21
 - 2026-09-29T15:57:56+00:00 not opening positions: balance change awaiting confirmation
 - 2026-09-29T15:58:03+00:00 heartbeat: 15586 scans, 1 open, mode CAUTIOUS, bankroll 45.59, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790697300, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T15:58:21+00:00 heartbeat: 15604 scans, 1 open, mode CAUTIOUS, bankroll 45.59, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790697300, opens 60, blocked by {'too late in the window': 5}, closest None
