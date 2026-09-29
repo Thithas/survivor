@@ -16569,3 +16569,4 @@
 - 2026-09-29T17:08:41+00:00 heartbeat: 19554 scans, 1 open, mode CAUTIOUS, bankroll 42.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790701500, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-29T17:09:17+00:00 sell failed (take profit) xrp-updown-5m-1790701500: not enough balance / allowance: the balance is not enough -> balance: 6341464, sum of matched orders: 6340000, order amount (inc. fees): 6340000
 - 2026-09-29T17:09:17+00:00 heartbeat: 19597 scans, 1 open, mode CAUTIOUS, bankroll 42.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.05 on xrp-updown-5m-1790701500, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T17:09:21+00:00 run end: 19597 scans, mode CAUTIOUS, bankroll 42.40, today -7.26, open 1, stats {'wins': 52, 'losses': 78, 'pnl': -37.7675, 'arb': 0, 'momentum': 130}
