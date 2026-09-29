@@ -16268,3 +16268,5 @@
 - 2026-09-29T10:48:47+00:00 sell failed (take profit) xrp-updown-5m-1790678700: size too small (0.004762)
 - 2026-09-29T10:48:47+00:00 heartbeat: 19001 scans, 1 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-29T10:49:12+00:00 heartbeat: 19033 scans, 1 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T10:49:42+00:00 balance confirmed 46.16 -> 47.17
+- 2026-09-29T10:51:56+00:00 heartbeat: 19186 scans, 1 open, mode NORMAL, bankroll 47.17, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790679000, opens 60, blocked by {'outside the last 150s': 5}, closest None
