@@ -16473,3 +16473,7 @@
 - 2026-09-29T15:58:03+00:00 heartbeat: 15586 scans, 1 open, mode CAUTIOUS, bankroll 45.59, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790697300, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-29T15:58:21+00:00 heartbeat: 15604 scans, 1 open, mode CAUTIOUS, bankroll 45.59, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790697300, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-29T15:58:34+00:00 heartbeat: 15618 scans, 1 open, mode CAUTIOUS, bankroll 45.59, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790697300, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T15:58:46+00:00 sell failed (stop loss) sol-updown-5m-1790697300: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
+- 2026-09-29T15:58:49+00:00 sol-updown-5m-1790697300: bid 0.19 is far under the 0.30 stop — book emptied, holding to resolution
+- 2026-09-29T15:58:56+00:00 balance confirmed 45.59 -> 42.50
+- 2026-09-29T16:00:35+00:00 heartbeat: 15772 scans, 1 open, mode CAUTIOUS, bankroll 42.50, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790697600, opens 60, blocked by {'outside the last 150s': 5}, closest None
