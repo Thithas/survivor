@@ -16289,3 +16289,4 @@
 - 2026-09-29T10:59:06+00:00 heartbeat: 19649 scans, 0 open, mode NORMAL, bankroll 47.17, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790679300, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-29T10:59:54+00:00 balance confirmed 47.17 -> 49.33
 - 2026-09-29T11:00:59+00:00 heartbeat: 19776 scans, 0 open, mode NORMAL, bankroll 49.33, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790679600, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-29T11:02:08+00:00 heartbeat: 19816 scans, 0 open, mode NORMAL, bankroll 49.33, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790679600, opens 60, blocked by {'outside the last 150s': 5}, closest None
