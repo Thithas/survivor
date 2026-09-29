@@ -16125,3 +16125,4 @@
 - 2026-09-29T11:54:02+00:00 doge-updown-5m-1790682600: 5.36 shares left after the exit — sold again FAILED size too small (0.003637)
 - 2026-09-29T11:54:02+00:00 sold MOMENTUM doge-updown-5m-1790682600 pnl -1.84 (stop loss @ 0.26 with 61s left) | today -2.24 | bankroll 47.93
 - 2026-09-29T11:54:02+00:00 heartbeat: 2018 scans, 0 open, mode CAUTIOUS, bankroll 47.93, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790682600, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T11:54:40+00:00 heartbeat: 2058 scans, 0 open, mode CAUTIOUS, bankroll 47.93, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790682900, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
