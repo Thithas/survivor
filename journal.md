@@ -16264,3 +16264,6 @@
 - 2026-09-29T10:47:45+00:00 xrp-updown-5m-1790678700: filled 97% of the order (4.90 shares) — position resized to 2.99
 - 2026-09-29T10:48:06+00:00 heartbeat: 18960 scans, 1 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-29T10:48:35+00:00 heartbeat: 18992 scans, 1 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T10:48:43+00:00 sell failed (take profit) xrp-updown-5m-1790678700: size too small (0.004762)
+- 2026-09-29T10:48:47+00:00 sell failed (take profit) xrp-updown-5m-1790678700: size too small (0.004762)
+- 2026-09-29T10:48:47+00:00 heartbeat: 19001 scans, 1 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'too late in the window': 5}, closest None
