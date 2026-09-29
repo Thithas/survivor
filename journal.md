@@ -16260,3 +16260,6 @@
 - 2026-09-29T10:45:22+00:00 heartbeat: 18834 scans, 0 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-29T10:47:33+00:00 LIVE MOMENTUM xrp-updown-5m-1790678700 $3.09 edge 0.0333 move 8.7 bps peers 2/0
 - 2026-09-29T10:47:34+00:00 heartbeat: 18926 scans, 1 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'move under 6 bps': 4}, closest ('xrp', 0.0333)
+- 2026-09-29T10:47:42+00:00 not opening positions: balance change awaiting confirmation
+- 2026-09-29T10:47:45+00:00 xrp-updown-5m-1790678700: filled 97% of the order (4.90 shares) — position resized to 2.99
+- 2026-09-29T10:48:06+00:00 heartbeat: 18960 scans, 1 open, mode NORMAL, bankroll 46.16, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790678700, opens 60, blocked by {'too late in the window': 5}, closest None
