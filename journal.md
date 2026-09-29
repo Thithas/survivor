@@ -16281,3 +16281,4 @@
 - 2026-09-29T10:57:43+00:00 xrp-updown-5m-1790679300: filled 102% of the order (5.49 shares) — position resized to 2.74
 - 2026-09-29T10:57:53+00:00 not opening positions: balance change awaiting confirmation
 - 2026-09-29T10:58:01+00:00 heartbeat: 19576 scans, 1 open, mode NORMAL, bankroll 47.17, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790679300, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T10:58:07+00:00 heartbeat: 19579 scans, 1 open, mode NORMAL, bankroll 47.17, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790679300, opens 60, blocked by {'too late in the window': 5}, closest None
