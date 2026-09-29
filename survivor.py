@@ -142,11 +142,11 @@ RUN_SECONDS = int(os.environ.get("RUN_SECONDS", "21000"))
 IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
 PULL_EVERY, COMMIT_EVERY = 120, 600
 
-HARD = {"floor_usd": 0.5, "daily_loss_cap_usd": 999.0, "max_trade_pct": 0.12,
-        "max_open_positions": 2, "max_exposure_pct": 0.35}
-# Owner decision 2026-09-21: no floor and no daily cap — the agent keeps running and gathering experience.
-# What bounds risk: 12% per trade (the least that lets a 5-share ticket cover the entry band at a small balance), 2 positions, 35% exposed at once, and validated lessons that veto entries.
-# 0.50 is mechanical only: below it no 5-share order can be placed.
+HARD = {"floor_usd": 20.0, "daily_loss_cap_usd": 15.0, "max_trade_pct": 0.10,
+        "max_open_positions": 2, "max_exposure_pct": 0.30}
+# V2 brief, 2026-09-22, fresh $40. Protect the capital first, trade second.
+# Every entry passes through decide(); there is no forced, arb or recovery path that can skip these.
+# If the 5-share minimum exceeds 10% of bankroll the trade is skipped (MIN_ORDER_BLOCK) — never resized up.
 BOUNDS = {"min_edge": (0.01, 0.08), "max_trade_pct": (0.02, 0.15), "momentum_min_confidence": (0.40, 0.85),
           "momentum_window_sec": (10, 240), "max_open_positions": (1, 2), "min_liquidity_usd": (20, 200),
           "fees": (0.0, 0.05), "slippage": (0.0, 0.05), "momentum_min_move_bps": (3, 30),
@@ -544,8 +544,25 @@ def scan(state, P):
     state["diag"] = diag
     return sigs
 
+def unhealthy(state):
+    """If we cannot trust balance, records or the relay, we do not guess — we stop opening positions."""
+    why = []
+    if state.get("bad_reads", 0) >= 3: why.append("balance readings unconfirmed")
+    if state.get("settle_fails", 0) >= 5: why.append("settlement failing")
+    if _push_fails >= 3: why.append("records not reaching GitHub")
+    if state.get("pending_read") is not None: why.append("balance change awaiting confirmation")
+    if os.path.exists("LIVE") and not relay_url(): why.append("no relay")
+    return ", ".join(why)
+
 def decide(state, P, sigs):
     if state["mode"] in ("DEAD", "HIBERNATE"): return []
+    sick = unhealthy(state)
+    if sick:
+        if state.get("sick_note") != sick:
+            journal(f"not opening positions: {sick}"); notify(f"Paused new entries: {sick}")
+            state["sick_note"] = sick
+        return []
+    state["sick_note"] = None
     caut = state["mode"] == "CAUTIOUS"
     # CAUTIOUS already halves the stake; raising the entry bar on top of that was a second penalty for the
     # same losing streak and shut the 0.65-0.85 band out entirely. Smaller size is the caution now.
@@ -704,6 +721,14 @@ def manage(state, P):
             else: keep.append(p); continue
         # (A sibling-stop used to live here. With one bet per direction per window, the only possible sibling is
         # the OPPOSITE side, so forcing it out sold likely winners. Each position now stands on its own price.)
+        if is_live() and not p.get("filled_checked") and (now() - parse(p["ts"])).total_seconds() > 12:
+            p["filled_checked"] = True
+            real = held_shares(leg["token"])
+            if real is not None and real > 0 and abs(real - leg["shares"]) > 0.05:
+                got = real / leg["shares"] if leg["shares"] else 1
+                p["partial_fill"] = round(got, 3)
+                p["stake"] = round(p["stake"] * got, 4); leg["shares"] = real
+                journal(f"{p['slug']}: filled {got:.0%} of the order ({real:.2f} shares) — position resized to {p['stake']:.2f}")
         p["peak_bid"] = max(p.get("peak_bid", 0.0), bid)          # trailing lock: once it was a near-certain win, don't ride it back down
         # Every exit under two minutes in the record lost — 41 of 41. Entries at 0.51 "fell" to 0.22 in five
         # seconds, which is the book emptying after we took the ask, not the market moving. So: leave a position
@@ -786,6 +811,8 @@ def record(state, p, pnl, winner, note=""):
     why = classify(p, pnl, note)
     learn(state, p, pnl, why)
     decide_log(state, "EXIT", {"slug": p["slug"], "type": p["type"], "ask": p.get("entry_price"),
+                               "partial_fill": p.get("partial_fill"), "exit_bid": p.get("exit_bid"),
+                               "stop_at": p.get("stop_at"), "peak_bid": round(p.get("peak_bid", 0), 3),
                                "move_bps": p.get("move_bps"), "peers": p.get("peers"),
                                "confidence": p.get("confidence")},
                stake=p["stake"], pnl=pnl, exit_reason=note or "settled at expiry", lesson=why,
