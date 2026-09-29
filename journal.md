@@ -16405,3 +16405,4 @@
 - 2026-09-29T15:12:56+00:00 not opening positions: balance change awaiting confirmation
 - 2026-09-29T15:13:19+00:00 doge-updown-5m-1790694600: bid 0.02 is far under the 0.29 stop — book emptied, holding to resolution
 - 2026-09-29T15:13:30+00:00 heartbeat: 13105 scans, 1 open, mode CAUTIOUS, bankroll 53.98, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on doge-updown-5m-1790694600, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T15:13:34+00:00 heartbeat: 13106 scans, 1 open, mode CAUTIOUS, bankroll 53.98, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on doge-updown-5m-1790694600, opens 60, blocked by {'too late in the window': 5}, closest None
