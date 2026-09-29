@@ -16194,3 +16194,5 @@
 - 2026-09-29T10:12:45+00:00 heartbeat: 16962 scans, 1 open, mode CAUTIOUS, bankroll 39.07, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790676600, opens 60, blocked by {'side too dear': 3, 'side too cheap (market disagrees)': 1}, closest ('doge', 0.0432)
 - 2026-09-29T10:12:56+00:00 doge-updown-5m-1790676600: filled 98% of the order (4.92 shares) — position resized to 2.95
 - 2026-09-29T10:13:00+00:00 heartbeat: 16978 scans, 1 open, mode CAUTIOUS, bankroll 39.07, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790676600, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T10:13:04+00:00 not opening positions: balance change awaiting confirmation
+- 2026-09-29T10:13:16+00:00 heartbeat: 16994 scans, 1 open, mode CAUTIOUS, bankroll 39.07, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790676600, opens 60, blocked by {'too late in the window': 5}, closest None
