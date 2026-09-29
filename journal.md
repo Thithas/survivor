@@ -16727,3 +16727,10 @@
 - 2026-09-29T21:32:38+00:00 heartbeat: 16530 scans, 0 open, mode CAUTIOUS, bankroll 46.03, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790717400, opens 60, blocked by {'move under 6 bps': 2, 'side too cheap (market disagrees)': 3}, closest None
 - 2026-09-29T21:32:42+00:00 LIVE MOMENTUM xrp-updown-5m-1790717400 $2.8 edge 0.0828 move 6.7 bps peers 4/0
 - 2026-09-29T21:32:42+00:00 heartbeat: 16531 scans, 1 open, mode CAUTIOUS, bankroll 46.03, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790717400, opens 60, blocked by {'move under 6 bps': 2}, closest ('doge', 0.0927)
+- 2026-09-29T21:33:20+00:00 sell failed (take profit) xrp-updown-5m-1790717400: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
+- 2026-09-29T21:33:20+00:00 not opening positions: balance change awaiting confirmation
+- 2026-09-29T21:33:25+00:00 xrp-updown-5m-1790717400: 5.00 shares left after the exit — sold again OK
+- 2026-09-29T21:33:28+00:00 xrp-updown-5m-1790717400: 5.00 shares left after the exit — sold again OK
+- 2026-09-29T21:33:29+00:00 xrp-updown-5m-1790717400: 5.00 shares left after the exit — sold again FAILED size too small (0.01)
+- 2026-09-29T21:33:29+00:00 sold MOMENTUM xrp-updown-5m-1790717400 pnl +1.67 (take profit @ 0.90 with 97s left) | today +9.35 | bankroll 46.03
+- 2026-09-29T21:33:30+00:00 heartbeat: 16586 scans, 0 open, mode CAUTIOUS, bankroll 46.03, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790717400, opens 60, blocked by {'too late in the window': 5}, closest None
