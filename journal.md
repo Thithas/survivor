@@ -16668,3 +16668,4 @@
 - 2026-09-29T20:43:38+00:00 sold MOMENTUM doge-updown-5m-1790714400 pnl +1.59 (take profit @ 0.91 with 84s left) | today +9.11 | bankroll 43.67
 - 2026-09-29T20:43:39+00:00 heartbeat: 13422 scans, 1 open, mode CAUTIOUS, bankroll 43.67, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790714400, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-29T20:43:41+00:00 heartbeat: 13423 scans, 1 open, mode CAUTIOUS, bankroll 43.67, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790714400, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T20:43:46+00:00 heartbeat: 13424 scans, 1 open, mode CAUTIOUS, bankroll 43.67, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790714400, opens 60, blocked by {'too late in the window': 5}, closest None
