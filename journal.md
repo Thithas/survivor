@@ -16435,3 +16435,7 @@
 - 2026-09-29T17:52:38+00:00 not opening positions: balance change awaiting confirmation
 - 2026-09-29T17:52:46+00:00 xrp-updown-5m-1790704200: filled 102% of the order (5.10 shares) — position resized to 2.55
 - 2026-09-29T17:53:28+00:00 heartbeat: 2416 scans, 1 open, mode CAUTIOUS, bankroll 46.83, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790704200, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T17:53:39+00:00 balance confirmed 46.83 -> 44.24
+- 2026-09-29T17:54:05+00:00 xrp-updown-5m-1790704200: 5.10 shares left after the exit — sold again FAILED not enough balance / allowance: the balance is not
+- 2026-09-29T17:54:05+00:00 sold MOMENTUM xrp-updown-5m-1790704200 pnl -1.54 (stop loss @ 0.21 with 58s left) | today +4.80 | bankroll 44.24
+- 2026-09-29T17:54:06+00:00 heartbeat: 2460 scans, 0 open, mode CAUTIOUS, bankroll 44.24, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790704200, opens 60, blocked by {'too late in the window': 5}, closest None
