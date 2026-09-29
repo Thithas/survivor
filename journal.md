@@ -16577,3 +16577,7 @@
 - 2026-09-29T19:36:03+00:00 heartbeat: 9106 scans, 0 open, mode CAUTIOUS, bankroll 43.93, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790710500, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-29T19:37:31+00:00 LIVE MOMENTUM sol-updown-5m-1790710500 $2.85 edge 0.0728 move -7.5 bps peers 3/0
 - 2026-09-29T19:37:32+00:00 heartbeat: 9174 scans, 1 open, mode CAUTIOUS, bankroll 43.93, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790710500, opens 60, blocked by {'move under 6 bps': 2, 'side too dear': 1, 'edge too thin': 1}, closest ('sol', 0.0728)
+- 2026-09-29T19:37:46+00:00 sell failed (take profit) sol-updown-5m-1790710500: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
+- 2026-09-29T19:37:59+00:00 sol-updown-5m-1790710500: 5.00 shares left after the exit — sold again FAILED size too small (0.0)
+- 2026-09-29T19:37:59+00:00 sold MOMENTUM sol-updown-5m-1790710500 pnl +1.62 (take profit @ 0.90 with 123s left) | today +5.79 | bankroll 43.93
+- 2026-09-29T19:38:00+00:00 heartbeat: 9205 scans, 0 open, mode CAUTIOUS, bankroll 43.93, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790710500, opens 60, blocked by {'move under 6 bps': 2, 'side too dear': 3}, closest None
