@@ -16477,3 +16477,5 @@
 - 2026-09-29T15:58:49+00:00 sol-updown-5m-1790697300: bid 0.19 is far under the 0.30 stop — book emptied, holding to resolution
 - 2026-09-29T15:58:56+00:00 balance confirmed 45.59 -> 42.50
 - 2026-09-29T16:00:35+00:00 heartbeat: 15772 scans, 1 open, mode CAUTIOUS, bankroll 42.50, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790697600, opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-09-29T16:03:59+00:00 closed MOMENTUM sol-updown-5m-1790697300 pnl -3.21 | today -7.40 | bankroll 42.50
+- 2026-09-29T16:04:00+00:00 heartbeat: 15924 scans, 0 open, mode CAUTIOUS, bankroll 42.50, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790697600, opens 60, blocked by {'too late in the window': 5}, closest None
