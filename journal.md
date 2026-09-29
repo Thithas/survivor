@@ -15874,3 +15874,6 @@
 - 2026-09-29T05:26:14+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 40.61
 - 2026-09-29T05:26:18+00:00 not opening positions: balance readings unconfirmed
 - 2026-09-29T05:26:19+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 2.67, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790659500, opens 60, blocked by {'no opening price captured': 5}, closest None
+- 2026-09-29T05:27:16+00:00 not opening positions: balance readings unconfirmed, balance change awaiting confirmation
+- 2026-09-29T05:28:16+00:00 balance confirmed 2.67 -> 40.61
+- 2026-09-29T05:32:52+00:00 heartbeat: 484 scans, 0 open, mode CAUTIOUS, bankroll 40.61, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'no ask': 5}, closest None
