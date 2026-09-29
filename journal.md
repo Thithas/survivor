@@ -16360,3 +16360,6 @@
 - 2026-09-29T14:42:45+00:00 sol-updown-5m-1790692800: filled 103% of the order (5.16 shares) — position resized to 3.35
 - 2026-09-29T14:43:17+00:00 not opening positions: balance change awaiting confirmation
 - 2026-09-29T14:43:50+00:00 heartbeat: 11517 scans, 1 open, mode CAUTIOUS, bankroll 55.70, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790692800, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-29T14:44:00+00:00 sol-updown-5m-1790692800: 5.16 shares left after the exit — sold again FAILED no orders found to match with FAK order. FAK order
+- 2026-09-29T14:44:00+00:00 sold MOMENTUM sol-updown-5m-1790692800 pnl -1.93 (stop loss @ 0.29 with 63s left) | today +3.23 | bankroll 55.70
+- 2026-09-29T14:44:01+00:00 heartbeat: 11520 scans, 0 open, mode CAUTIOUS, bankroll 55.70, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790692800, opens 60, blocked by {'too late in the window': 5}, closest None
