@@ -16205,3 +16205,5 @@
 - 2026-09-29T10:15:05+00:00 balance confirmed 39.07 -> 40.54
 - 2026-09-29T10:17:33+00:00 order failed MOMENTUM eth-updown-5m-1790676900: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
 - 2026-09-29T10:17:33+00:00 heartbeat: 17260 scans, 0 open, mode CAUTIOUS, bankroll 40.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790676900, opens 60, blocked by {'side too dear': 2, 'move under 6 bps': 2}, closest ('eth', 0.0241)
+- 2026-09-29T10:17:43+00:00 LIVE MOMENTUM eth-updown-5m-1790676900 $2.6 edge 0.0225 move -8.1 bps peers 3/0
+- 2026-09-29T10:17:43+00:00 heartbeat: 17268 scans, 1 open, mode CAUTIOUS, bankroll 40.54, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790676900, opens 60, blocked by {'side too dear': 2, 'move under 6 bps': 2}, closest ('eth', 0.0225)
