@@ -1,0 +1,60 @@
+{
+  "lastRun": "2026-09-30T11:06:40.641Z",
+  "confidence": 0.72,
+  "marketRegime": "Choppy, low-volatility 5-minute crypto microstructure with frequent small momentum moves (6-15bps) that lack follow-through — consistent with a mean-reverting/noisy intraday regime rather than trending. The 'move10-20' and 'move<10' buckets being unprofitable while 'move20+' is strongly profitable confirms that only larger dislocations carry genuine short-term momentum signal; smaller moves are largely noise that the market quickly reverts. Peer agreement ('all-agree') no longer discriminates well, suggesting correlated/lagging cross-asset signals in this current regime (possibly all majors moving together on macro/BTC-driven flows), reducing its value as an independent confirmation.",
+  "appliedCount": 6,
+  "applied": [
+    {
+      "param": "momentum_min_move_bps",
+      "from": 6,
+      "to": 15,
+      "reason": "Lesson buckets show 'move<10' (-$5.55, 123 trades) and 'move10-20' (-$33.47, 81 trades, validated) are both net losers while 'move20+' (+$10.14, 43 trades) is strongly profitable. Raising the minimum move threshold from 6 to 15 bps directly filters out both negative buckets and concentrates trades in the only proven-profitable move regime.",
+      "confidence": 0.85
+    },
+    {
+      "param": "momentum_min_confidence",
+      "from": 0.4,
+      "to": 0.6,
+      "reason": "49% WR on 383 momentum trades with many entries at conf=0.57-0.67 getting stopped out quickly indicates the confidence signal is weakly calibrated at current threshold; raising the floor should cut low-quality entries that contribute to the 14-trade max loss streak.",
+      "confidence": 0.55
+    },
+    {
+      "param": "momentum_max_ask",
+      "from": 0.7,
+      "to": 0.6,
+      "reason": "price0.55-0.70 bucket (84 trades) shows negative expectancy (-0.086); tightening the max ask ceiling to 0.6 removes the upper portion of this toxic pricing zone while preserving the profitable price0.45-0.55 bucket (+0.026 expectancy).",
+      "confidence": 0.5
+    },
+    {
+      "param": "min_entry_left_sec",
+      "from": 120,
+      "to": 130,
+      "reason": "'left60-120' bucket is validated-veto at -$20.25/59 trades while 'left120+' is profitable (+$10.77/175 trades). Nudging the minimum time-remaining requirement up narrows exposure to the safer window and reduces edge-case entries near the veto boundary.",
+      "confidence": 0.5
+    },
+    {
+      "param": "max_trade_pct",
+      "from": 0.1,
+      "to": 0.07,
+      "reason": "With bankroll at $33.55 and a documented 14-trade max loss streak plus MOMENTUM setup barely above coinflip (49% WR), reducing position sizing preserves capital during regime uncertainty without needing to change entry logic; this is a risk-management lever, not an edge lever.",
+      "confidence": 0.4
+    },
+    {
+      "param": "stop_loss_bid",
+      "from": 0.25,
+      "to": 0.2,
+      "reason": "Multiple stop-losses are triggering very quickly after entry (69-99s left) suggesting the stop may be cutting trades before mean-reversion/noise resolves; loosening slightly (lower bid trigger) combined with tighter entry filters (move_bps, confidence) should reduce whipsaw exits. Low confidence since this trades off against risk control.",
+      "confidence": 0.3
+    }
+  ],
+  "skippedCount": 0,
+  "skipped": [],
+  "diagnosis": "The bot is roughly breakeven overall (50.7% WR, -$68.37 across 404 trades) but the negative P&L is concentrated in specific, identifiable segments rather than being systemic. The MOMENTUM strategy (383 trades) is the sole loss driver at -$55.81/49% WR, while ARB is small but strongly profitable (92% WR, +$5.89). Lesson buckets clearly show which conditions are toxic: 'move10-20' bps moves (-$33.47, 28/81=35% WR) and 'price<0.45' entries (-$19.54, 19/62=31% WR) and 'left60-120' (-$20.25, 21/59=36% WR) are all validated losers and already vetoed/should stay vetoed — this is working as designed and is visibly filtering out bad trades in the recent decision log. However, 'all-agree' peer consensus (112 trades, -$18.99, 'reduce_confidence' status) is underweighted — despite full peer agreement, WR is only 44.6%, suggesting the peer-agreement signal is not adding edge and may be inversely correlated with true edge, likely due to correlated/lagging peer reads across the same market regime. DOGE (-$23.45, 39% WR) is the worst coin and should be deprioritized or given stricter thresholds. BTC is the only clearly profitable coin (+$10.83, 60% WR) suggesting some coin-specific alpha or lower noise. The recent decision log shows heavy activity in the 0.5-0.65 ask / 6-15 bps move / all-peer-agree zone — exactly the zone that lesson buckets flag as marginal-to-negative (price0.55-0.70 bucket: -$7.21 expectancy -0.086; move<10 bucket: -$5.55 expectancy -0.045). The bot is still entering these zones repeatedly even though 'all-agree' and small-move buckets have negative expectancy, meaning confidence/edge thresholds are too permissive for these overlapping bad conditions. Take-profit/stop-loss exits are functioning (multiple TP@0.90-0.93 hits, SL@0.19-0.25 hits visible), but frequent stop-losses right after entry (74s, 69s, 89s left) with confidence 0.67 suggests entries are happening too close to coinflip-quality signals.",
+  "priorityActions": [
+    "Raise momentum_min_move_bps from 6 to 15 to exit the two proven-negative move buckets (move<10, move10-20) and concentrate trades in the move20+ regime that has +$10.14 P&L over 43 trades.",
+    "Escalate 'all-agree' lesson bucket from reduce_confidence to veto or a much larger confidence penalty — it is costing -$18.99 across 112 trades despite being the bot's highest apparent confidence signal.",
+    "Reduce max_trade_pct from 0.1 to 0.07 to protect the $33.55 bankroll given the 14-trade max loss streak already realized and MOMENTUM setup's 49% WR.",
+    "Apply a DOGE-specific throttle (raise its effective min_edge/momentum_min_confidence or lower its position sizing) given -$23.45 P&L and 39% WR, the weakest coin by a wide margin.",
+    "Audit enforcement of the 'left60-120' veto (validated, -$20.25/59 trades) — it isn't visible in the recent decision log sample and should be confirmed active alongside the move10-20 veto that is clearly firing correctly."
+  ]
+}
