@@ -16915,3 +16915,5 @@
 - 2026-09-30T09:02:32+00:00 LIVE MOMENTUM doge-updown-5m-1790758800 $3.1 edge 0.0235 move -6.4 bps peers 3/0
 - 2026-09-30T09:02:33+00:00 heartbeat: 697 scans, 1 open, mode CAUTIOUS, bankroll 35.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790758800, opens 60, blocked by {'move under 6 bps': 2, 'side too cheap (market disagrees)': 2}, closest ('doge', 0.0235)
 - 2026-09-30T09:02:40+00:00 heartbeat: 701 scans, 1 open, mode CAUTIOUS, bankroll 35.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790758800, opens 60, blocked by {'move under 6 bps': 2, 'side too cheap (market disagrees)': 3}, closest None
+- 2026-09-30T09:02:45+00:00 doge-updown-5m-1790758800: filled 84% of the order (4.19 shares) — position resized to 2.60
+- 2026-09-30T09:02:51+00:00 heartbeat: 707 scans, 1 open, mode CAUTIOUS, bankroll 35.40, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790758800, opens 60, blocked by {'move under 6 bps': 5}, closest None
