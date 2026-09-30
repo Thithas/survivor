@@ -16786,3 +16786,8 @@
 - 2026-09-30T01:10:01+00:00 heartbeat: 6772 scans, 0 open, mode CAUTIOUS, bankroll 46.68, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790730600, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-30T01:12:48+00:00 LIVE MOMENTUM eth-updown-5m-1790730600 $2.8 edge 0.0828 move 7.9 bps peers 3/0
 - 2026-09-30T01:12:48+00:00 heartbeat: 6902 scans, 1 open, mode CAUTIOUS, bankroll 46.68, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790730600, opens 60, blocked by {'move under 6 bps': 1, 'side too dear': 1, 'edge too thin': 1}, closest ('eth', 0.0828)
+- 2026-09-30T01:13:00+00:00 eth-updown-5m-1790730600: filled 102% of the order (5.09 shares) — position resized to 2.85
+- 2026-09-30T01:13:05+00:00 not opening positions: balance change awaiting confirmation
+- 2026-09-30T01:13:35+00:00 eth-updown-5m-1790730600: bid 0.13 is far under the 0.28 stop — book emptied, holding to resolution
+- 2026-09-30T01:14:05+00:00 balance confirmed 46.68 -> 43.80
+- 2026-09-30T01:14:08+00:00 heartbeat: 6987 scans, 1 open, mode CAUTIOUS, bankroll 43.80, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790730600, opens 60, blocked by {'too late in the window': 5}, closest None
