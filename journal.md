@@ -16860,3 +16860,4 @@
 - 2026-09-30T01:53:36+00:00 xrp-updown-5m-1790733000: bid 0.12 is far under the 0.33 stop — book emptied, holding to resolution
 - 2026-09-30T01:53:54+00:00 balance confirmed 43.89 -> 40.56
 - 2026-09-30T01:54:45+00:00 heartbeat: 9239 scans, 1 open, mode CAUTIOUS, bankroll 40.56, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790733300, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
+- 2026-09-30T01:55:19+00:00 heartbeat: 9275 scans, 1 open, mode CAUTIOUS, bankroll 40.56, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790733300, opens 60, blocked by {'outside the last 150s': 5}, closest None
