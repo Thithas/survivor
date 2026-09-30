@@ -17053,3 +17053,4 @@
 - 2026-09-30T04:30:56+00:00 heartbeat: 18047 scans, 0 open, mode CAUTIOUS, bankroll 37.04, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790742600, opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-09-30T04:33:49+00:00 heartbeat: 18205 scans, 0 open, mode CAUTIOUS, bankroll 37.04, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on eth-updown-5m-1790742600, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-30T04:34:10+00:00 heartbeat: 18228 scans, 0 open, mode CAUTIOUS, bankroll 37.04, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on xrp-updown-5m-1790742600, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-30T04:35:34+00:00 code updated on main, restarting on next run
