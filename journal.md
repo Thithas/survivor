@@ -16870,3 +16870,4 @@
 - 2026-09-30T01:58:57+00:00 btc-updown-5m-1790733300: 6.00 shares left after the exit — sold again FAILED size too small (0.0)
 - 2026-09-30T01:58:57+00:00 sold MOMENTUM btc-updown-5m-1790733300 pnl +1.76 (take profit @ 0.90 with 66s left) | today +3.26 | bankroll 40.56
 - 2026-09-30T01:58:58+00:00 heartbeat: 9430 scans, 1 open, mode CAUTIOUS, bankroll 40.56, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790733300, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-30T01:59:20+00:00 heartbeat: 9451 scans, 1 open, mode CAUTIOUS, bankroll 40.56, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790733300, opens 60, blocked by {'too late in the window': 5}, closest None
