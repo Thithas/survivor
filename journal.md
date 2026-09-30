@@ -16843,3 +16843,9 @@
 - 2026-09-30T01:47:46+00:00 not opening positions: balance change awaiting confirmation
 - 2026-09-30T01:48:14+00:00 heartbeat: 8836 scans, 1 open, mode CAUTIOUS, bankroll 45.78, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790732700, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-30T01:48:22+00:00 heartbeat: 8842 scans, 1 open, mode CAUTIOUS, bankroll 45.78, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790732700, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-30T01:48:46+00:00 sell failed (stop loss) eth-updown-5m-1790732700: no orders found to match with FAK order. FAK orders are partially filled or killed if no match is found.
+- 2026-09-30T01:48:47+00:00 balance confirmed 45.78 -> 42.95
+- 2026-09-30T01:48:47+00:00 eth-updown-5m-1790732700: bid 0.17 is far under the 0.28 stop — book emptied, holding to resolution
+- 2026-09-30T01:48:54+00:00 eth-updown-5m-1790732700: 5.00 shares left after the exit — sold again FAILED size too small (0.0)
+- 2026-09-30T01:48:54+00:00 sold MOMENTUM eth-updown-5m-1790732700 pnl -1.71 (stop loss @ 0.22 with 69s left) | today +1.50 | bankroll 42.95
+- 2026-09-30T01:48:54+00:00 heartbeat: 8877 scans, 0 open, mode CAUTIOUS, bankroll 42.95, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790732700, opens 60, blocked by {'too late in the window': 5}, closest None
