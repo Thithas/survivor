@@ -16990,3 +16990,4 @@
 - 2026-09-30T10:03:38+00:00 balance confirmed 33.84 -> 30.76
 - 2026-09-30T10:04:20+00:00 sold MOMENTUM eth-updown-5m-1790762400 pnl +1.40 (take profit @ 0.90 with 42s left) | today -1.41 | bankroll 30.76
 - 2026-09-30T10:04:21+00:00 heartbeat: 3718 scans, 0 open, mode CAUTIOUS, bankroll 30.76, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on sol-updown-5m-1790762400, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-30T10:04:24+00:00 heartbeat: 3719 scans, 0 open, mode CAUTIOUS, bankroll 30.76, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.02 on sol-updown-5m-1790762400, opens 60, blocked by {'too late in the window': 5}, closest None
