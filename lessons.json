@@ -8,7 +8,7 @@
   "won at expiry": 109,
   "momentum reversed, stop did its job": 77,
   "gave back a gain after reaching the lock level": 3,
-  "held to expiry and the prediction was wrong": 39
+  "held to expiry and the prediction was wrong": 40
  },
  "_note": "Seeded from 151 live trades. Only crowd buckets are seeded: entry price is unrecoverable for losing trades in the old records, so price buckets start empty and fill from live data.",
  "_retired": {
@@ -21,25 +21,25 @@
  },
  "price0.55-0.70": {
   "condition": "price0.55-0.70",
-  "sample_size": 79,
+  "sample_size": 80,
   "wins": 41,
-  "losses": 38,
-  "pnl": -3.9927,
+  "losses": 39,
+  "pnl": -7.3459,
   "created_at": "2026-09-18T21:39:24+00:00",
-  "last_updated": "2026-09-30T02:01:05+00:00",
-  "expectancy": -0.0505,
+  "last_updated": "2026-09-30T03:07:46+00:00",
+  "expectancy": -0.0918,
   "status": "validated",
   "action": "none"
  },
  "move<10": {
   "condition": "move<10",
-  "sample_size": 119,
+  "sample_size": 120,
   "wins": 58,
-  "losses": 61,
-  "pnl": -0.8101,
+  "losses": 62,
+  "pnl": -4.1633,
   "created_at": "2026-09-18T21:39:24+00:00",
-  "last_updated": "2026-09-30T02:01:05+00:00",
-  "expectancy": -0.0068,
+  "last_updated": "2026-09-30T03:07:46+00:00",
+  "expectancy": -0.0347,
   "status": "validated",
   "action": "none"
  },
@@ -117,13 +117,13 @@
  },
  "left120+": {
   "condition": "left120+",
-  "sample_size": 170,
+  "sample_size": 171,
   "wins": 86,
-  "losses": 84,
-  "pnl": 13.9893,
+  "losses": 85,
+  "pnl": 10.6361,
   "created_at": "2026-09-19T07:27:10+00:00",
-  "last_updated": "2026-09-30T02:01:05+00:00",
-  "expectancy": 0.0823,
+  "last_updated": "2026-09-30T03:07:46+00:00",
+  "expectancy": 0.0622,
   "status": "validated",
   "action": "none"
  },
@@ -165,13 +165,13 @@
  },
  "all-agree": {
   "condition": "all-agree",
-  "sample_size": 110,
+  "sample_size": 111,
   "wins": 48,
-  "losses": 62,
-  "pnl": -21.9075,
+  "losses": 63,
+  "pnl": -25.2607,
   "created_at": "2026-09-19T19:17:15+00:00",
-  "last_updated": "2026-09-30T02:01:05+00:00",
-  "expectancy": -0.1992,
+  "last_updated": "2026-09-30T03:07:46+00:00",
+  "expectancy": -0.2276,
   "status": "validated",
   "action": "reduce_confidence"
  }
