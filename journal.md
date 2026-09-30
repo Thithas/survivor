@@ -16709,3 +16709,6 @@
 - 2026-09-30T00:23:12+00:00 heartbeat: 4172 scans, 1 open, mode CAUTIOUS, bankroll 43.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790727600, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-30T00:23:17+00:00 heartbeat: 4173 scans, 1 open, mode CAUTIOUS, bankroll 43.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790727600, opens 60, blocked by {'too late in the window': 5}, closest None
 - 2026-09-30T00:23:20+00:00 heartbeat: 4174 scans, 1 open, mode CAUTIOUS, bankroll 43.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790727600, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-09-30T00:23:29+00:00 btc-updown-5m-1790727600: 5.00 shares left after the exit — sold again FAILED size too small (0.0)
+- 2026-09-30T00:23:29+00:00 sold MOMENTUM btc-updown-5m-1790727600 pnl +1.72 (take profit @ 0.90 with 93s left) | today +1.72 | bankroll 43.13
+- 2026-09-30T00:23:30+00:00 heartbeat: 4178 scans, 0 open, mode CAUTIOUS, bankroll 43.13, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790727600, opens 60, blocked by {'too late in the window': 5}, closest None
