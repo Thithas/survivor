@@ -217,13 +217,26 @@ def pull():
     if git("fetch", "-q", "origin", "main").returncode: return
     code_before = git("rev-parse", "HEAD:survivor.py").stdout.strip()
     wf_before = git("rev-parse", "HEAD:.github/workflows/survivor.yml").stdout.strip()
+    APPEND_ONLY = (TRADES_FILE, JOURNAL_FILE, WINDOWS_FILE, DECISIONS_FILE)
     keep = {}
     for f in BOT_FILES:
         try: keep[f] = open(f, "rb").read()
         except FileNotFoundError: pass
     git("reset", "-q", "--hard", "origin/main")
     for f, data in keep.items():
-        with open(f, "wb") as fh: fh.write(data)
+        if f in APPEND_ONLY:
+            # These only ever grow. Replacing them wholesale let a run holding an older copy erase newer
+            # records (2026-09-29: trades vanished between reads and the ledger stopped matching the balance).
+            # Union the two, keeping first-seen order, so nothing can be lost from either side.
+            try: remote = open(f, "rb").read()
+            except FileNotFoundError: remote = b""
+            seen, merged = set(), []
+            for line in remote.split(b"\n") + data.split(b"\n"):
+                if line.strip() and line not in seen:
+                    seen.add(line); merged.append(line)
+            with open(f, "wb") as fh: fh.write(b"\n".join(merged) + (b"\n" if merged else b""))
+        else:
+            with open(f, "wb") as fh: fh.write(data)
     code_after = git("rev-parse", "HEAD:survivor.py").stdout.strip()
     wf_after = git("rev-parse", "HEAD:.github/workflows/survivor.yml").stdout.strip()
     if (code_before and code_after and code_before != code_after) or (wf_before and wf_after and wf_before != wf_after):
@@ -762,7 +775,9 @@ def manage(state, P):
             for _ in range(3):
                 time.sleep(1.5)
                 rem = held_shares(leg["token"])
-                if rem is None or rem < 1: break
+                # If the API still reports nearly the whole position, it hasn't caught up with our sale yet.
+                # Acting on that stale number just fires an order the exchange rejects as "size too small".
+                if rem is None or rem < 1 or rem > leg["shares"] * 0.9: break
                 ok2, r2 = sell(leg["token"], rem)
                 journal(f"{p['slug']}: {rem:.2f} shares left after the exit — sold again {'OK' if ok2 else 'FAILED ' + str(r2)[:50]}")
                 if not ok2: break
