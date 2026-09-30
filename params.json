@@ -2,7 +2,7 @@
   "min_edge": 0.02,
   "max_trade_pct": 0.035,
   "momentum_min_confidence": 0.72,
-  "momentum_window_sec": 150,
+  "momentum_window_sec": 180,
   "max_open_positions": 2,
   "min_liquidity_usd": 20,
   "fees": 0,
