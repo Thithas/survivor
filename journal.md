@@ -17762,3 +17762,4 @@
 - 2026-10-01T03:49:56+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 0.00
 - 2026-10-01T03:49:59+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790826600, opens 60, blocked by {'no opening price captured': 5, 'outside the last 240s': 5}, closest None
 - 2026-10-01T03:52:39+00:00 heartbeat: 186 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.001 on btc-updown-5m-1790826600, opens 60, blocked by {'too late in the window': 5}, closest None
+- 2026-10-01T03:52:43+00:00 heartbeat: 187 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.003 on btc-updown-5m-1790826600, opens 60, blocked by {'too late in the window': 5}, closest None
