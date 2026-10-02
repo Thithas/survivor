@@ -19256,3 +19256,6 @@
 - 2026-10-02T05:49:41+00:00 heartbeat: 9854 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/10 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790920200, opens 60, blocked by {'too late in the window': 5, 'no opening price captured': 5}, closest None
 - 2026-10-02T05:50:00+00:00 heartbeat: 9874 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790920200, opens 60, blocked by {'outside the last 240s': 5}, closest None
 - 2026-10-02T05:51:13+00:00 heartbeat: 9948 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790920200, opens 60, blocked by {'move under 20 bps': 5}, closest None
+- 2026-10-02T07:06:20+00:00 lessons rebuilt from 404 trades; vetoes armed: move10-20, left60-120, price<0.45
+- 2026-10-02T07:06:22+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 0.00
+- 2026-10-02T07:06:25+00:00 heartbeat: 1 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down 1.01 on btc-updown-5m-1790924700, opens 60, blocked by {'no opening price captured': 5}, closest None
