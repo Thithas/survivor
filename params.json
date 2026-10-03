@@ -1,13 +1,13 @@
 {
   "min_edge": 0.08,
   "max_trade_pct": 0.02,
-  "momentum_min_confidence": 0.85,
+  "momentum_min_confidence": 0.7,
   "momentum_window_sec": 240,
   "max_open_positions": 1,
   "min_liquidity_usd": 80,
   "fees": 0,
   "slippage": 0.01,
-  "momentum_min_move_bps": 25,
+  "momentum_min_move_bps": 30,
   "momentum_max_ask": 0.5,
   "min_order_usd": 1,
   "take_profit_bid": 0.9,
@@ -20,6 +20,6 @@
   "lessons_enabled": 1,
   "stop_frac_of_entry": 0.5,
   "min_sell_bid": 0.15,
-  "min_entry_left_sec": 130,
+  "min_entry_left_sec": 140,
   "stop_confirm_ticks": 1
 }
