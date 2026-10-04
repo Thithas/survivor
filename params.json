@@ -7,7 +7,7 @@
   "min_liquidity_usd": 80,
   "fees": 0,
   "slippage": 0.01,
-  "momentum_min_move_bps": 25,
+  "momentum_min_move_bps": 22,
   "momentum_max_ask": 0.5,
   "min_order_usd": 1,
   "take_profit_bid": 0.9,
