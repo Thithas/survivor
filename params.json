@@ -7,7 +7,7 @@
   "min_liquidity_usd": 55,
   "fees": 0,
   "slippage": 0.01,
-  "momentum_min_move_bps": 30,
+  "momentum_min_move_bps": 20,
   "momentum_max_ask": 0.45,
   "min_order_usd": 1,
   "take_profit_bid": 0.9,
@@ -21,5 +21,5 @@
   "stop_frac_of_entry": 0.45,
   "min_sell_bid": 0.15,
   "min_entry_left_sec": 150,
-  "stop_confirm_ticks": 1
+  "stop_confirm_ticks": 2
 }
