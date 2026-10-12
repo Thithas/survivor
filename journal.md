@@ -32704,3 +32704,4 @@
 - 2026-10-12T19:26:04+00:00 redeem sweep: positions API failed (ReadTimeout: HTTPSConnectionPool(host='data-api.polymarket.com', port=443): Read timed out. ()
 - 2026-10-12T19:26:41+00:00 heartbeat: 4280 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'outside the last 150s': 5}, closest None
 - 2026-10-12T19:26:47+00:00 heartbeat: 4281 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'outside the last 150s': 5}, closest None
+- 2026-10-12T19:26:55+00:00 heartbeat: 4283 scans, 0 open, mode CAUTIOUS, bankroll 33.55, markets 100/5 in window across ['btc', 'doge', 'eth', 'sol', 'xrp'], best up+down None on , opens 60, blocked by {'outside the last 150s': 5}, closest None
