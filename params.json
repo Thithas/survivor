@@ -1,9 +1,9 @@
 {
   "min_edge": 0.08,
   "max_trade_pct": 0.03,
-  "momentum_min_confidence": 0.8,
+  "momentum_min_confidence": 0.85,
   "momentum_window_sec": 150,
-  "max_open_positions": 1,
+  "max_open_positions": 2,
   "min_liquidity_usd": 110,
   "fees": 0,
   "slippage": 0.01,
@@ -18,8 +18,8 @@
   "lock_from_bid": 0.95,
   "lock_giveback": 0.5,
   "lessons_enabled": 1,
-  "stop_frac_of_entry": 0.35,
+  "stop_frac_of_entry": 0.5,
   "min_sell_bid": 0.15,
   "min_entry_left_sec": 120,
-  "stop_confirm_ticks": 2
+  "stop_confirm_ticks": 1
 }
