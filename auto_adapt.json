@@ -1,52 +1,56 @@
 {
-  "lastRun": "2026-10-16T06:02:13.654Z",
-  "confidence": 0.68,
-  "marketRegime": "Choppy, low-momentum, rangebound crypto conditions: most recent trade setups show small moves (6-15bps) with ask prices clustered 0.5-0.65, and peer agreement is high (4/0) yet still unprofitable per the all-agree lesson bucket. This is a regime where naive momentum-following with high peer consensus is a false signal — real tradable edge only appears on larger moves (20+bps) and markets with more time remaining (120s+), both of which are underrepresented in current entries. The regime currently favors patience and narrower setup selection over broad momentum chasing.",
+  "lastRun": "2026-10-16T08:02:08.069Z",
+  "confidence": 0.72,
+  "marketRegime": "Choppy/low-conviction 5-minute crypto markets with frequent small reversals (many trades show move magnitudes of 6-15bps, i.e., weak momentum signals being traded as if strong). The lesson-veto log shows persistent small-to-medium moves (10-20bps) dominating current flow and getting correctly filtered, meaning the live market is currently generating marginal setups more than clean trending moves. Best performance historically comes from strong moves (20+bps) and markets with 120s+ time remaining — current recent decisions show many entries happening with only 120-150s left, near the edge of the min_entry_left_sec=150 threshold, in a market regime of frequent low-signal chop.",
   "appliedCount": 4,
   "applied": [
     {
       "param": "momentum_min_move_bps",
-      "from": 25,
-      "to": 30,
-      "reason": "move10-20 bucket is a validated loser (-$33.47, -0.41 expectancy) and move<10 is also negative (-$5.55); only move20+ is clearly profitable (+$10.14, +0.236 expectancy). Raising the floor to the bound max (30) pushes entries toward the only proven profitable move bucket.",
-      "confidence": 0.75
-    },
-    {
-      "param": "min_edge",
-      "from": 0.07,
-      "to": 0.08,
-      "reason": "Despite min_edge=0.07, momentum trades with reported edge 0.04-0.10 are still net losing (-$55.81), suggesting the edge calculation overstates true edge; raising to the bound max of 0.08 tightens the filter slightly while data on fee_rate/stop recalibration is gathered.",
-      "confidence": 0.5
+      "from": 30,
+      "to": 20,
+      "reason": "move20+ bucket is the strongest performer (+$10.14 PnL, 55.8% WR, 43 trades) while move10-20 is the worst (-33.47 PnL, 34.6% WR). Current param is already at upper bound favoring strong moves, but live decisions show many trades entering in the 6-15bps range — tightening the effective floor toward 20 (near bound) will mechanically shift volume away from the losing 10-20bps zone without needing to rely solely on the lesson veto.",
+      "confidence": 0.55
     },
     {
       "param": "momentum_min_confidence",
-      "from": 0.8,
-      "to": 0.82,
-      "reason": "all-agree bucket (112 trades, high confidence signal) is a validated loser (-$18.99, action=reduce_confidence already flagged by lesson engine); nudging confidence threshold up slightly should reduce volume of these overconfident-but-wrong setups. Kept modest since bound ceiling is 0.85 and large jumps risk starving trade volume.",
-      "confidence": 0.4
+      "from": 0.82,
+      "to": 0.78,
+      "reason": "all-agree (full peer consensus) is paradoxically a loser (-18.99 PnL, 44.6% WR, 112 trades) suggesting confidence scoring tied to peer agreement is miscalibrated and overconfident. Slightly lowering the confidence threshold while relying more on move-size filtering (see momentum_min_move_bps change) may reduce overreliance on the flawed peer-agreement signal, but this is a secondary lever — low confidence given mixed signal.",
+      "confidence": 0.3
+    },
+    {
+      "param": "stop_loss_bid",
+      "from": 0.42,
+      "to": 0.35,
+      "reason": "Actual stop exits are occurring at 0.19-0.25 bid, well below the nominal 0.42 threshold, indicating execution slippage/lag of 15-25 cents. Lowering the nominal threshold won't fix the lag itself but aligns expectations; combined with stop_confirm_ticks reduction this may reduce bleed. This is a moderate-confidence fix since root cause may be elsewhere (data feed lag per bad_reads:14132).",
+      "confidence": 0.35
     },
     {
       "param": "max_trade_pct",
-      "from": 0.03,
-      "to": 0.025,
-      "reason": "Max loss streak of 14 vs win streak of 12 plus a -$68.37 net result with only $33.55 bankroll indicates current sizing creates outsized drawdown risk relative to edge uncertainty; trimming size slightly preserves runway while the lesson vetoes take effect.",
-      "confidence": 0.45
+      "from": 0.025,
+      "to": 0.02,
+      "reason": "With bankroll down to $33.55 and CAUTIOUS mode active plus 14132 bad reads flagged, reducing position sizing to the bound minimum preserves capital while the data-quality and lesson-veto systems stabilize performance; current net P&L is negative so capital preservation takes priority over growth.",
+      "confidence": 0.5
     }
   ],
-  "skippedCount": 1,
+  "skippedCount": 2,
   "skipped": [
     {
       "param": "min_entry_left_sec",
       "reason": "already at value"
+    },
+    {
+      "param": "stop_confirm_ticks",
+      "reason": "already at value"
     }
   ],
-  "diagnosis": "Survivor is roughly breakeven overall (50.7% win, -$68.37 across 404 trades), with the core MOMENTUM strategy slightly unprofitable (49% win, -$55.81) while small ARB sidelines are strongly profitable (92% win, +$5.89) but under-sized. The lesson engine has correctly identified and is now vetoing the single worst-performing bucket (move10-20, -$33.47 expectancy -0.41) which should materially help going forward, but several other validated/experimental loss buckets (left60-120 veto -$20.25, price<0.45 veto -$19.54, all-agree reduce_confidence -$18.99, left<60 collecting -$19.40) are either not yet enforced or only partially enforced in the recent decision log. Coin-level performance is highly skewed: BTC is the only clearly profitable coin (60% win, +$10.83) while DOGE is badly losing (39% win, -$23.45) and ETH/SOL/XRP are all modestly negative. The recent decision tape shows the bot entering trades almost exclusively in the 0.5-0.65 ask / 120-150s-left window with small moves (6-15bps) and 'peers 4/0' agreement, which per the all-agree bucket (-0.1695 expectancy) is actually a negative-edge pattern despite looking confident. Many recent EXITs are stop-losses (0.19-0.25 bid) suggesting the stop_loss_bid=0.42 threshold is not actually triggering until well past 0.42, or stops are being hit late — worth checking stop_confirm_ticks/stop_grace interaction. Overall the bot's edge calculations systematically overstate real edge (reported edge 0.04-0.10 on trades that lose), indicating the edge model needs recalibration, probably by incorporating fee_rate (currently 0.07) more aggressively and raising min_edge.",
+  "diagnosis": "The bot is roughly break-even overall (50.7% WR, -$68.37 over 404 trades) but the core MOMENTUM strategy (383 trades, 49% WR, -$55.81) is the primary loss driver, while ARB (92% WR, +$5.89 on tiny sample) is a bright spot but too small to matter. The lesson engine is correctly identifying and vetoing the worst bucket (move10-20, -33.47 PnL, 34.6% WR) which is visible working as intended in the recent decision log. However, several other validated losing buckets (price<0.45: -19.54 PnL/30.6%WR, left60-120: -20.25PnL/35.6%WR, all-agree: -18.99PnL/44.6%WR) are NOT being vetoed, only flagged 'reduce_confidence' or 'none' — this is inconsistent given their expectancy is worse than or comparable to the vetoed move10-20 bucket. DOGE is a clear bleeder (39% WR, -$23.45) while BTC is the only consistently profitable coin (60% WR, +$10.83). The 'alone' (no peer agreement) and 'some-agree' buckets are also mild losers. Entry edges being taken (0.04-0.09 range) are not translating to wins, suggesting the edge calculation or confidence scoring is miscalibrated — paying 0.55-0.65 ask with 'edge' math that assumes favorable settlement isn't materializing at this win rate. Stop losses are firing frequently and deep (losses like -15.93, stop_loss_bid=0.42 but actual exits logged at 0.19-0.25), meaning stops are not protecting capital efficiently — by the time stop_confirm_ticks and min_left_sec gates trigger, price has already cratered well past the nominal stop level, indicating slippage/gating issues rather than param level being wrong.",
   "priorityActions": [
-    "1. Verify and harden enforcement of existing validated vetoes (move10-20, left60-120, price<0.45) across all coins — these three alone account for over -$73 in cumulative losses.",
-    "2. Raise momentum_min_move_bps to 30 to concentrate entries in the only clearly profitable move-size bucket (move20+, +$10.14, 0.236 expectancy).",
-    "3. Add or escalate a DOGE-specific confidence penalty / reduced position size given its -$23.45 P&L and 39% win rate, the worst of all coins.",
-    "4. Decouple or down-weight peer-agreement ('all-agree') from the confidence score — it is a validated negative-edge signal (-$18.99) despite appearing bullish.",
-    "5. Investigate the data integrity issue flagged by 'bad reads: 14319' and 'balance readings unconfirmed' — ensure live decisions aren't being made on stale/corrupted price or liquidity data, especially around stop-loss triggers that are firing at 0.19-0.25 bid far below the 0.42 stop_loss_bid threshold.",
-    "6. Monitor the 'left<60' and 'price0.70+' experimental buckets for a few more cycles before taking automatic action, but prepare an auto-veto rule given their steep negative expectancy trend."
+    "Add/upgrade lesson-veto action to 'veto' for left60-120 and price<0.45 buckets immediately — both are validated losers with sample sizes >59 and expectancy worse than -0.3, consistent with the already-vetoed move10-20 criterion.",
+    "Investigate stop-loss execution lag: nominal stop_loss_bid=0.42 but actual fills at 0.19-0.25 — likely linked to the 14132 bad_reads / feed reliability issue flagged in live state; this execution gap is costing an estimated extra $0.15-0.25 per stopped-out position.",
+    "Reduce max_trade_pct to 0.02 (bound minimum) given current CAUTIOUS mode, low bankroll ($33.55), and negative cumulative P&L, to limit further drawdown while fixes are validated.",
+    "Shift momentum entry filtering to favor move20+ setups (current best performer) over the 10-20bps zone by tightening momentum_min_move_bps toward 20, reinforcing what the lesson veto is already partially achieving.",
+    "Add a DOGE-specific monitoring/veto lesson bucket given its standalone -$23.45 PnL and 39% WR, the worst of all five coins by a wide margin.",
+    "Scale up ARB setup allocation cautiously (currently only 13 trades) given its 92% WR — if liquidity/opportunity permits, this is the bot's clearest edge and is underutilized relative to momentum (383 trades)."
   ]
 }
