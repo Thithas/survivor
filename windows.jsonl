@@ -41200,3 +41200,4 @@
 {"slug": "btc-updown-5m-1792495500", "asset": "btc", "end": "2026-10-20T11:30:00+00:00", "open": null, "winner": 0, "snaps": [{"t": 1, "up": null, "down": 0.01, "mv": null}]}
 {"slug": "sol-updown-5m-1792495500", "asset": "sol", "end": "2026-10-20T11:30:00+00:00", "open": null, "winner": 1, "snaps": [{"t": 1, "up": 0.01, "down": null, "mv": null}]}
 {"slug": "xrp-updown-5m-1792495500", "asset": "xrp", "end": "2026-10-20T11:30:00+00:00", "open": null, "winner": 0, "snaps": [{"t": 1, "up": null, "down": 0.001, "mv": null}]}
+{"slug": "doge-updown-5m-1792495500", "asset": "doge", "end": "2026-10-20T11:30:00+00:00", "open": null, "winner": 0, "snaps": [{"t": 1, "up": null, "down": 0.001, "mv": null}]}
