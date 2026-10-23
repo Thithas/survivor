@@ -43550,3 +43550,7 @@
 - 2026-10-23T06:05:17+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 0.00
 - 2026-10-23T06:05:20+00:00 HALT found, exiting
 - 2026-10-23T06:05:21+00:00 run end: 0 scans, mode CAUTIOUS, bankroll 33.55, today +0.00, open 0, stats {'wins': 64, 'losses': 85, 'pnl': -28.9696, 'arb': 0, 'momentum': 149}
+- 2026-10-23T10:56:46+00:00 lessons rebuilt from 404 trades; vetoes armed: move10-20, left60-120, price<0.45
+- 2026-10-23T10:56:49+00:00 relay survivor-mhthithas.vercel.app region dub1 | balance via relay 0.00
+- 2026-10-23T10:56:52+00:00 HALT found, exiting
+- 2026-10-23T10:56:52+00:00 run end: 0 scans, mode CAUTIOUS, bankroll 33.55, today +0.00, open 0, stats {'wins': 64, 'losses': 85, 'pnl': -28.9696, 'arb': 0, 'momentum': 149}
